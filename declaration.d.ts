@@ -1,5 +1,11 @@
 declare module "react-reader" {
   const ReactReader: any
   const ReactReaderStyle: any
-  export { ReactReader, ReactReaderStyle }
+  const EpubView: any
+  export { ReactReader, ReactReaderStyle, EpubView }
 }
+
+// declare module "react-file-reader-input" {
+//   const FileReaderInput: any
+//   export { FileReaderInput }
+// }

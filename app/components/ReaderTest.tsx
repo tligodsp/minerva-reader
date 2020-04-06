@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ReactReader, ReactReaderStyle } from 'react-reader';
+import { ReactReader, ReactReaderStyle, EpubView } from 'react-reader';
+import FileReaderInput from 'react-file-reader-input';
+import { Button } from 'react-bootstrap';
+import process from 'process';
 import {
   ReaderContainer,
 } from './Components'
@@ -23,6 +26,12 @@ const ReaderTest = (props: any) => {
           ? storage.getItem('epub-location')
           : 2
   );
+  const [localFile, setLocalFile] = useState(
+    storage && storage.getItem('local-path')
+          ? storage.getItem('local-path')
+          : 'C:\\Users\\tligsp\\Downloads\\moby-dick (2).epub'
+  );
+  const [localName, setLocalName] = useState(null);
 
   const rendition = null;
 
@@ -32,11 +41,34 @@ const ReaderTest = (props: any) => {
 
   useEffect(() => {
     storage && storage.setItem('epub-location', location);
+    console.log('eff ' + storage.getItem('epub-location'));
   }, [location]);
 
   const handleInputChange = (event: any) => {
     setUrlInput(event.target.value);
   }
+
+  const handleChangeFile = (event, results) => {
+    if (results.length > 0) {
+      const [e, file] = results[0];
+      if (file.type !== "application/epub+zip") {
+        return alert("Unsupported type");
+      }
+      var filePath = file.path;
+      setLocalFile(filePath);
+      setLocalName(file.name);
+      setLocation(0);
+      console.log(filePath);
+      window.location.reload();
+    }
+  }
+
+  useEffect(() => {
+    storage && storage.setItem('local-path', localFile);
+    // setLocalName(localFile);
+    // setLocation(null);
+    // window.location.reload();
+  }, [localFile]);
 
   const handleSubmit = (event: any) => {
     // setLocation(null);
@@ -61,58 +93,36 @@ const ReaderTest = (props: any) => {
     <div style={{ width: '100%', height: '100%' }}>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <form onSubmit={handleSubmit}>
+          {/* <form onSubmit={handleSubmit}>
             <label>
               Url:
               <input type="text" name="name" value={urlInput} onChange={handleInputChange}/>
             </label>
             <input type="submit" value="Load" />
-          </form>
+          </form> */}
+          <FileReaderInput as="buffer" onChange={handleChangeFile}>
+            <Button>Upload local epub</Button>
+          </FileReaderInput>
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ position: 'absolute', top: '50px', bottom: '0', left: '0', right: '0', transition: 'all 0.6s ease' }}>
+            {/* <ReactReader
+              url={localFile || epubUrl}
+              title={localName || epubUrl}
+              location={location}
+              locationChanged={onLocationChanged}
+            /> */}
             <ReactReader
-                    url={epubUrl}
-                    title={epubUrl}
-                    location={location}
-                    locationChanged={onLocationChanged}
-                    styles={{
-                      ...ReactReaderStyle,
-                      reader: {
-                        ...ReactReaderStyle.reader,
-                        position: "absolute",
-                        width: "100%",
-                        top: 50,
-                        left: 1,
-                        bottom: 20,
-                        right: 1
-                      }
-                    }}
-                    epubOptions={{
-                      fontSize: "18px",
-                      flow: "scrolled-continuous",
-                      width: "100%",
-                      layout: {
-                        columnWidth: 1000
-                      }
-                    }}
-                  />
+              url={localFile}
+              title={localName || epubUrl}
+              location={location}
+              locationChanged={onLocationChanged}
+            />
           </div>
         </div>
       </div>
     </div>
   );
-
-  // return (
-  //   <ReaderContainer fullscreen={false}>
-  //         <ReactReader
-  //           url={props.epubUrl}
-  //           locationChanged={onLocationChanged}
-  //           title={'Alice in wonderland'}
-  //           location={location}
-  //         />
-  //       </ReaderContainer>
-  // );
 }
 
 export default ReaderTest;
