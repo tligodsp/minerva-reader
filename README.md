@@ -1,6 +1,8 @@
-## Running Locally
+<img src="img/MinervaReader.png" width="100%" />
 
-Install dependecies with `yarn`
+## Installation
+
+Install dependencies with `yarn`
 
 ```bash
 yarn
