@@ -105,7 +105,7 @@ const ReaderTest = (props: any) => {
           </FileReaderInput>
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ position: 'absolute', top: '50px', bottom: '0', left: '0', right: '0', transition: 'all 0.6s ease' }}>
+          <div style={{ position: 'absolute', top: '50px', bottom: '0', left: '150px', right: '0', transition: 'all 0.6s ease' }}>
             {/* <ReactReader
               url={localFile || epubUrl}
               title={localName || epubUrl}
