@@ -6,7 +6,7 @@ import { Colors } from '../styles';
 const HomePage = (props) => {
   return (
     <div style={{ width: "100%", height: "100%", backgroundColor: '#DDDDDD' }}>
-      <div style={{ width: "350px", height: "fit-content", margin: "50px 0 0 50px" }}>
+      <div style={{ width: "400px", height: "fit-content", margin: "50px 0 0 50px" }}>
         {/* <RatingBar /> */}
         {/* <RatingBar
           wrapperStyle={{ backgroundColor: 'blue' }}
@@ -16,9 +16,10 @@ const HomePage = (props) => {
           ratingValue={0}
         /> */}
         <BookInfoCard
-          title="The Alchemist"
-          authors="J.D. Salinger"
-          subInfo="Classics, Mystery, Fiction"
+          title="The Catcher in the Rye"
+          authors="by J.D. Salinger"
+          subInfo="Classics, Fiction, Young Adult, Literature"
+          cover="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1398034300l/5107.jpg"
           bookInfoContainerStyle={{ fontSize: "1rem" }}
           bookTitleStyle={{ fontSize: "1.25rem", color: Colors.PRIMARY }}
         >
