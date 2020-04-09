@@ -43,13 +43,13 @@ const RatingBar = ({ ratingValue, wrapperStyle, starStyle } : RatingBarProps) =>
   useEffect(() => {
     _width = _ref.current ? _ref.current.offsetWidth : 0;
     console.log(_width);
-    _setStarSize(_width / NUM_OF_STARS);
+    _setStarSize((0.98 * _width) / NUM_OF_STARS);
   }, [_ref.current]);
 
   return (
     <div
       ref={_ref}
-      className={defaultStyles.wrapper}
+      className={defaultStyles['wrapper']}
       style={wrapperStyle}
     >
       {

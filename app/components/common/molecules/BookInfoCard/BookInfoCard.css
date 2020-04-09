@@ -1,0 +1,48 @@
+.wrapper {
+  font-family: 'Quicksand', sans-serif;
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  background-color: #FEFEFE;
+  border-radius: 1.5rem;
+  padding: 5%;
+}
+
+.book-cover-container {
+  flex: 1;
+  border-radius: 1rem;
+  /* background-color: blue; */
+}
+
+.book-cover-container .book-cover {
+  width: 100%;
+  border-radius: inherit;
+}
+
+.book-info-container {
+  flex: 2;
+  padding: 5% 0 5% 5%;
+  display: flex;
+  flex-direction: column;
+  /* background-color: red; */
+}
+
+.book-title {
+  /* font-size: 1.5rem; */
+  /* font-size: 1.5rem; */
+  font-weight: bold;
+  color: #00ABAB;
+}
+
+.book-authors {
+  /* font-size: 1.25rem; */
+  font-weight: bold;
+  color: #111111;
+}
+
+.book-sub-info {
+  /* font-size: 1.25rem; */
+  font-weight: 600;
+  color: #999999;
+}
