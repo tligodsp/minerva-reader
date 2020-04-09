@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap';
 import process from 'process';
 import {
   ReaderContainer,
-} from './Components'
+} from '../../to_be_deleted/Components'
 
 const globalAny:any = global;
 

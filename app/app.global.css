@@ -17,6 +17,7 @@ body {
   font-family: Arial, Helvetica, Helvetica Neue, serif;
   overflow-y: hidden; */
   height: 100vh;
+  font-family: 'Quicksand', sans-serif;
 }
 
 body button:focus {

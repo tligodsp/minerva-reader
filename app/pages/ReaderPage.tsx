@@ -1,10 +1,10 @@
 import React from 'react';
-import ReaderTest from '../components/ReaderTest';
+import { Reader } from '../components/app';
 
-const Reader = (props) => {
+const ReaderPage = (props) => {
   return (
-    <ReaderTest />
+    <Reader />
   );
 }
 
-export default Reader;
+export default ReaderPage;

@@ -5,7 +5,7 @@ import { hot } from 'react-hot-loader/root';
 import { History } from 'history';
 import { Store } from '../reducers/types';
 import { routes } from '../routes';
-import NavBar from '../components/NavBar/NavBar';
+import { NavBar } from '../components/app';
 import { Switch, Route } from 'react-router-dom';
 
 type Props = {

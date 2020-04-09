@@ -6,7 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
-import { Colors, Sizing } from '../../styles';
+import { Colors, Sizing } from '../../../styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: Colors.PRIMARY,
   },
   icon: {
-    fontSize: '2rem',
+    fontSize: Sizing.NAVBAR_ICON_SIZE,
   }
 }));
 
@@ -71,7 +71,11 @@ const NavBar = (props: any) => {
 	return (
     <Paper className={classes.paper}>
       {/* TODO: Make logo an element */}
-      <img src={"file:///resources/logo.png"} alt="logo" style={{ width: "45px", height: "45px" }}/>
+      <img
+        src={"file:///resources/logo.png"}
+        alt="logo"
+        style={{ width: Sizing.NAVBAR_LOGO_SIZE, height: Sizing.NAVBAR_LOGO_SIZE }}
+      />
       <Tabs
         orientation="vertical"
         variant="scrollable"
