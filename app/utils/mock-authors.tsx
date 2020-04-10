@@ -93,3 +93,8 @@ export const georgeOrwell: Author = {
   id: "orwell",
   name: "George Orwell"
 }
+
+export const harperLee: Author = {
+  id: "harperlee",
+  name: "Harper Lee"
+}

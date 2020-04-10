@@ -2,7 +2,7 @@ import React from 'react';
 import defaultStyles from './BookInfoCard.css';
 
 // Properties
-interface BookInfoCardProps {
+export interface BookInfoCardProps {
   title: string;
   authors?: string;
   cover?: string;

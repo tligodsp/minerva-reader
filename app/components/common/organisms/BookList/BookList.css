@@ -1,0 +1,11 @@
+.wrapper {
+  width: 100%;
+  display: flex;
+  flex-flow: wrap;
+  justify-content: flex-start;
+}
+
+.book-container {
+  width: 300px;
+  margin: 10px;
+}
