@@ -1,0 +1,110 @@
+import * as MockAuthors from './mock-authors';
+import * as MockGenres from './mock-genres';
+
+interface Book {
+  id: string,
+  name: string,
+  authors?: MockAuthors.Author[],
+  genres?: MockGenres.Genre[],
+  cover?: string,
+  ratingValue?: number
+}
+
+const mockBooks: Book[] = [
+  {
+    id: "book01",
+    name: "The Tempest",
+    authors: [ MockAuthors.shakespeare ],
+    genres: [MockGenres.classics, MockGenres.plays, MockGenres.drama],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1546081115l/12985.jpg",
+    ratingValue: 4,
+  },
+  {
+    id: "book02",
+    name: "The Alchemist",
+    authors: [ MockAuthors.pauloCoelho ],
+    genres: [MockGenres.classics, MockGenres.fiction, MockGenres.fantasy, MockGenres.philosophy ],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1466865542l/18144590._SY475_.jpg",
+    ratingValue: 4,
+  },
+  {
+    id: "book03",
+    name: "The Great Gatsby",
+    authors: [ MockAuthors.fitzgerald ],
+    genres: [MockGenres.classics, MockGenres.fiction, MockGenres.fantasy ],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1490528560l/4671._SY475_.jpg",
+    ratingValue: 4,
+  },
+  {
+    id: "book04",
+    name: "The Little Prince",
+    authors: [ MockAuthors.saintExupery ],
+    genres: [MockGenres.classics, MockGenres.fiction, MockGenres.childrens, MockGenres.fantasy ],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1367545443l/157993.jpg",
+    ratingValue: 4.5,
+  },
+  {
+    id: "book05",
+    name: "And Then There Were None",
+    authors: [ MockAuthors.agathaChristie ],
+    genres: [MockGenres.classics, MockGenres.mystery, MockGenres.crime, MockGenres.thriller ],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1391120695l/16299.jpg",
+    ratingValue: 4.5,
+  },
+  {
+    id: "book06",
+    name: "The Catcher in the Rye",
+    authors: [ MockAuthors.salinger ],
+    genres: [MockGenres.classics, MockGenres.fiction, MockGenres.literature ],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1398034300l/5107.jpg",
+    ratingValue: 4,
+  },
+  {
+    id: "book07",
+    name: "The Old Man and the Sea",
+    authors: [ MockAuthors.hemingway ],
+    genres: [MockGenres.classics, MockGenres.fiction, MockGenres.literature ],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1329189714l/2165.jpg",
+    ratingValue: 4,
+  },
+  {
+    id: "book08",
+    name: "The Time Machine",
+    authors: [ MockAuthors.hgWells ],
+    genres: [MockGenres.classics, MockGenres.scifi, MockGenres.fantasy ],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1327942880l/2493.jpg",
+    ratingValue: 4,
+  },
+  {
+    id: "book09",
+    name: "A Study in Scarlet",
+    authors: [ MockAuthors.conanDoyle ],
+    genres: [MockGenres.classics, MockGenres.mystery, MockGenres.fiction, MockGenres.crime ],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1519031842l/102868._SX318_.jpg",
+    ratingValue: 4.5,
+  },
+  {
+    id: "book10",
+    name: "Spice & Wolf, Vol. 01",
+    authors: [ MockAuthors.iHasekura, MockAuthors.jAyakura ],
+    genres: [MockGenres.fantasy, MockGenres.lightNovel, MockGenres.fiction, MockGenres.romance ],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1340904653l/6483360.jpg",
+    ratingValue: 4.5,
+  },
+  {
+    id: "book11",
+    name: "Durarara!!, Vol. 1",
+    authors: [ MockAuthors.rNarita, MockAuthors.sYasuda ],
+    genres: [MockGenres.fantasy, MockGenres.lightNovel, MockGenres.fiction, MockGenres.mystery ],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1431851926l/24409126._SY475_.jpg",
+    ratingValue: 4.5,
+  },
+  {
+    id: "book12",
+    name: "1984",
+    authors: [ MockAuthors.georgeOrwell ],
+    genres: [ MockGenres.classics, MockGenres.fiction, MockGenres.politics, MockGenres.dystopia ],
+    cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1532714506l/40961427._SX318_.jpg",
+    ratingValue: 4.5,
+  },
+]
