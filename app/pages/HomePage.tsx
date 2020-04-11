@@ -60,7 +60,7 @@ const HomePage = (props) => {
       style={{
         width: "100%",
         height: "100%",
-        backgroundColor: "EEEEEE",
+        backgroundColor: "#EEEEEE",
         display: "flex",
         flexDirection: "row"
       }}
