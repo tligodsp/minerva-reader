@@ -4,6 +4,8 @@ import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/sty
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
 import AccessibleForwardIcon from '@material-ui/icons/AccessibleForward';
+import Slider from "react-slick";
+import Carousel from 'nuka-carousel';
 
 import { RatingBar } from '../../components/common/atoms';
 import { BookInfoCard } from '../../components/common/molecules';
@@ -12,7 +14,6 @@ import { Colors, Sizing } from '../../styles';
 import { mockBooks, Book } from '../../utils/mock-books';
 import { Author } from '../../utils/mock-authors';
 import { Genre } from '../../utils/mock-genres';
-import styles from './HomePage.css';
 
 const drawerWidth = Sizing.HOMEPAGE_DRAWER_WIDTH;
 
@@ -56,6 +57,16 @@ const HomePage = (props) => {
     setOpen(!open);
   };
 
+  const settings = {
+    className: "center",
+      centerMode: true,
+      infinite: true,
+      centerPadding: "60px",
+      slidesToShow: 2,
+      speed: 500,
+      variableWidth: true
+  };
+
   return (
     <div
       style={{
@@ -63,33 +74,79 @@ const HomePage = (props) => {
         height: "100%",
         backgroundColor: "#EEEEEE",
         display: "flex",
-        flexDirection: "row"
+        flexDirection: "row",
+        minWidth: "0"
       }}
     >
       <div
-        style={{ flex: 1, display: "flex", flexDirection: "row" }}
+        style={{ flex: 1, display: "flex", flexDirection: "row", minWidth: "0" }}
         className={clsx(classes.content, {
           [classes.contentShift]: open,
         })}
       >
-        <BookListSection
-          sectionTitle="Popular Books"
-          buttonLabel="View All"
-          wrapperStyle={{ padding: "0 30px" }}
-          headerContainerStyle={{
-            fontFamily: "Quicksand, sans-serif",
-            fontSize: "1.15rem",
-            fontWeight: "bold",
-            padding: "15px 20px"
-          }}
-          buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
-        >
-          <BookList
-            books={_mockBooks}
-            wrapperStyle={{ justifyContent: "space-evenly" }}
-            bookContainerStyle={{ width: "290px", margin: "5px" }}
-          />
-        </BookListSection>
+        <div style={{ display: "flex", flexDirection: "column", minWidth: "0" }}>
+
+          <BookListSection
+            sectionTitle="You Might Like"
+            buttonLabel="View All"
+            wrapperStyle={{ padding: "0 30px", minWidth: "0" }}
+            headerContainerStyle={{
+              fontFamily: "Quicksand, sans-serif",
+              fontSize: "1.15rem",
+              fontWeight: "bold",
+              padding: "15px 20px"
+            }}
+            buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
+          >
+            {/* <Slider {...settings}>
+              {
+                mockBooks.map((book: Book, index: number) => (
+                  <div style={{ margin: "10px", width: "500px" }}>
+                    <BookInfoCard
+                      title={book.title}
+                      cover={book.cover}
+                    />
+                  </div>
+                ))
+              }
+            </Slider> */}
+            <Carousel
+              slidesToShow={3}
+              slidesToScroll="auto"
+              cellSpacing={10}
+              framePadding="0 20px"
+            >
+              {
+                mockBooks.map((book: Book, index: number) => (
+                  <div style={{width: "400px", height: "223px" }}>
+                    <BookInfoCard
+                      title={book.title}
+                      cover={book.cover}
+                    />
+                  </div>
+                ))
+              }
+            </Carousel>
+          </BookListSection>
+          <BookListSection
+            sectionTitle="Popular Books"
+            buttonLabel="View All"
+            wrapperStyle={{ padding: "0 30px" }}
+            headerContainerStyle={{
+              fontFamily: "Quicksand, sans-serif",
+              fontSize: "1.15rem",
+              fontWeight: "bold",
+              padding: "15px 20px"
+            }}
+            buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
+          >
+            <BookList
+              books={_mockBooks}
+              wrapperStyle={{ justifyContent: "space-evenly" }}
+              bookContainerStyle={{ width: "290px", margin: "5px" }}
+            />
+          </BookListSection>
+        </div>
         <div
             style={{
               width: "80px",
