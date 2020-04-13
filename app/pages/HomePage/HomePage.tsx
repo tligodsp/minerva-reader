@@ -5,15 +5,16 @@ import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
 import AccessibleForwardIcon from '@material-ui/icons/AccessibleForward';
 
-import { RatingBar } from '../components/common/atoms';
-import { BookInfoCard } from '../components/common/molecules';
-import { BookList } from '../components/common/organisms';
-import { Colors, Sizing } from '../styles';
-import { mockBooks, Book } from '../utils/mock-books';
-import { Author } from '../utils/mock-authors';
-import { Genre } from '../utils/mock-genres';
+import { RatingBar } from '../../components/common/atoms';
+import { BookInfoCard } from '../../components/common/molecules';
+import { BookList, BookListSection } from '../../components/common/organisms';
+import { Colors, Sizing } from '../../styles';
+import { mockBooks, Book } from '../../utils/mock-books';
+import { Author } from '../../utils/mock-authors';
+import { Genre } from '../../utils/mock-genres';
+import styles from './HomePage.css';
 
-const drawerWidth = 240;
+const drawerWidth = Sizing.HOMEPAGE_DRAWER_WIDTH;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,24 +72,38 @@ const HomePage = (props) => {
           [classes.contentShift]: open,
         })}
       >
-        <BookList
-          books={_mockBooks}
-          wrapperStyle={{ padding: "0 30px", justifyContent: "space-between" }}
-        />
-        <div
-          style={{
-            width: "80px",
-            backgroundColor: "white",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
+        <BookListSection
+          sectionTitle="Popular Books"
+          buttonLabel="View All"
+          wrapperStyle={{ padding: "0 30px" }}
+          headerContainerStyle={{
+            fontFamily: "Quicksand, sans-serif",
+            fontSize: "1.15rem",
+            fontWeight: "bold",
+            padding: "15px 20px"
           }}
+          buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
         >
-          <IconButton onClick={handleDrawerClick}>
-            <AccessibleForwardIcon className={classes.icon}/>
-          </IconButton>
+          <BookList
+            books={_mockBooks}
+            wrapperStyle={{ justifyContent: "space-evenly" }}
+            bookContainerStyle={{ width: "290px", margin: "5px" }}
+          />
+        </BookListSection>
+        <div
+            style={{
+              width: "80px",
+              backgroundColor: "white",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <IconButton onClick={handleDrawerClick}>
+              <AccessibleForwardIcon className={classes.icon}/>
+            </IconButton>
+          </div>
         </div>
-      </div>
       <Drawer
         className={classes.drawer}
         variant="persistent"

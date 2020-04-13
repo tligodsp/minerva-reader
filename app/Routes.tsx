@@ -7,7 +7,7 @@ import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
 import { Sizing } from './styles';
 
 import TestPage from './pages/TestPage';
-import HomePage from './pages/HomePage';
+import HomePage from './pages/HomePage/HomePage';
 import ReaderPage from './pages/ReaderPage';
 import AboutPage from './pages/AboutPage';
 
