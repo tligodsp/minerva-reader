@@ -1,5 +1,6 @@
 import React from 'react';
 import defaultStyles from './BookInfoCard.css';
+import AspectRatio from 'react-aspect-ratio';
 
 // Properties
 export interface BookInfoCardProps {
@@ -31,12 +32,51 @@ const BookInfoCard = ({
         className={defaultStyles['book-cover-container']}
         style={{ ...bookCoverStyle }}
       >
+        <div
+          className={defaultStyles['test-ap']}
+        >
+          <img
+            className={defaultStyles['img']}
+            src={_cover}
+            alt="book-cover"
+          />
+        </div>
+      </div>
+      {/* <div
+        className={defaultStyles['book-cover-container']}
+        style={{ ...bookCoverStyle }}
+      >
         <img
           className={defaultStyles['book-cover']}
           src={_cover}
           alt="book-cover"
         />
-      </div>
+      </div> */}
+      {/* <AspectRatio
+        ratio="3/4"
+        className={defaultStyles['book-cover-container']}
+        style={{ ...bookCoverStyle }}>
+        <img
+          className={defaultStyles['book-cover']}
+          src={_cover}
+          alt="book-cover"
+        />
+      </AspectRatio> */}
+      {/* <div
+        className={defaultStyles['book-cover-container']}
+        style={{ ...bookCoverStyle }}
+      >
+        <AspectRatio ratio="3/4" style={{ maxWidth: '100px' }}>
+          <img
+            className={defaultStyles['book-cover']}
+            src={_cover}
+            alt="book-cover"
+          />
+        </AspectRatio>
+      </div> */}
+      {/* <AspectRatio ratio="3/4" style={{ maxWidth: '100px' }}>
+        <img src={_cover} />
+      </AspectRatio> */}
       <div
         className={defaultStyles['book-info-container']}
         style={{ ...bookInfoContainerStyle }}

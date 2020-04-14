@@ -21,7 +21,7 @@
 }
 
 .book-cover-container .book-cover {
-  width: 100%;
+  /* width: 100%; */
   border-radius: inherit;
 }
 
@@ -69,4 +69,23 @@
   min-width: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.test-ap {
+  background-color: red;
+  width: 100%;
+  padding-top: 150%;
+  position: relative;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  border-radius: inherit;
 }

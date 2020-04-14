@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -51,11 +51,19 @@ const HomePage = (props) => {
   const _mockBooks = mockBooks.slice(0, 12);
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [carouselSlidesToScroll, setCarouselSlidesToScroll] = useState(3);
 
   const handleDrawerClick = () => {
     setOpen(!open);
+    // setCarouselSlidesToShow(open ? 2 : 3);
   };
+
+  useEffect(() => {
+    setCarouselSlidesToScroll(open ? 2 : 3);
+  }, [
+    open
+  ]);
 
   const settings = {
     className: "center",
@@ -112,13 +120,21 @@ const HomePage = (props) => {
             </Slider> */}
             <Carousel
               slidesToShow={3}
-              slidesToScroll="auto"
-              cellSpacing={10}
-              framePadding="0 20px"
+              slidesToScroll={carouselSlidesToScroll}
+              cellSpacing={20}
+              framePadding="0 50px"
+              slideWidth="410px"
+              defaultControlsConfig={{
+                nextButtonText: '›',
+                prevButtonText: '‹',
+                nextButtonStyle: { width: "40px", height: "40px", lineHeight: "0", borderRadius: "100%" },
+                prevButtonStyle: { width: "40px", height: "40px", lineHeight: "0", borderRadius: "100%" },
+                pagingDotsStyle: { display: "none" }
+              }}
             >
               {
                 mockBooks.map((book: Book, index: number) => (
-                  <div style={{width: "400px", height: "223px" }}>
+                  <div>
                     <BookInfoCard
                       title={book.title}
                       cover={book.cover}
