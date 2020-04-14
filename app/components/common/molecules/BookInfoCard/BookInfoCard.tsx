@@ -39,10 +39,10 @@ const BookInfoCard = ({
         style={{ ...bookCoverStyle }}
       >
         <div
-          className={defaultStyles['test-ap']}
+          className={defaultStyles['aspect-ratio-container']}
         >
           <img
-            className={defaultStyles['img']}
+            className={defaultStyles['cover-img']}
             src={_cover}
             alt="book-cover"
           />

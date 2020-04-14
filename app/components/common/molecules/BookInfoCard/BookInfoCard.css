@@ -71,8 +71,7 @@
   white-space: nowrap;
 }
 
-.test-ap {
-  background-color: red;
+.aspect-ratio-container {
   width: 100%;
   padding-top: 150%;
   position: relative;
@@ -80,7 +79,7 @@
   overflow: hidden;
 }
 
-.img {
+.cover-img {
   position: absolute;
   top: 0;
   left: 0;
