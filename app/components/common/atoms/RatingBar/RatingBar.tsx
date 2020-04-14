@@ -6,7 +6,7 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 import defaultStyles from './RatingBar.css';
 
 // Default values
-const STAR_COLOR = "E3E315";
+const STAR_COLOR = "#E3E315";
 const NUM_OF_STARS = 5;
 
 // Properties

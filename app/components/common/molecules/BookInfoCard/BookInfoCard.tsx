@@ -1,6 +1,6 @@
 import React from 'react';
 import defaultStyles from './BookInfoCard.css';
-import AspectRatio from 'react-aspect-ratio';
+import Palette, {usePalette} from 'react-palette';
 
 // Properties
 export interface BookInfoCardProps {
@@ -15,18 +15,24 @@ export interface BookInfoCardProps {
   bookTitleStyle?: React.CSSProperties;
   bookAuthorsStyle?: React.CSSProperties;
   bookSubInfoStyle?: React.CSSProperties;
+  smartBackgroundColor?: boolean;
 }
 
 const BookInfoCard = ({
   title, authors, cover, subInfo, children,
   wrapperStyle, bookCoverStyle, bookInfoContainerStyle,
-  bookTitleStyle, bookAuthorsStyle, bookSubInfoStyle
+  bookTitleStyle, bookAuthorsStyle, bookSubInfoStyle,
+  smartBackgroundColor
 }: BookInfoCardProps) => {
   const _cover = cover ? cover : 'https://lazioeventi.com/wp-content/uploads/2014/05/No-image-available.jpg';
+  const { data, loading, error } = usePalette(_cover);
   return (
     <div
       className={defaultStyles['wrapper']}
-      style={{ ...wrapperStyle }}
+      style={{
+        backgroundColor: smartBackgroundColor ? (data.vibrant + "80") : "#FEFEFE" ,
+        ...wrapperStyle
+      }}
     >
       <div
         className={defaultStyles['book-cover-container']}
@@ -52,31 +58,6 @@ const BookInfoCard = ({
           alt="book-cover"
         />
       </div> */}
-      {/* <AspectRatio
-        ratio="3/4"
-        className={defaultStyles['book-cover-container']}
-        style={{ ...bookCoverStyle }}>
-        <img
-          className={defaultStyles['book-cover']}
-          src={_cover}
-          alt="book-cover"
-        />
-      </AspectRatio> */}
-      {/* <div
-        className={defaultStyles['book-cover-container']}
-        style={{ ...bookCoverStyle }}
-      >
-        <AspectRatio ratio="3/4" style={{ maxWidth: '100px' }}>
-          <img
-            className={defaultStyles['book-cover']}
-            src={_cover}
-            alt="book-cover"
-          />
-        </AspectRatio>
-      </div> */}
-      {/* <AspectRatio ratio="3/4" style={{ maxWidth: '100px' }}>
-        <img src={_cover} />
-      </AspectRatio> */}
       <div
         className={defaultStyles['book-info-container']}
         style={{ ...bookInfoContainerStyle }}

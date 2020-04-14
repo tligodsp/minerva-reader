@@ -6,6 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AccessibleForwardIcon from '@material-ui/icons/AccessibleForward';
 import Slider from "react-slick";
 import Carousel from 'nuka-carousel';
+import Palette, {usePalette} from 'react-palette';
 
 import { RatingBar } from '../../components/common/atoms';
 import { BookInfoCard } from '../../components/common/molecules';
@@ -53,6 +54,7 @@ const HomePage = (props) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [carouselSlidesToScroll, setCarouselSlidesToScroll] = useState(3);
+  // const { data, loading, error } = usePalette("https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1466865542l/18144590._SY475_.jpg")
 
   const handleDrawerClick = () => {
     setOpen(!open);
@@ -122,13 +124,25 @@ const HomePage = (props) => {
               slidesToShow={3}
               slidesToScroll={carouselSlidesToScroll}
               cellSpacing={20}
-              framePadding="0 50px"
-              slideWidth="410px"
+              framePadding="0 34px"
+              slideWidth="420px"
               defaultControlsConfig={{
                 nextButtonText: '›',
                 prevButtonText: '‹',
-                nextButtonStyle: { width: "40px", height: "40px", lineHeight: "0", borderRadius: "100%" },
-                prevButtonStyle: { width: "40px", height: "40px", lineHeight: "0", borderRadius: "100%" },
+                nextButtonStyle: {
+                  width: "40px",
+                  height: "40px",
+                  lineHeight: "0",
+                  borderRadius: "100%",
+                  transform: "translateX(16px)"
+                },
+                prevButtonStyle: {
+                  width: "40px",
+                  height: "40px",
+                  lineHeight: "0",
+                  borderRadius: "100%",
+                  transform: "translateX(-16px)"
+                },
                 pagingDotsStyle: { display: "none" }
               }}
             >
@@ -138,9 +152,47 @@ const HomePage = (props) => {
                     <BookInfoCard
                       title={book.title}
                       cover={book.cover}
-                    />
+                      authors={book.authors ? `by ${book.authors[0].name}` : ""}
+                      smartBackgroundColor={true}
+                      bookTitleStyle={{
+                        color: Colors.WHITE,
+                        textShadow: "0px 0px 10px #000000",
+                        fontSize: "1.25rem"
+                      }}
+                      bookAuthorsStyle={{
+                        color: Colors.WHITE,
+                        textShadow: "0px 0px 10px #000000",
+                        fontSize: "1rem"
+                      }}
+                    >
+                      <div
+                        style={{
+                          flex: 1,
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: "flex-end",
+                          paddingRight: "30%"
+                        }}
+                      >
+                        <RatingBar
+                          ratingValue={book.ratingValue ? book.ratingValue / 5 : 0}
+                          starStyle={{ color: Colors.WHITE }}
+                        />
+                      </div>
+                    </BookInfoCard>
                   </div>
                 ))
+                // mockBooks.map((book: Book, index: number) => (
+                //   <Palette src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1466865542l/18144590._SY475_.jpg">
+                //     {({ data, loading, error }) => (
+                //       <BookInfoCard
+                //         title={book.title}
+                //         cover={book.cover}
+                //         wrapperStyle={{ backgroundColor: data.vibrant }}
+                //       />
+                //     )}
+                //   </Palette>
+                // ))
               }
             </Carousel>
           </BookListSection>
