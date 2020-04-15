@@ -17,6 +17,7 @@ import { Colors, Sizing } from '../../styles';
 import { mockBooks, Book } from '../../utils/mock-books';
 import { Author } from '../../utils/mock-authors';
 import { Genre } from '../../utils/mock-genres';
+import styles from './HomePage.css';
 
 const drawerWidth = Sizing.HOMEPAGE_DRAWER_WIDTH;
 
@@ -38,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
-      marginRight: -drawerWidth,
+      marginRight: -drawerWidth + Sizing.HOMEPAGE_DRAWER_TOGGLE_WIDTH,
     },
     contentShift: {
       transition: theme.transitions.create('margin', {
@@ -69,25 +70,16 @@ const HomePage = (props) => {
     open
   ]);
 
-  const settings = {
-    className: "center",
-      centerMode: true,
-      infinite: true,
-      centerPadding: "60px",
-      slidesToShow: 2,
-      speed: 500,
-      variableWidth: true
-  };
-
   return (
     <div
       style={{
         width: "100%",
         height: "100%",
-        backgroundColor: "#EEEEEE",
+        backgroundColor: "#F5F5F5",
         display: "flex",
         flexDirection: "row",
-        minWidth: "0"
+        minWidth: "0",
+        position: "relative"
       }}
     >
       <div
@@ -200,17 +192,6 @@ const HomePage = (props) => {
                       </BookInfoCard>
                     </div>
                   ))
-                  // mockBooks.map((book: Book, index: number) => (
-                  //   <Palette src="https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1466865542l/18144590._SY475_.jpg">
-                  //     {({ data, loading, error }) => (
-                  //       <BookInfoCard
-                  //         title={book.title}
-                  //         cover={book.cover}
-                  //         wrapperStyle={{ backgroundColor: data.vibrant }}
-                  //       />
-                  //     )}
-                  //   </Palette>
-                  // ))
                 }
               </Carousel>
             </BookListSection>
@@ -234,19 +215,37 @@ const HomePage = (props) => {
             </BookListSection>
           </Scrollbars>
         </div>
-        <div
-            style={{
-              width: "80px",
-              backgroundColor: "white",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <IconButton onClick={handleDrawerClick}>
-              <AccessibleForwardIcon className={classes.icon}/>
-            </IconButton>
-          </div>
+        {/* <div
+          className={styles['right-drawer-toggle']}
+          style={{
+            width: "80px",
+            backgroundColor: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <IconButton onClick={handleDrawerClick}>
+            <AccessibleForwardIcon className={classes.icon}/>
+          </IconButton>
+        </div> */}
+      </div>
+      <div
+          style={{
+            width: `${Sizing.HOMEPAGE_DRAWER_TOGGLE_WIDTH}px`,
+            backgroundColor: "white",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0
+          }}
+        >
+          <IconButton onClick={handleDrawerClick}>
+            <AccessibleForwardIcon className={classes.icon}/>
+          </IconButton>
         </div>
       <Drawer
         className={classes.drawer}
@@ -257,7 +256,21 @@ const HomePage = (props) => {
           paper: classes.drawerPaper,
         }}
       >
-        <div>Alo alo</div>
+        <div style={{ display: "flex", flexDirection: "column", padding: "20px"}}>
+          <div onClick={handleDrawerClick}>Close</div>
+          <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+            <div>Recently Read</div>
+            <div>View All</div>
+          </div>
+          <BookList
+              books={_mockBooks.slice(0, 2)}
+              wrapperStyle={{ }}
+              bookContainerStyle={{ width: `${Sizing.HOMEPAGE_DRAWER_WIDTH - 40}px`, margin: "5px" }}
+              bookProps={{
+                wrapperStyle: { backgroundColor: "#ECECEC" }
+              }}
+            />
+        </div>
       </Drawer>
     </div>
   );
