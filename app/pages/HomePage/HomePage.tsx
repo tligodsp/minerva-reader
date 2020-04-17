@@ -8,13 +8,15 @@ import Slider from "react-slick";
 import Carousel from 'nuka-carousel';
 import Palette, {usePalette} from 'react-palette';
 import { Scrollbars } from 'react-custom-scrollbars';
-
+import Avatar from '@material-ui/core/Avatar';
+import Divider from '@material-ui/core/Divider';
 
 import { RatingBar } from '../../components/common/atoms';
-import { BookInfoCard } from '../../components/common/molecules';
+import { BookInfoCard, ProgressionCard } from '../../components/common/molecules';
 import { BookList, BookListSection } from '../../components/common/organisms';
-import { Colors, Sizing } from '../../styles';
+import { Colors, Sizing, Typography } from '../../styles';
 import { mockBooks, Book } from '../../utils/mock-books';
+import { currentUser, User } from '../../utils/mock-users';
 import { Author } from '../../utils/mock-authors';
 import { Genre } from '../../utils/mock-genres';
 import styles from './HomePage.css';
@@ -29,7 +31,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     drawerPaper: {
       width: drawerWidth,
-      border: "none"
+      border: "none",
+      fontFamily: Typography.FONT_FAMILY,
     },
     icon: {
       fontSize: Sizing.NAVBAR_ICON_SIZE,
@@ -48,8 +51,29 @@ const useStyles = makeStyles((theme: Theme) =>
       }),
       marginRight: 0,
     },
+    avatarLarge: {
+      width: theme.spacing(7),
+      height: theme.spacing(7),
+      border: "1px solid #bbb"
+    },
+    progressionCard: {
+      width: Sizing.HOMEPAGE_DRAWER_WIDTH - 60,
+      backgroundColor: 'red'
+    }
   }),
 );
+
+const DrawerSection = (props) => {
+  return (
+    <div className={styles['section']}>
+      <div className={styles['header']}>
+        <div>{props.headerText}</div>
+        <div className={styles['view-all']}>{props.headerClickableText}</div>
+      </div>
+      {props.children}
+    </div>
+  );
+}
 
 const HomePage = (props) => {
   const _mockBooks = mockBooks.slice(0, 12);
@@ -106,6 +130,7 @@ const HomePage = (props) => {
             right: "-17px"
           }}>
 
+            {/* RECOMMENDED SECTION */}
             <BookListSection
               sectionTitle="You Might Like"
               buttonLabel="View All"
@@ -118,18 +143,6 @@ const HomePage = (props) => {
               }}
               buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
             >
-              {/* <Slider {...settings}>
-                {
-                  mockBooks.map((book: Book, index: number) => (
-                    <div style={{ margin: "10px", width: "500px" }}>
-                      <BookInfoCard
-                        title={book.title}
-                        cover={book.cover}
-                      />
-                    </div>
-                  ))
-                }
-              </Slider> */}
               <Carousel
                 slidesToShow={3}
                 slidesToScroll={carouselSlidesToScroll}
@@ -195,6 +208,8 @@ const HomePage = (props) => {
                 }
               </Carousel>
             </BookListSection>
+
+            {/* POPULAR SECTION */}
             <BookListSection
               sectionTitle="Popular Books"
               buttonLabel="View All"
@@ -210,26 +225,15 @@ const HomePage = (props) => {
               <BookList
                 books={_mockBooks}
                 wrapperStyle={{ justifyContent: "space-evenly" }}
-                bookContainerStyle={{ width: "290px", margin: "5px" }}
+                bookContainerStyle={{ width: "290px", margin: "5px", fontSize: "0.85rem" }}
+                bookProps={{ bookTitleStyle: { fontSize: "1rem" } }}
               />
             </BookListSection>
           </Scrollbars>
         </div>
-        {/* <div
-          className={styles['right-drawer-toggle']}
-          style={{
-            width: "80px",
-            backgroundColor: "white",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
-          }}
-        >
-          <IconButton onClick={handleDrawerClick}>
-            <AccessibleForwardIcon className={classes.icon}/>
-          </IconButton>
-        </div> */}
       </div>
+
+      {/* RIGHT DRAWER */}
       <div
           style={{
             width: `${Sizing.HOMEPAGE_DRAWER_TOGGLE_WIDTH}px`,
@@ -248,7 +252,7 @@ const HomePage = (props) => {
           </IconButton>
         </div>
       <Drawer
-        className={classes.drawer}
+        className={classes.drawer + " " + styles['right-drawer']}
         variant="persistent"
         anchor="right"
         open={open}
@@ -256,20 +260,63 @@ const HomePage = (props) => {
           paper: classes.drawerPaper,
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", padding: "20px"}}>
+        <div className={styles['content']}>
           <div onClick={handleDrawerClick}>Close</div>
-          <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-            <div>Recently Read</div>
-            <div>View All</div>
+          <div className={styles['avatar-container']}>
+            <div className={styles['avatar-and-name']}>
+              <Avatar
+                alt="Profile Picture"
+                src={currentUser.profilePicture}
+                className={classes.avatarLarge}
+              />
+              <div style={{ marginLeft: '10px' }}>{currentUser.displayName}</div>
+            </div>
           </div>
-          <BookList
-              books={_mockBooks.slice(0, 2)}
-              wrapperStyle={{ }}
-              bookContainerStyle={{ width: `${Sizing.HOMEPAGE_DRAWER_WIDTH - 40}px`, margin: "5px" }}
-              bookProps={{
-                wrapperStyle: { backgroundColor: "#ECECEC" }
+          <Divider style={{ margin: "10px 0" }}/>
+          {
+            currentUser.recentlyRead &&
+            <DrawerSection
+              headerText="Recently Read"
+              headerClickableText="View All"
+            >
+              <BookList
+                books={currentUser.recentlyRead.slice(0, 1)}
+                wrapperStyle={{ }}
+                bookContainerStyle={{ width: `${Sizing.HOMEPAGE_DRAWER_WIDTH - 60}px`, margin: "5px" }}
+                bookProps={{
+                  wrapperStyle: { backgroundColor: "#ECECEC" }
+                }}
+              />
+            </DrawerSection>
+          }
+          {
+            currentUser.wishlist &&
+            <DrawerSection
+              headerText="Want To Read"
+              headerClickableText="View All"
+            >
+              <BookList
+                books={currentUser.wishlist.slice(0, 1)}
+                wrapperStyle={{ }}
+                bookContainerStyle={{ width: `${Sizing.HOMEPAGE_DRAWER_WIDTH - 60}px`, margin: "5px" }}
+                bookProps={{
+                  wrapperStyle: { backgroundColor: "#ECECEC" }
+                }}
+              />
+            </DrawerSection>
+
+          }
+          <DrawerSection
+            headerText="Daily Goal"
+            headerClickableText="Setting"
+          >
+            <ProgressionCard
+              wrapperStyles={{
+                width: `${Sizing.HOMEPAGE_DRAWER_WIDTH - 60}px`,
+                background: 'linear-gradient(202.86deg, #7670FF 47.99%, rgba(196, 196, 196, 0) 223.45%, #8B82FF 223.45%)'
               }}
-            />
+            ></ProgressionCard>
+          </DrawerSection>
         </div>
       </Drawer>
     </div>
