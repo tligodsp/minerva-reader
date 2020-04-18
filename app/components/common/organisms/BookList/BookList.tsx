@@ -1,4 +1,5 @@
 import React from 'react';
+import { CircularProgressbar } from 'react-circular-progressbar';
 import defaultStyles from './BookList.css';
 import { BookInfoCard } from '../../molecules';
 import { RatingBar } from '../../atoms';
@@ -22,12 +23,15 @@ interface BookListProps {
   wrapperStyle?: React.CSSProperties;
   bookContainerStyle?: React.CSSProperties;
   bookProps?: BookInfoCardStyleProps;
+  useProgressForSubInfo?: boolean;
+  useProgressForChildren?: boolean;
   // TODO: Add book card display type: Rating|Progress
 }
 
 const BookList = ({
     books, bookTitleFontSize, bookDefaultFontSize,
-    wrapperStyle, bookContainerStyle, bookProps }
+    wrapperStyle, bookContainerStyle, bookProps,
+    useProgressForSubInfo, useProgressForChildren }
   : BookListProps) => {
   const _books = books ? books : [];
   const _getAuthorsString = (authors: Author[]) => {
@@ -40,6 +44,16 @@ const BookList = ({
     let res: string = genres?.reduce((accumulator, currentGenre: Genre) => (accumulator + currentGenre.name + ", "), "");
     res = res.match(/^(.+),\s$/)![1];
     return res;
+  }
+
+  const _getSubInfo = (book) => {
+    if (useProgressForSubInfo) {
+      // TODO: Get Progress by book and user
+      return 'Chapter 1';
+    }
+    else  {
+      return book.genres ? _getGenresString(book.genres) : "";
+    }
   }
 
   return (
@@ -58,7 +72,7 @@ const BookList = ({
               <BookInfoCard
                 title={book.title}
                 authors={book.authors ? _getAuthorsString(book.authors) : ""}
-                subInfo={book.genres ? _getGenresString(book.genres) : ""}
+                subInfo={_getSubInfo(book)}
                 cover={book.cover}
                 wrapperStyle={{ ...bookProps?.wrapperStyle }}
                 bookCoverStyle={{ ...bookProps?.bookCoverStyle }}
@@ -74,18 +88,36 @@ const BookList = ({
                   ...bookProps?.bookTitleStyle
                 }}
               >
-                <div
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: "flex-end",
-                    paddingRight: "16%"
-                  }}
-                >
-                  <RatingBar ratingValue={book.ratingValue ? book.ratingValue / 5 : 0}/>
-                  <div style={{ fontWeight: "bold", marginLeft: "10px" }}>({book.ratingCount})</div>
-                </div>
+                {
+                  useProgressForChildren ?
+                  (
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "flex-end" }}>
+                      <div style={{ width: "25px", marginTop: "5px"}}>
+                        <CircularProgressbar
+                          value={66}
+                          styles={{
+                            path: {
+                              stroke: "#7670FF"
+                            },
+                          }}
+                        />
+                      </div>
+                      <div style={{ marginLeft: "5px", fontWeight: "bold", color: "#7670FF" }}>66%</div>
+                    </div>
+                  )
+                  : (<div
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: "flex-end",
+                      paddingRight: "16%"
+                    }}
+                  >
+                    <RatingBar ratingValue={book.ratingValue ? book.ratingValue / 5 : 0}/>
+                    <div style={{ fontWeight: "bold", marginLeft: "10px" }}>({book.ratingCount})</div>
+                  </div>)
+                }
               </BookInfoCard>
             </div>
         )})

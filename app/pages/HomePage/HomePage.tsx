@@ -38,18 +38,14 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: Sizing.NAVBAR_ICON_SIZE,
     },
     content: {
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      marginRight: -drawerWidth + Sizing.HOMEPAGE_DRAWER_TOGGLE_WIDTH,
+      marginRight: Sizing.HOMEPAGE_DRAWER_TOGGLE_WIDTH,
     },
     contentShift: {
       transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.enteringScreen,
       }),
-      marginRight: 0,
+      marginRight: -drawerWidth + Sizing.HOMEPAGE_DRAWER_TOGGLE_WIDTH,
     },
     avatarLarge: {
       width: theme.spacing(7),
@@ -108,9 +104,7 @@ const HomePage = (props) => {
     >
       <div
         style={{ flex: 1, display: "flex", flexDirection: "row", minWidth: "0" }}
-        className={clsx(classes.content, {
-          [classes.contentShift]: open,
-        })}
+        className={classes.content}
       >
         <div style={{
           flex: 1,
@@ -253,15 +247,14 @@ const HomePage = (props) => {
         </div>
       <Drawer
         className={classes.drawer + " " + styles['right-drawer']}
-        variant="persistent"
         anchor="right"
         open={open}
+        onClose={() => {setOpen(false)}}
         classes={{
           paper: classes.drawerPaper,
         }}
       >
         <div className={styles['content']}>
-          <div onClick={handleDrawerClick}>Close</div>
           <div className={styles['avatar-container']}>
             <div className={styles['avatar-and-name']}>
               <Avatar
@@ -286,6 +279,8 @@ const HomePage = (props) => {
                 bookProps={{
                   wrapperStyle: { backgroundColor: "#ECECEC" }
                 }}
+                useProgressForSubInfo={true}
+                useProgressForChildren={true}
               />
             </DrawerSection>
           }
@@ -311,11 +306,19 @@ const HomePage = (props) => {
             headerClickableText="Setting"
           >
             <ProgressionCard
+              goal={60}
+              progress={25}
               wrapperStyles={{
                 width: `${Sizing.HOMEPAGE_DRAWER_WIDTH - 60}px`,
                 background: 'linear-gradient(202.86deg, #7670FF 47.99%, rgba(196, 196, 196, 0) 223.45%, #8B82FF 223.45%)'
               }}
-            ></ProgressionCard>
+            >
+              <img
+                className={styles['progress-circle-img']}
+                src='https://firebasestorage.googleapis.com/v0/b/fb-cloud-functions-demo-4de69.appspot.com/o/book-icon-png-5-tr.png?alt=media&token=929e8164-b77d-47d8-8403-c6d7a028a89e'
+                alt='Book'
+              />
+            </ProgressionCard>
           </DrawerSection>
         </div>
       </Drawer>

@@ -12879,6 +12879,11 @@ react-bootstrap@^1.0.0:
     uncontrollable "^7.0.0"
     warning "^4.0.3"
 
+react-circular-progressbar@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/react-circular-progressbar/-/react-circular-progressbar-2.0.3.tgz#fa8eb59f8db168d2904bae4590641792c80f5991"
+  integrity sha512-YKN+xAShXA3gYihevbQZbavfiJxo83Dt1cUxqg/cltj4VVsRQpDr7Fg1mvjDG3x1KHGtd9NmYKvJ2mMrPwbKyw==
+
 react-coverflow@^0.2.20:
   version "0.2.20"
   resolved "https://registry.yarnpkg.com/react-coverflow/-/react-coverflow-0.2.20.tgz#6a6b8cf3c845ae235025d21ae3f7818d976c6d57"

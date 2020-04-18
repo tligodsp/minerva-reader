@@ -47,4 +47,9 @@
   color: #7670FF;
 }
 
+.progress-circle-img {
+  vertical-align: middle;
+  border-style: none;
+  width: 100%;
+}
 

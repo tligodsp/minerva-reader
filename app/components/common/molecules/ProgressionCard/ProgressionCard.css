@@ -16,3 +16,45 @@
   border-radius: inherit;
   overflow: hidden;
 }
+
+.content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.progress-circle-container {
+  flex: 1;
+  padding: 0 40px 0 10px;
+  display: flex;
+  align-items: center;
+}
+
+.progress-circle-children {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #FEFEFE;
+  font-weight: 600;
+}
+
+.progress-circle-text {
+  font-size: large;
+}
+
+.progress-circle-subtext {
+  font-size: smaller;
+}
+
+.right-element {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 10px;
+}
