@@ -11,33 +11,38 @@ import HomePage from './pages/HomePage/HomePage';
 import ReaderPage from './pages/ReaderPage';
 import AboutPage from './pages/AboutPage';
 
+const styles: React.CSSProperties = {
+  fontSize: Sizing.NAVBAR_ICON_SIZE,
+  opacity: 1
+}
+
 export const routes = [
   {
     path: '/home',
     name: 'Home',
     component: HomePage,
     isOnNavBar: true,
-    icon: <HomeOutlinedIcon style={{ fontSize: Sizing.NAVBAR_ICON_SIZE }}/>,
+    icon: <HomeOutlinedIcon style={styles}/>,
   },
   {
     path: '/reader',
     name: 'Reader',
     component: ReaderPage,
     isOnNavBar: true,
-    icon: <ImportContactsOutlinedIcon style={{ fontSize: Sizing.NAVBAR_ICON_SIZE }}/>,
+    icon: <ImportContactsOutlinedIcon style={styles}/>,
   },
   {
     path: '/test',
     name: 'Test',
     component: TestPage,
     isOnNavBar: true,
-    icon: <SettingsOutlinedIcon style={{ fontSize: Sizing.NAVBAR_ICON_SIZE }}/>,
+    icon: <SettingsOutlinedIcon style={styles}/>,
   },
   {
     path: '/about',
     name: 'About',
     component: AboutPage,
     isOnNavBar: true,
-    icon: <HelpOutlineOutlinedIcon style={{ fontSize: Sizing.NAVBAR_ICON_SIZE }}/>,
+    icon: <HelpOutlineOutlinedIcon style={styles}/>,
   },
 ];
