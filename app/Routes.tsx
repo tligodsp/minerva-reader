@@ -8,6 +8,7 @@ import { Sizing } from './styles';
 
 import TestPage from './pages/TestPage';
 import HomePage from './pages/HomePage/HomePage';
+import SearchResultsPage from './pages/SearchResultsPage/SearchResultsPage';
 import ReaderPage from './pages/ReaderPage';
 import AboutPage from './pages/AboutPage';
 
@@ -23,6 +24,12 @@ export const routes = [
     component: HomePage,
     isOnNavBar: true,
     icon: <HomeOutlinedIcon style={styles}/>,
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: SearchResultsPage,
+    isOnNavBar: false,
   },
   {
     path: '/reader',

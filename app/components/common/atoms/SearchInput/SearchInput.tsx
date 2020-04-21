@@ -2,11 +2,9 @@ import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import DirectionsIcon from '@material-ui/icons/Directions';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,6 +32,11 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const SearchInput = () => {
   const classes = useStyles();
+  let history = useHistory();
+
+  const handleSearchClick = () => {
+    history.push('/search');
+  }
 
   return (
     <Paper component="form" className={classes.root}>
@@ -42,7 +45,11 @@ const SearchInput = () => {
         placeholder="Search Books"
         inputProps={{ 'aria-label': 'search books' }}
       />
-      <IconButton className={classes.iconButton} aria-label="search">
+      <IconButton
+        className={classes.iconButton}
+        aria-label="search"
+        onClick={handleSearchClick}
+      >
         <SearchIcon />
       </IconButton>
     </Paper>

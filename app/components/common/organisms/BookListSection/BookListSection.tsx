@@ -4,17 +4,20 @@ import defaultStyles from './BookListSection.css';
 
 interface BookListSectionProps {
   sectionTitle: string;
-  buttonLabel: string;
+  buttonLabel?: string;
   children: React.ReactNode;
   wrapperStyle?: React.CSSProperties;
   headerContainerStyle?: React.CSSProperties;
   buttonColor?: string;
+  showButton?: boolean;
 }
 
 const BookListSection = ({
   sectionTitle, buttonLabel, children,
-  wrapperStyle, headerContainerStyle, buttonColor
+  wrapperStyle, headerContainerStyle, buttonColor,
+  showButton
 }: BookListSectionProps) => {
+  const _showButton = showButton != undefined ? showButton : true;
   return (
     <div
       className={defaultStyles['wrapper']}
@@ -25,12 +28,15 @@ const BookListSection = ({
         style={{ ...headerContainerStyle }}
       >
         <div>{sectionTitle}</div>
-        <button
-          className={defaultStyles['button']}
-          style={buttonColor ? { background: buttonColor } : undefined }
-        >
-          <span>View All</span>
-        </button>
+        {
+          _showButton &&
+          (<button
+            className={defaultStyles['button']}
+            style={buttonColor ? { background: buttonColor } : undefined }
+          >
+            <span>View All</span>
+          </button>)
+        }
       </div>
       {children}
     </div>

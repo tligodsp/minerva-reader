@@ -98,3 +98,7 @@ export const harperLee: Author = {
   id: "harperlee",
   name: "Harper Lee"
 }
+
+export const mockAuthors: Author[] = [
+  harperLee, georgeOrwell, rNarita, hgWells, dBrown, jDeaver
+]

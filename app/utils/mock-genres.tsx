@@ -86,3 +86,7 @@ export const dystopia: Genre = {
   id: "dystopia",
   name: "Dystopia"
 }
+
+export const mockGenres: Genre[] = [
+  dystopia, politics, scifi, literature, crime, philosophy, classics, mystery
+]

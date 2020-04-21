@@ -8,6 +8,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import { Colors, Sizing } from '../../../styles';
 import transitions from '@material-ui/core/styles/transitions';
+import { useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -67,8 +68,12 @@ const renderNavItems = (routes: any) => {
 }
 
 const NavBar = (props: any) => {
-	const classes = useStyles();
-  const [currentPath, setCurrentPath] = useState('/home');
+  const classes = useStyles();
+  const location = useLocation();
+  const [currentPath, setCurrentPath] = useState(
+    location && location.pathname
+    ? location.pathname
+    : '/home');
   const { routes } = props;
   var history = useHistory();
 
