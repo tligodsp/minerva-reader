@@ -10,8 +10,9 @@ import Palette, {usePalette} from 'react-palette';
 import { Scrollbars } from 'react-custom-scrollbars';
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
+import MenuIcon from '@material-ui/icons/Menu';
 
-import { RatingBar } from '../../components/common/atoms';
+import { RatingBar, SearchInput } from '../../components/common/atoms';
 import { BookInfoCard, ProgressionCard } from '../../components/common/molecules';
 import { BookList, BookListSection } from '../../components/common/organisms';
 import { Colors, Sizing, Typography } from '../../styles';
@@ -37,8 +38,12 @@ const useStyles = makeStyles((theme: Theme) =>
     icon: {
       fontSize: Sizing.NAVBAR_ICON_SIZE,
     },
+    iconButton: {
+      // padding: 10,
+      fontSize: "2rem"
+    },
     content: {
-      marginRight: Sizing.HOMEPAGE_DRAWER_TOGGLE_WIDTH,
+      // marginRight: Sizing.HOMEPAGE_DRAWER_TOGGLE_WIDTH,
     },
     contentShift: {
       transition: theme.transitions.create('margin', {
@@ -97,11 +102,12 @@ const HomePage = (props) => {
         height: "100%",
         backgroundColor: "#F5F5F5",
         display: "flex",
-        flexDirection: "row",
+        flexDirection: "column",
         minWidth: "0",
         position: "relative"
       }}
     >
+      {/* PAGE CONTENT */}
       <div
         style={{ flex: 1, display: "flex", flexDirection: "row", minWidth: "0" }}
         className={classes.content}
@@ -123,12 +129,20 @@ const HomePage = (props) => {
             left: 0,
             right: "-17px"
           }}>
-
+            {/* SEARCH BAR */}
+            <div className={styles['search-bar-container']}>
+              <SearchInput />
+              <div className={styles['menu-button-container']}>
+                <IconButton className={classes.iconButton} onClick={handleDrawerClick}>
+                  <MenuIcon />
+                </IconButton>
+              </div>
+            </div>
             {/* RECOMMENDED SECTION */}
             <BookListSection
               sectionTitle="You Might Like"
               buttonLabel="View All"
-              wrapperStyle={{ padding: "0 30px", minWidth: "0" }}
+              wrapperStyle={{ padding: "0 40px", minWidth: "0" }}
               headerContainerStyle={{
                 fontFamily: "Quicksand, sans-serif",
                 fontSize: "1.15rem",
@@ -140,9 +154,9 @@ const HomePage = (props) => {
               <Carousel
                 slidesToShow={3}
                 slidesToScroll={carouselSlidesToScroll}
-                cellSpacing={20}
+                cellSpacing={30}
                 framePadding="0 30px"
-                slideWidth="416px"
+                slideWidth="436px"
                 defaultControlsConfig={{
                   nextButtonText: '›',
                   prevButtonText: '‹',
@@ -207,7 +221,7 @@ const HomePage = (props) => {
             <BookListSection
               sectionTitle="Popular Books"
               buttonLabel="View All"
-              wrapperStyle={{ padding: "0 30px" }}
+              wrapperStyle={{ padding: "0 40px" }}
               headerContainerStyle={{
                 fontFamily: "Quicksand, sans-serif",
                 fontSize: "1.15rem",
@@ -218,7 +232,12 @@ const HomePage = (props) => {
             >
               <BookList
                 books={_mockBooks}
-                wrapperStyle={{ justifyContent: "space-evenly" }}
+                wrapperStyle={{
+                  justifyContent: 'space-between',
+                  backgroundColor: Colors.WHITE,
+                  borderRadius: "20px",
+                  padding: "10px"
+                }}
                 bookContainerStyle={{ width: "290px", margin: "5px", fontSize: "0.85rem" }}
                 bookProps={{ bookTitleStyle: { fontSize: "1rem" } }}
               />
@@ -228,7 +247,7 @@ const HomePage = (props) => {
       </div>
 
       {/* RIGHT DRAWER */}
-      <div
+      {/* <div
           style={{
             width: `${Sizing.HOMEPAGE_DRAWER_TOGGLE_WIDTH}px`,
             backgroundColor: "white",
@@ -244,7 +263,7 @@ const HomePage = (props) => {
           <IconButton onClick={handleDrawerClick}>
             <AccessibleForwardIcon className={classes.icon}/>
           </IconButton>
-        </div>
+        </div> */}
       <Drawer
         className={classes.drawer + " " + styles['right-drawer']}
         anchor="right"

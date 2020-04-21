@@ -53,3 +53,17 @@
   width: 100%;
 }
 
+.search-bar-container {
+  width: 100% - 17px;
+  margin: 20px 10px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.menu-button-container {
+  position: absolute;
+  right: 20px;
+}
+
