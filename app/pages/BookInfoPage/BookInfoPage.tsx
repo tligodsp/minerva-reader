@@ -2,20 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
-import Carousel from 'nuka-carousel';
 import { Scrollbars } from 'react-custom-scrollbars';
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
-import { RatingBar, SearchInput } from '../../components/common/atoms';
-import { BookInfoCard, ProgressionCard } from '../../components/common/molecules';
+import { SearchInput } from '../../components/common/atoms';
+import { ProgressionCard, FilterCard } from '../../components/common/molecules';
 import { BookList, BookListSection } from '../../components/common/organisms';
 import { Colors, Sizing, Typography } from '../../styles';
-import { mockBooks, Book } from '../../utils/mock-books';
-import { currentUser, User } from '../../utils/mock-users';
-import styles from './HomePage.css';
+import { mockBooks } from '../../utils/mock-books';
+import { mockGenres } from '../../utils/mock-genres';
+import { mockAuthors } from '../../utils/mock-authors';
+import { currentUser} from '../../utils/mock-users';
+import styles from './BookInfoPage.css';
 
 const drawerWidth = Sizing.HOMEPAGE_DRAWER_WIDTH;
 
@@ -71,18 +72,14 @@ const DrawerSection = (props) => {
   );
 }
 
-const HomePage = (props) => {
+const BookInfoPage = (props) => {
   const _mockBooks = mockBooks.slice(0, 12);
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [carouselSlidesToScroll, setCarouselSlidesToScroll] = useState(3);
-  let history = useHistory();
   // const { data, loading, error } = usePalette("https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1466865542l/18144590._SY475_.jpg")
-
-  const handleSearchClick = () => {
-    history.push('/search');
-  }
+  let { id } = useParams();
 
   const handleDrawerClick = () => {
     setOpen(!open);
@@ -138,133 +135,16 @@ const HomePage = (props) => {
                 </IconButton>
               </div>
             </div>
-            {/* RECOMMENDED SECTION */}
-            <BookListSection
-              sectionTitle="You Might Like"
-              buttonLabel="View All"
-              wrapperStyle={{ padding: "0 40px", minWidth: "0" }}
-              headerContainerStyle={{
-                fontFamily: "Quicksand, sans-serif",
-                fontSize: "1.15rem",
-                fontWeight: "bold",
-                padding: "15px 20px"
-              }}
-              buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
-            >
-              <Carousel
-                slidesToShow={3}
-                slidesToScroll={carouselSlidesToScroll}
-                cellSpacing={30}
-                framePadding="0 30px"
-                slideWidth="436px"
-                defaultControlsConfig={{
-                  nextButtonText: '›',
-                  prevButtonText: '‹',
-                  nextButtonStyle: {
-                    width: "34px",
-                    height: "34px",
-                    lineHeight: "0",
-                    borderRadius: "100%",
-                    transform: "translateX(16px)"
-                  },
-                  prevButtonStyle: {
-                    width: "34px",
-                    height: "34px",
-                    lineHeight: "0",
-                    borderRadius: "100%",
-                    transform: "translateX(-16px)"
-                  },
-                  pagingDotsStyle: { display: "none" }
-                }}
-              >
-                {
-                  mockBooks.map((book: Book, index: number) => (
-                    <div>
-                      <BookInfoCard
-                        id={book.id}
-                        title={book.title}
-                        cover={book.cover}
-                        authors={book.authors ? `by ${book.authors[0].name}` : ""}
-                        smartBackgroundColor={true}
-                        bookTitleStyle={{
-                          color: Colors.WHITE,
-                          textShadow: "0px 0px 10px #000000",
-                          fontSize: "1.25rem"
-                        }}
-                        bookAuthorsStyle={{
-                          color: Colors.WHITE,
-                          textShadow: "0px 0px 10px #000000",
-                          fontSize: "1rem"
-                        }}
-                      >
-                        <div
-                          style={{
-                            flex: 1,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: "flex-end",
-                            paddingRight: "30%"
-                          }}
-                        >
-                          <RatingBar
-                            ratingValue={book.ratingValue ? book.ratingValue / 5 : 0}
-                            starStyle={{ color: Colors.WHITE }}
-                          />
-                        </div>
-                      </BookInfoCard>
-                    </div>
-                  ))
-                }
-              </Carousel>
-            </BookListSection>
 
-            {/* POPULAR SECTION */}
-            <BookListSection
-              sectionTitle="Popular Books"
-              buttonLabel="View All"
-              wrapperStyle={{ padding: "0 40px" }}
-              headerContainerStyle={{
-                fontFamily: "Quicksand, sans-serif",
-                fontSize: "1.15rem",
-                fontWeight: "bold",
-                padding: "15px 20px"
-              }}
-              buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
-            >
-              <BookList
-                books={_mockBooks}
-                wrapperStyle={{
-                  justifyContent: 'flex-start',
-                  backgroundColor: Colors.WHITE,
-                  borderRadius: "20px",
-                  padding: "10px"
-                }}
-                bookContainerStyle={{ width: "23%", margin: "1%", fontSize: "0.85rem" }}
-                bookProps={{ bookTitleStyle: { fontSize: "1rem" } }}
-              />
-            </BookListSection>
+            <div className={styles['page-content']}>
+              {/* LEFT SECTION */}
+              <div className={styles['left-section']}></div>
+              {/* RIGHT SECTION */}
+              <div className={styles['right-section']}></div>
+            </div>
           </Scrollbars>
         </div>
       </div>
-
-      {/* RIGHT DRAWER */}
-      {/* <div
-          style={{
-            width: `${Sizing.HOMEPAGE_DRAWER_TOGGLE_WIDTH}px`,
-            backgroundColor: "white",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "absolute",
-            top: 0,
-            right: 0,
-            bottom: 0
-          }}
-        >
-          <IconButton onClick={handleDrawerClick}>
-            <AccessibleForwardIcon className={classes.icon}/>
-          </IconButton>
-        </div> */}
       <Drawer
         className={classes.drawer + " " + styles['right-drawer']}
         anchor="right"
@@ -346,4 +226,4 @@ const HomePage = (props) => {
   );
 }
 
-export default HomePage;
+export default BookInfoPage;

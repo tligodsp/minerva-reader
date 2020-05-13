@@ -9,6 +9,7 @@ export interface Book {
   cover?: string,
   ratingValue?: number,
   ratingCount?: number,
+  sypnosis?: string
 }
 
 export const mockBooks: Book[] = [
@@ -29,6 +30,7 @@ export const mockBooks: Book[] = [
     cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1466865542l/18144590._SY475_.jpg",
     ratingValue: 4,
     ratingCount: 420,
+    sypnosis: "Paulo Coelho's masterpiece tells the mystical story of Santiago, an Andalusian shepherd boy who yearns to travel in search of a worldly treasure. His quest will lead him to riches far different, and far more satisfying, listening to our hearts, of recognizing opportunity and learning to read the omens strewn along life's path, and, most importantly, to follow our dreams.",
   },
   {
     id: "book03",

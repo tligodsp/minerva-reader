@@ -9,6 +9,7 @@ import { Sizing } from './styles';
 import TestPage from './pages/TestPage';
 import HomePage from './pages/HomePage/HomePage';
 import SearchResultsPage from './pages/SearchResultsPage/SearchResultsPage';
+import BookInfoPage from './pages/BookInfoPage/BookInfoPage';
 import ReaderPage from './pages/ReaderPage';
 import AboutPage from './pages/AboutPage';
 
@@ -29,6 +30,12 @@ export const routes = [
     path: '/search',
     name: 'Search',
     component: SearchResultsPage,
+    isOnNavBar: false,
+  },
+  {
+    path: '/book-info/:id',
+    name: 'BookInfo',
+    component: BookInfoPage,
     isOnNavBar: false,
   },
   {

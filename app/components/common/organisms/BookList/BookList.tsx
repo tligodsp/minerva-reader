@@ -70,6 +70,7 @@ const BookList = ({
               style={{ ...bookContainerStyle }}
             >
               <BookInfoCard
+                id={book.id}
                 title={book.title}
                 authors={book.authors ? _getAuthorsString(book.authors) : ""}
                 subInfo={_getSubInfo(book)}

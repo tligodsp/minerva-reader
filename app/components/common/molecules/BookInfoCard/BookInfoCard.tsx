@@ -1,9 +1,11 @@
 import React from 'react';
 import defaultStyles from './BookInfoCard.css';
 import Palette, {usePalette} from 'react-palette';
+import {useHistory} from 'react-router-dom';
 
 // Properties
 export interface BookInfoCardProps {
+  id: string,
   title: string;
   authors?: string;
   cover?: string;
@@ -19,13 +21,19 @@ export interface BookInfoCardProps {
 }
 
 const BookInfoCard = ({
-  title, authors, cover, subInfo, children,
+  id, title, authors, cover, subInfo, children,
   wrapperStyle, bookCoverStyle, bookInfoContainerStyle,
   bookTitleStyle, bookAuthorsStyle, bookSubInfoStyle,
   smartBackgroundColor
 }: BookInfoCardProps) => {
   const _cover = cover ? cover : 'https://lazioeventi.com/wp-content/uploads/2014/05/No-image-available.jpg';
   const { data, loading, error } = usePalette(_cover);
+  let history = useHistory();
+
+  const _handleClick = () => {
+    history.push(`/book-info/${id}`)
+  }
+
   return (
     <div
       className={defaultStyles['wrapper']}
@@ -33,6 +41,7 @@ const BookInfoCard = ({
         backgroundColor: smartBackgroundColor ? (data.vibrant + "80") : "#FEFEFE" ,
         ...wrapperStyle
       }}
+      onClick={_handleClick}
     >
       <div
         className={defaultStyles['book-cover-container']}

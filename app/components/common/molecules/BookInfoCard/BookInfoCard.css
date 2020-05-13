@@ -12,6 +12,8 @@
   min-width: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  cursor: pointer;
 }
 
 .book-cover-container {
