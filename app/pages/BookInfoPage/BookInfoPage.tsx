@@ -9,7 +9,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { useHistory, useParams } from 'react-router-dom';
 
 import { SearchInput } from '../../components/common/atoms';
-import { ProgressionCard, FilterCard } from '../../components/common/molecules';
+import { RatingBar } from '../../components/common/atoms';
+import { ProgressionCard, FilterCard, BookInfoCard } from '../../components/common/molecules';
 import { BookList, BookListSection } from '../../components/common/organisms';
 import { Colors, Sizing, Typography } from '../../styles';
 import { mockBooks } from '../../utils/mock-books';
@@ -80,6 +81,7 @@ const BookInfoPage = (props) => {
   const [carouselSlidesToScroll, setCarouselSlidesToScroll] = useState(3);
   // const { data, loading, error } = usePalette("https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1466865542l/18144590._SY475_.jpg")
   let { id } = useParams();
+  const _book = _mockBooks.find(book => book.id == id);
 
   const handleDrawerClick = () => {
     setOpen(!open);
@@ -138,7 +140,34 @@ const BookInfoPage = (props) => {
 
             <div className={styles['page-content']}>
               {/* LEFT SECTION */}
-              <div className={styles['left-section']}></div>
+              <div className={styles['left-section']}>
+                <div className={styles['book-info-card']}>
+                  <div className={styles['book-cover-and-buttons']}>
+                    <div style={{ marginBottom: '5px' }}>
+                      <img src={_book!.cover} alt='cover' className={styles['cover-img']}/>
+                    </div>
+                    <button
+                      className={styles['button-secondary']}
+                    >
+                      Want to Read
+                    </button>
+                    <button
+                      className={styles['button-secondary']}
+                    >
+                      Download
+                    </button>
+                  </div>
+                  <div className={styles['book-text-info']}>
+                    <div className={styles['book-title']}>{_book!.title}</div>
+                    <div className={styles['book-author']}>by {_book!.authors![0].name}</div>
+                    <div className={styles['rating-bar']}>
+                      <RatingBar ratingValue={_book!.ratingValue ? _book!.ratingValue / 5 : 0}/>
+                      <div style={{ fontWeight: 600, marginLeft: "10px" }}>({_book!.ratingCount})</div>
+                    </div>
+                    <p className={styles['book-sypnosis']}>{_book!.sypnosis}</p>
+                  </div>
+                </div>
+              </div>
               {/* RIGHT SECTION */}
               <div className={styles['right-section']}></div>
             </div>
