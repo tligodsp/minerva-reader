@@ -93,13 +93,13 @@ const BookInfoPage = (props) => {
   }, [
     open
   ]);
-
+  // backgroundColor: "#F5F5F5",
   return (
     <div
       style={{
         width: "100%",
         height: "100%",
-        backgroundColor: "#F5F5F5",
+        backgroundColor: "#E5E5E5",
         display: "flex",
         flexDirection: "column",
         minWidth: "0",
@@ -141,6 +141,7 @@ const BookInfoPage = (props) => {
             <div className={styles['page-content']}>
               {/* LEFT SECTION */}
               <div className={styles['left-section']}>
+                {/* BOOK INFO CARD */}
                 <div className={styles['book-info-card']}>
                   <div className={styles['book-cover-and-buttons']}>
                     <div style={{ marginBottom: '5px' }}>
@@ -166,6 +167,46 @@ const BookInfoPage = (props) => {
                     </div>
                     <p className={styles['book-sypnosis']}>{_book!.sypnosis}</p>
                   </div>
+                </div>
+                {/* REVIEWS CARD */}
+                <div
+                  className={styles['review-card']}
+                >
+                  <div className={styles['review-card-header']}>
+                    <div>Community Reviews</div>
+                    {/* <div className={defaultStyles['header-subtext']}>More</div> */}
+                  </div>
+                  <Divider style={{ margin: "10px 0" }}/>
+                  <div className={styles['start-review-container']}>
+                    <img
+                      className={styles['user-avatar']}
+                      src={currentUser.profilePicture}
+                    />
+                    <div className={styles['start-review-text-and-button']}>
+                      <div className={styles['review-bold-text']}>
+                        <span className={styles['review-username-clickable']}>{currentUser.displayName}</span>
+                        , start your review of Deception Point
+                      </div>
+                      <button
+                        className={styles['button-secondary'] + ' ' + styles['start-review-button']}
+                      >
+                        Add Review
+                      </button>
+                    </div>
+                  </div>
+                  {/* <div>
+                    { values.map((obj, index) => (
+                      <div className={defaultStyles['check']}>
+                        <Checkbox
+                          checked={_checks[index]}
+                          onChange={() => { handleCheck(index) }}
+                          name={`check${index}`}
+                          color="primary"
+                        />
+                        <div>{obj.name}</div>
+                      </div>
+                    )) }
+                  </div> */}
                 </div>
               </div>
               {/* RIGHT SECTION */}
