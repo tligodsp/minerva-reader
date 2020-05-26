@@ -13,10 +13,10 @@ import { RatingBar } from '../../components/common/atoms';
 import { ProgressionCard, FilterCard, BookInfoCard } from '../../components/common/molecules';
 import { BookList, BookListSection } from '../../components/common/organisms';
 import { Colors, Sizing, Typography } from '../../styles';
-import { mockBooks } from '../../utils/mock-books';
+import { mockBooks, Review } from '../../utils/mock-books';
 import { mockGenres } from '../../utils/mock-genres';
 import { mockAuthors } from '../../utils/mock-authors';
-import { currentUser} from '../../utils/mock-users';
+import { currentUser, mockUsers, User } from '../../utils/mock-users';
 import styles from './BookInfoPage.css';
 
 const drawerWidth = Sizing.HOMEPAGE_DRAWER_WIDTH;
@@ -93,6 +93,25 @@ const BookInfoPage = (props) => {
   }, [
     open
   ]);
+
+  const getReviewListWrapper = (reviewList: Review[]) => {
+    // TODO: Write a data util
+    interface ReviewWrapper extends Review {
+      user: User
+    }
+    let reviewListWrapper: ReviewWrapper[] = [];
+    for (let review of reviewList) {
+      console.log(review);
+      const commentUser: User | undefined = mockUsers.find((user) => user.id === review.userId);
+      reviewListWrapper.push({
+        ...review,
+        user: commentUser!
+      })
+    }
+    console.log(reviewListWrapper);
+    return reviewListWrapper;
+  };
+
   // backgroundColor: "#F5F5F5",
   return (
     <div
@@ -177,12 +196,15 @@ const BookInfoPage = (props) => {
                     {/* <div className={defaultStyles['header-subtext']}>More</div> */}
                   </div>
                   <Divider style={{ margin: "10px 0" }}/>
-                  <div className={styles['start-review-container']}>
-                    <img
-                      className={styles['user-avatar']}
-                      src={currentUser.profilePicture}
-                    />
-                    <div className={styles['start-review-text-and-button']}>
+                  {/* START REVIEW */}
+                  <div className={styles['review-container']}>
+                    <div className={styles['user-avatar']}>
+                      <img
+                        className={styles['user-avatar']}
+                        src={currentUser.profilePicture}
+                      />
+                    </div>
+                    <div className={styles['review-bold-text-and-content']}>
                       <div className={styles['review-bold-text']}>
                         <span className={styles['review-username-clickable']}>{currentUser.displayName}</span>
                         , start your review of Deception Point
@@ -194,6 +216,37 @@ const BookInfoPage = (props) => {
                       </button>
                     </div>
                   </div>
+                  {/* REVIEWS */}
+                  {
+                    _book!.reviews &&
+                    getReviewListWrapper(_book!.reviews).map((review, index) => (
+                      <div
+                        id={`review${index}`}
+                        className={styles['review-container']}
+                      >
+                        <div className={styles['user-avatar']}>
+                          <img
+                            className={styles['user-avatar']}
+                            src={review.user.profilePicture}
+                          />
+                        </div>
+                        <div className={styles['review-bold-text-and-content']}>
+                          <div className={styles['review-bold-text']}>
+                            <span className={styles['review-username-clickable']}>{review.user.displayName}</span>
+                            &nbsp;rated it&nbsp;
+                            <span>
+                              <RatingBar
+                                starStyle={{ fontSize: '1.25rem' }}
+                                wrapperStyle={{ display: 'flex' }}
+                                ratingValue={review.ratingValue / 5}
+                              />
+                            </span>
+                          </div>
+                          <p>{review.content}</p>
+                        </div>
+                      </div>
+                    ))
+                  }
                   {/* <div>
                     { values.map((obj, index) => (
                       <div className={defaultStyles['check']}>
