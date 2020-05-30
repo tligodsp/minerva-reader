@@ -1,0 +1,35 @@
+.page {
+  width: 100%;
+  height: 100%;
+  background-color: #F5F5F5;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+}
+
+.page .main-display {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  min-width: 0;
+}
+
+.page .main-display .scroll-view-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.page .main-display .scroll-view-container .scroll-view {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  box-sizing: content-box;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: -17px;
+}

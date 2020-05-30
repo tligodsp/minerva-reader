@@ -1,24 +1,6 @@
 import * as MockAuthors from './mock-authors';
 import * as MockGenres from './mock-genres';
-
-export interface Book {
-  id: string,
-  title: string,
-  authors?: MockAuthors.Author[],
-  genres?: MockGenres.Genre[],
-  cover?: string,
-  ratingValue?: number,
-  ratingCount?: number,
-  sypnosis?: string,
-  reviews?: Review[]
-}
-
-export interface Review {
-  id: string,
-  ratingValue: number,
-  userId: string,
-  content: string
-}
+import { Book } from '../types';
 
 export const mockBooks: Book[] = [
   {

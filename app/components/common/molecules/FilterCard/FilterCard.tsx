@@ -16,7 +16,6 @@ const FilterCard = ({ criteriaName, values, wrapperStyle }: FilterCardProps) => 
     _setChecks([
       ..._checks.map((check, i) => i === index ? !check : check)
     ]);
-    console.log(_checks);
   }
 
   return (

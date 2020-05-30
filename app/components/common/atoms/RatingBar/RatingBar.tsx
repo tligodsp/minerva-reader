@@ -42,7 +42,6 @@ const RatingBar = ({ ratingValue, wrapperStyle, starStyle } : RatingBarProps) =>
   const _ref: any = useRef(null);
   useEffect(() => {
     _width = _ref.current ? _ref.current.offsetWidth : 0;
-    console.log(_width);
     _setStarSize((0.98 * _width) / NUM_OF_STARS);
   }, [_ref.current]);
 

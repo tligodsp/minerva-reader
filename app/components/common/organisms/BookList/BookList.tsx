@@ -3,9 +3,7 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import defaultStyles from './BookList.css';
 import { BookInfoCard } from '../../molecules';
 import { RatingBar } from '../../atoms';
-import { Book } from '../../../../utils/mock-books';
-import { Author } from '../../../../utils/mock-authors';
-import { Genre } from '../../../../utils/mock-genres';
+import { Book, Author, Genre } from '../../../../types';
 
 interface BookInfoCardStyleProps {
   wrapperStyle?: React.CSSProperties;

@@ -1,7 +1,4 @@
-export interface Genre {
-  id: string,
-  name: string
-}
+import { Genre } from '../types';
 
 export const classics: Genre = {
   id: "classics",

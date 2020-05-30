@@ -1,12 +1,5 @@
 import * as MockBooks from './mock-books';
-
-export interface User {
-  id: string,
-  displayName: string,
-  profilePicture: string,
-  recentlyRead?: MockBooks.Book[];
-  wishlist?: MockBooks.Book[];
-}
+import { User } from '../types';
 
 export const currentUser: User = {
   id: 'user00',
