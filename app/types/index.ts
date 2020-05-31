@@ -7,8 +7,9 @@ export interface Author {
 export interface Review {
   id: string,
   ratingValue: number,
-  userId: string,
-  content: string
+  content: string,
+  user: User,
+  book: Book
 }
 
 export interface Genre {
@@ -25,7 +26,8 @@ export interface Book {
   ratingValue?: number,
   ratingCount?: number,
   sypnosis?: string,
-  reviews?: Review[]
+  reviews?: Review[],
+  downloadLink: string,
 }
 
 export interface User {

@@ -1,7 +1,8 @@
-import { FETCH_BOOKS } from '../actions/types';
+import { FETCH_BOOKS, GET_BOOK_BY_ID } from '../actions/types';
 
 const initialState = {
-  allBooks: []
+  allBooks: [],
+  currentBook: {},
 };
 
 const bookReducer = (state = initialState, action) => {
@@ -11,6 +12,11 @@ const bookReducer = (state = initialState, action) => {
         ...state,
         allBooks: action.payload
       };
+    case GET_BOOK_BY_ID:
+      return {
+        ...state,
+        currentBook: action.payload
+      }
     default:
       return state;
   }

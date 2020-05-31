@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import Divider from '@material-ui/core/Divider';
 import { useParams } from 'react-router-dom';
 
@@ -8,27 +9,30 @@ import { Review, User } from '../../types';
 import { mockBooks } from '../../utils/mock-books';
 import { currentUser, mockUsers } from '../../utils/mock-users';
 import styles from './BookInfoPage.css';
+import { getBookById } from '../../actions/bookActions';
+import { getReviewsByBookId } from '../../actions/reviewActions';
 
-const BookInfoPage = () => {
+const { ipcRenderer } = require('electron')
+
+const BookInfoPage = (props) => {
   const _mockBooks = mockBooks.slice(0, 12);
   let { id } = useParams();
-  const _book = _mockBooks.find(book => book.id == id);
+  const _book = props.books.currentBook;
+  const _reviews = props.reviews.currentBookReviews;
 
-  const getReviewListWrapper = (reviewList: Review[]) => {
-    // TODO: Write a data util
-    interface ReviewWrapper extends Review {
-      user: User
-    }
-    let reviewListWrapper: ReviewWrapper[] = [];
-    for (let review of reviewList) {
-      const commentUser: User | undefined = mockUsers.find((user) => user.id === review.userId);
-      reviewListWrapper.push({
-        ...review,
-        user: commentUser!
-      })
-    }
-    return reviewListWrapper;
-  };
+  useEffect(() => {
+    props.getBookById(id);
+    props.getReviewsByBookId(id);
+    console.log(props);
+  }, []);
+
+  const handleDownloadClick = (downloadLink) => {
+    console.log(downloadLink);
+    ipcRenderer.send('download-item', { url: downloadLink });
+    ipcRenderer.on('download-success', (event, arg) => {
+      console.log(arg);
+    });
+  }
 
   return (
     <LibraryPageTemplate>
@@ -36,32 +40,36 @@ const BookInfoPage = () => {
         {/* LEFT SECTION */}
         <div className={styles['left-section']}>
           {/* BOOK INFO CARD */}
-          <div className={styles['book-info-card']}>
-            <div className={styles['book-cover-and-buttons']}>
-              <div style={{ marginBottom: '5px' }}>
-                <img src={_book!.cover} alt='cover' className={styles['cover-img']}/>
+          {
+            (_book && _book.authors) &&
+            <div className={styles['book-info-card']}>
+              <div className={styles['book-cover-and-buttons']}>
+                <div style={{ marginBottom: '5px' }}>
+                  <img src={_book!.cover} alt='cover' className={styles['cover-img']}/>
+                </div>
+                <button
+                  className={styles['button-secondary']}
+                >
+                  Want to Read
+                </button>
+                <button
+                  className={styles['button-secondary']}
+                  onClick={() => handleDownloadClick(_book.downloadLink)}
+                >
+                  Download
+                </button>
               </div>
-              <button
-                className={styles['button-secondary']}
-              >
-                Want to Read
-              </button>
-              <button
-                className={styles['button-secondary']}
-              >
-                Download
-              </button>
-            </div>
-            <div className={styles['book-text-info']}>
-              <div className={styles['book-title']}>{_book!.title}</div>
-              <div className={styles['book-author']}>by {_book!.authors![0].name}</div>
-              <div className={styles['rating-bar']}>
-                <RatingBar ratingValue={_book!.ratingValue ? _book!.ratingValue / 5 : 0}/>
-                <div style={{ fontWeight: 600, marginLeft: "10px" }}>({_book!.ratingCount})</div>
+              <div className={styles['book-text-info']}>
+                <div className={styles['book-title']}>{_book!.title}</div>
+                <div className={styles['book-author']}>by {_book.authors[0].name}</div>
+                <div className={styles['rating-bar']}>
+                  <RatingBar ratingValue={_book!.ratingValue ? _book!.ratingValue / 5 : 0}/>
+                  <div style={{ fontWeight: 600, marginLeft: "10px" }}>({_book!.ratingCount})</div>
+                </div>
+                <p className={styles['book-sypnosis']}>{_book!.sypnosis}</p>
               </div>
-              <p className={styles['book-sypnosis']}>{_book!.sypnosis}</p>
             </div>
-          </div>
+          }
           {/* REVIEWS CARD */}
           <div
             className={styles['review-card']}
@@ -93,8 +101,8 @@ const BookInfoPage = () => {
             </div>
             {/* REVIEWS */}
             {
-              _book!.reviews &&
-              getReviewListWrapper(_book!.reviews).map((review, index) => (
+              _reviews &&
+              _reviews.map((review, index) => (
                 <div
                   id={`review${index}`}
                   className={styles['review-container']}
@@ -131,4 +139,9 @@ const BookInfoPage = () => {
   );
 }
 
-export default BookInfoPage;
+const mapStateToProps = (state) => ({
+  books: state.books,
+  reviews: state.reviews
+});
+
+export default connect(mapStateToProps, { getBookById, getReviewsByBookId })(BookInfoPage);

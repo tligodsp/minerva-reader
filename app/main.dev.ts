@@ -9,10 +9,11 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import { download } from 'electron-dl';
 
 export default class AppUpdater {
   constructor() {
@@ -100,6 +101,13 @@ const createWindow = async () => {
 /**
  * Add event listeners...
  */
+
+ipcMain.on('download-item', async (event, {url}) => {
+  event.sender.send('download-success', url);
+  console.log(url);
+  const win = BrowserWindow.getFocusedWindow();
+  console.log(await download(win!, url));
+});
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
