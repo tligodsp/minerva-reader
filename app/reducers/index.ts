@@ -5,6 +5,7 @@ import counter from './counter';
 import bookReducer from './bookReducer';
 import userReducer from './userReducer';
 import reviewReducer from './reviewReducer';
+import localReducer from './localReducer';
 
 export default function createRootReducer(history: History) {
   return combineReducers({
@@ -12,6 +13,7 @@ export default function createRootReducer(history: History) {
     counter,
     books: bookReducer,
     users: userReducer,
-    reviews: reviewReducer
+    reviews: reviewReducer,
+    local: localReducer,
   });
 }

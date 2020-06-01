@@ -16,7 +16,7 @@ const HomePage = (props) => {
 
   useEffect(() => {
     props.fetchBooks();
-    console.log(props);
+    // console.log(props);
   }, []);
 
   return (

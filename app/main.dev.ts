@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { download } from 'electron-dl';
+// import { download } from 'edl';
 
 export default class AppUpdater {
   constructor() {
@@ -102,11 +103,36 @@ const createWindow = async () => {
  * Add event listeners...
  */
 
-ipcMain.on('download-item', async (event, {url}) => {
-  event.sender.send('download-success', url);
-  console.log(url);
+let downloadingQueue: any[] = [];
+
+const downloadBook = (win, { event, info }) => {
+  // const win = BrowserWindow.getFocusedWindow();
+  download(win!, info.url)
+  .then(() => {
+    // console.log(`success-${info.bookId}`);
+    event.sender.send(`download-end-${info.bookId}`, { result: 'SUCCESS', url: info.url});
+  })
+  .catch((err) => {
+    // console.log(`${err}-${info.bookId}`);
+    event.sender.send(`download-end-${info.bookId}`, { result: 'ERROR', err});
+  })
+  .finally(() => {
+    // console.log('end download ' + info.bookId);
+    downloadingQueue = downloadingQueue.filter(downloadItem => downloadItem.info.bookId !== info.bookId);
+    if (downloadingQueue.length > 0) {
+      downloadBook(win, downloadingQueue[0]);
+    }
+  });
+}
+
+ipcMain.on('download-item', async (event, info) => {
+  console.log('start download ' + info.bookId);
+  downloadingQueue.push({ event, info });
   const win = BrowserWindow.getFocusedWindow();
-  console.log(await download(win!, url));
+
+  if (downloadingQueue[0].info.bookId === info.bookId) {
+    downloadBook(win, downloadingQueue[0]);
+  }
 });
 
 app.on('window-all-closed', () => {

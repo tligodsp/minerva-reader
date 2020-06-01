@@ -11,8 +11,9 @@ import { currentUser, mockUsers } from '../../utils/mock-users';
 import styles from './BookInfoPage.css';
 import { getBookById } from '../../actions/bookActions';
 import { getReviewsByBookId } from '../../actions/reviewActions';
+import { downloadBook } from '../../actions/localActions';
 
-const { ipcRenderer } = require('electron')
+const { ipcRenderer } = require('electron');
 
 const BookInfoPage = (props) => {
   const _mockBooks = mockBooks.slice(0, 12);
@@ -23,15 +24,20 @@ const BookInfoPage = (props) => {
   useEffect(() => {
     props.getBookById(id);
     props.getReviewsByBookId(id);
-    console.log(props);
+    // console.log(props);
   }, []);
 
-  const handleDownloadClick = (downloadLink) => {
-    console.log(downloadLink);
-    ipcRenderer.send('download-item', { url: downloadLink });
-    ipcRenderer.on('download-success', (event, arg) => {
-      console.log(arg);
-    });
+  const handleDownloadClick = (bookId, downloadLink) => {
+    // console.log(downloadLink);
+    props.downloadBook(bookId, downloadLink);
+    // ipcRenderer.send('download-item', { url: downloadLink });
+    // ipcRenderer.on('download-success', (event, arg) => {
+    //   console.log(arg);
+    // });
+  }
+
+  const checkIsDownloading = (id) => {
+    return props.local.downloadingBooks.includes(id);
   }
 
   return (
@@ -52,12 +58,16 @@ const BookInfoPage = (props) => {
                 >
                   Want to Read
                 </button>
-                <button
-                  className={styles['button-secondary']}
-                  onClick={() => handleDownloadClick(_book.downloadLink)}
-                >
-                  Download
-                </button>
+                {
+                  !checkIsDownloading(_book.id) &&
+                  <button
+                    className={styles['button-secondary']}
+                    onClick={() => handleDownloadClick(_book.id, _book.downloadLink)}
+                    disabled={checkIsDownloading(_book.id)}
+                  >
+                    Download
+                  </button>
+                }
               </div>
               <div className={styles['book-text-info']}>
                 <div className={styles['book-title']}>{_book!.title}</div>
@@ -141,7 +151,8 @@ const BookInfoPage = (props) => {
 
 const mapStateToProps = (state) => ({
   books: state.books,
-  reviews: state.reviews
+  reviews: state.reviews,
+  local: state.local,
 });
 
-export default connect(mapStateToProps, { getBookById, getReviewsByBookId })(BookInfoPage);
+export default connect(mapStateToProps, { getBookById, getReviewsByBookId, downloadBook })(BookInfoPage);

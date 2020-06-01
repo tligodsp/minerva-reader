@@ -32,7 +32,7 @@ export const mockBooks: Book[] = [
     cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1490528560l/4671._SY475_.jpg",
     ratingValue: 4,
     ratingCount: 420,
-    downloadLink: 'http://ipv4.download.thinkbroadband.com/5MB.zip',
+    downloadLink: 'http://ipv4.download.thinkbroadband.com/10MB.zip',
   },
   {
     id: "book04",
@@ -42,7 +42,7 @@ export const mockBooks: Book[] = [
     cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1367545443l/157993.jpg",
     ratingValue: 4.5,
     ratingCount: 420,
-    downloadLink: 'http://ipv4.download.thinkbroadband.com/5MB.zip',
+    downloadLink: 'https://speed.hetzner.de/100MB.bin',
   },
   {
     id: "book05",

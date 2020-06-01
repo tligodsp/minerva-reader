@@ -83,7 +83,7 @@ const NavBar = (props: any) => {
 
   useEffect(() => {
     history.push(currentPath);
-    console.log(currentPath);
+    // console.log(currentPath);
   }, [currentPath]);
 
 	return (
