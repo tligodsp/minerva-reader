@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Divider from '@material-ui/core/Divider';
 import { useParams } from 'react-router-dom';
@@ -20,6 +20,7 @@ const BookInfoPage = (props) => {
   let { id } = useParams();
   const _book = props.books.currentBook;
   const _reviews = props.reviews.currentBookReviews;
+  const [downloadProgress, setDownloadProgress] = useState(0);
 
   useEffect(() => {
     props.getBookById(id);
@@ -67,6 +68,10 @@ const BookInfoPage = (props) => {
                   >
                     Download
                   </button>
+                }
+                {
+                  checkIsDownloading(_book.id) &&
+                  <div>{props.local.currentDownloadingBookId === _book.id ? props.local.currentDownloadProgress : 'Pending'}</div>
                 }
               </div>
               <div className={styles['book-text-info']}>

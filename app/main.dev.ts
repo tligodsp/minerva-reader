@@ -107,7 +107,13 @@ let downloadingQueue: any[] = [];
 
 const downloadBook = (win, { event, info }) => {
   // const win = BrowserWindow.getFocusedWindow();
-  download(win!, info.url)
+  download(win!, info.url, {
+    onProgress: currentProgress => {
+      win.webContents.send(`download-update-progress-${info.bookId}`, {
+        currentProgress,
+      })
+    }
+  })
   .then(() => {
     // console.log(`success-${info.bookId}`);
     event.sender.send(`download-end-${info.bookId}`, { result: 'SUCCESS', url: info.url});
