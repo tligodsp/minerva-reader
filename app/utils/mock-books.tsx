@@ -62,7 +62,7 @@ export const mockBooks: Book[] = [
     cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1398034300l/5107.jpg",
     ratingValue: 4,
     ratingCount: 420,
-    downloadLink: 'http://ipv4.download.thinkbroadband.com/5MB.zip',
+    downloadLink: 'https://firebasestorage.googleapis.com/v0/b/fb-cloud-functions-demo-4de69.appspot.com/o/PointyPixelPenetration_2018jan.pdf?alt=media&token=f6a55e4d-eb08-47e1-a122-ac9aabca1b34',
   },
   {
     id: "book07",
@@ -72,7 +72,7 @@ export const mockBooks: Book[] = [
     cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1329189714l/2165.jpg",
     ratingValue: 4,
     ratingCount: 420,
-    downloadLink: 'http://ipv4.download.thinkbroadband.com/5MB.zip',
+    downloadLink: 'https://firebasestorage.googleapis.com/v0/b/fb-cloud-functions-demo-4de69.appspot.com/o/PointyPixelPenetration_2018jan.pdf?alt=media&token=f6a55e4d-eb08-47e1-a122-ac9aabca1b34',
   },
   {
     id: "book08",
@@ -82,7 +82,7 @@ export const mockBooks: Book[] = [
     cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1327942880l/2493.jpg",
     ratingValue: 4,
     ratingCount: 420,
-    downloadLink: 'http://ipv4.download.thinkbroadband.com/5MB.zip',
+    downloadLink: 'https://firebasestorage.googleapis.com/v0/b/fb-cloud-functions-demo-4de69.appspot.com/o/PointyPixelPenetration_2018jan.pdf?alt=media&token=f6a55e4d-eb08-47e1-a122-ac9aabca1b34',
   },
   {
     id: "book09",
@@ -92,7 +92,7 @@ export const mockBooks: Book[] = [
     cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1519031842l/102868._SX318_.jpg",
     ratingValue: 4.5,
     ratingCount: 420,
-    downloadLink: 'http://ipv4.download.thinkbroadband.com/5MB.zip',
+    downloadLink: 'https://firebasestorage.googleapis.com/v0/b/fb-cloud-functions-demo-4de69.appspot.com/o/PointyPixelPenetration_2018jan.pdf?alt=media&token=f6a55e4d-eb08-47e1-a122-ac9aabca1b34',
   },
   {
     id: "book10",
@@ -102,7 +102,7 @@ export const mockBooks: Book[] = [
     cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1340904653l/6483360.jpg",
     ratingValue: 4.5,
     ratingCount: 420,
-    downloadLink: 'http://ipv4.download.thinkbroadband.com/5MB.zip',
+    downloadLink: 'https://firebasestorage.googleapis.com/v0/b/fb-cloud-functions-demo-4de69.appspot.com/o/PointyPixelPenetration_2018jan.pdf?alt=media&token=f6a55e4d-eb08-47e1-a122-ac9aabca1b34',
   },
   {
     id: "book11",
@@ -112,7 +112,7 @@ export const mockBooks: Book[] = [
     cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1431851926l/24409126._SY475_.jpg",
     ratingValue: 4.5,
     ratingCount: 420,
-    downloadLink: 'http://ipv4.download.thinkbroadband.com/5MB.zip',
+    downloadLink: 'https://firebasestorage.googleapis.com/v0/b/fb-cloud-functions-demo-4de69.appspot.com/o/PointyPixelPenetration_2018jan.pdf?alt=media&token=f6a55e4d-eb08-47e1-a122-ac9aabca1b34',
   },
   {
     id: "book12",
@@ -122,7 +122,7 @@ export const mockBooks: Book[] = [
     cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1532714506l/40961427._SX318_.jpg",
     ratingValue: 4.5,
     ratingCount: 420,
-    downloadLink: 'http://ipv4.download.thinkbroadband.com/5MB.zip',
+    downloadLink: 'https://firebasestorage.googleapis.com/v0/b/fb-cloud-functions-demo-4de69.appspot.com/o/PointyPixelPenetration_2018jan.pdf?alt=media&token=f6a55e4d-eb08-47e1-a122-ac9aabca1b34',
   },
   {
     id: "book13",
@@ -132,6 +132,6 @@ export const mockBooks: Book[] = [
     cover: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1553383690l/2657.jpg",
     ratingValue: 4.5,
     ratingCount: 420,
-    downloadLink: 'http://ipv4.download.thinkbroadband.com/5MB.zip',
+    downloadLink: 'https://firebasestorage.googleapis.com/v0/b/fb-cloud-functions-demo-4de69.appspot.com/o/PointyPixelPenetration_2018jan.pdf?alt=media&token=f6a55e4d-eb08-47e1-a122-ac9aabca1b34',
   },
 ]

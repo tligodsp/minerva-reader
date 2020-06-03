@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 
 import { RatingBar } from '../../components/common/atoms';
 import { LibraryPageTemplate } from '../../components/common/template';
-import { Review, User } from '../../types';
+import { Review, User, Book } from '../../types';
 import { mockBooks } from '../../utils/mock-books';
 import { currentUser, mockUsers } from '../../utils/mock-users';
 import styles from './BookInfoPage.css';
@@ -18,7 +18,7 @@ const { ipcRenderer } = require('electron');
 const BookInfoPage = (props) => {
   const _mockBooks = mockBooks.slice(0, 12);
   let { id } = useParams();
-  const _book = props.books.currentBook;
+  const _book: Book = props.books.currentBook;
   const _reviews = props.reviews.currentBookReviews;
   const [downloadProgress, setDownloadProgress] = useState(0);
 
@@ -28,9 +28,13 @@ const BookInfoPage = (props) => {
     // console.log(props);
   }, []);
 
-  const handleDownloadClick = (bookId, downloadLink) => {
+  const handleDownloadClick = () => {
     // console.log(downloadLink);
-    props.downloadBook(bookId, downloadLink);
+    const bookObj: Object = {
+      id: _book.id,
+      name: _book.title,
+    }
+    props.downloadBook(bookObj, _book.downloadLink);
     // ipcRenderer.send('download-item', { url: downloadLink });
     // ipcRenderer.on('download-success', (event, arg) => {
     //   console.log(arg);
@@ -63,7 +67,7 @@ const BookInfoPage = (props) => {
                   !checkIsDownloading(_book.id) &&
                   <button
                     className={styles['button-secondary']}
-                    onClick={() => handleDownloadClick(_book.id, _book.downloadLink)}
+                    onClick={() => handleDownloadClick()}
                     disabled={checkIsDownloading(_book.id)}
                   >
                     Download

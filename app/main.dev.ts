@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { download } from 'electron-dl';
+const fs = require("fs");
 // import { download } from 'edl';
 
 export default class AppUpdater {
@@ -103,40 +104,62 @@ const createWindow = async () => {
  * Add event listeners...
  */
 
+// const BOOKSHELF_PATH = 'books';
+const BOOKSHELF_FOLDER_NAME = 'books';
+// const BOOKSHELF_PATH = path.join(__dirname, "bookss");
+
 let downloadingQueue: any[] = [];
 
+const continueDownload = (win, info) => {
+  downloadingQueue = downloadingQueue.filter(downloadItem => downloadItem.info.bookObj.id !== info.bookObj.id);
+  if (downloadingQueue.length > 0) {
+    downloadBook(win, downloadingQueue[0]);
+  }
+}
+
 const downloadBook = (win, { event, info }) => {
-  // const win = BrowserWindow.getFocusedWindow();
+  const downloadTo = path.join(app.getPath('userData'), BOOKSHELF_FOLDER_NAME, info.bookObj.id);
+  if (fs.existsSync(downloadTo)) {
+    console.log('blah');
+    win.webContents.send(`folder-already-exist`, { blah: 'blah' });
+    continueDownload(win, info);
+    return;
+  }
   download(win!, info.url, {
+    directory: downloadTo,
     onProgress: currentProgress => {
-      win.webContents.send(`download-update-progress-${info.bookId}`, {
+      win.webContents.send(`download-update-progress-${info.bookObj.id}`, {
         currentProgress,
       })
     }
   })
   .then(() => {
-    // console.log(`success-${info.bookId}`);
-    event.sender.send(`download-end-${info.bookId}`, { result: 'SUCCESS', url: info.url});
+    // console.log(`success-${info.bookObj.id}`);
+    fs.writeFileSync(
+      path.join(downloadTo, "data.json"),
+      JSON.stringify(info.bookObj, null, 2)
+    );
+    event.sender.send(`download-end-${info.bookObj.id}`, { result: 'SUCCESS', url: info.url});
   })
   .catch((err) => {
-    // console.log(`${err}-${info.bookId}`);
-    event.sender.send(`download-end-${info.bookId}`, { result: 'ERROR', err});
+    // console.log(`${err}-${info.bookObj.id}`);
+    event.sender.send(`download-end-${info.bookObj.id}`, { result: 'ERROR', err});
   })
   .finally(() => {
-    // console.log('end download ' + info.bookId);
-    downloadingQueue = downloadingQueue.filter(downloadItem => downloadItem.info.bookId !== info.bookId);
-    if (downloadingQueue.length > 0) {
-      downloadBook(win, downloadingQueue[0]);
-    }
+    // console.log('end download ' + info.bookObj.id);
+    // downloadingQueue = downloadingQueue.filter(downloadItem => downloadItem.info.bookObj.id !== info.bookObj.id);
+    // if (downloadingQueue.length > 0) {
+    //   downloadBook(win, downloadingQueue[0]);
+    // }
+    continueDownload(win, info);
   });
 }
 
 ipcMain.on('download-item', async (event, info) => {
-  console.log('start download ' + info.bookId);
   downloadingQueue.push({ event, info });
   const win = BrowserWindow.getFocusedWindow();
 
-  if (downloadingQueue[0].info.bookId === info.bookId) {
+  if (downloadingQueue[0].info.bookObj.id === info.bookObj.id) {
     downloadBook(win, downloadingQueue[0]);
   }
 });

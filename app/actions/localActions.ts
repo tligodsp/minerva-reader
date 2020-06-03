@@ -2,20 +2,18 @@ import { DOWNLOAD_BOOK, ADD_BOOK_TO_DOWNLOADING_LIST, REMOVE_BOOK_FROM_DOWNLOADI
     UPDATE_CURRENT_DOWNLOAD_PROGRESS } from './types';
 const { ipcRenderer } = require('electron');
 
-export const downloadBook = (bookId, url) => {
+export const downloadBook = (bookObj, url) => {
   return dispatch => {
-    // console.log('alo');
-    dispatch(addBookToDownloadingList(bookId));
-    ipcRenderer.send('download-item', { bookId, url });
+    dispatch(addBookToDownloadingList(bookObj.id));
+    ipcRenderer.send('download-item', { bookObj, url });
 
-    ipcRenderer.on(`download-update-progress-${bookId}`, (event, arg) => {
+    ipcRenderer.on(`download-update-progress-${bookObj.id}`, (event, arg) => {
       console.log(arg);
-      dispatch(updateDownloadProgress({ progress: arg.currentProgress.percent, bookId }));
+      dispatch(updateDownloadProgress({ progress: arg.currentProgress.percent, bookId: bookObj.id }));
     })
 
-    ipcRenderer.on(`download-end-${bookId}`, (event, arg) => {
-      console.log('fe end ' + bookId);
-      dispatch(removeBookToDownloadingList(bookId));
+    ipcRenderer.on(`download-end-${bookObj.id}`, (event, arg) => {
+      dispatch(removeBookToDownloadingList(bookObj.id));
     })
   }
 }
