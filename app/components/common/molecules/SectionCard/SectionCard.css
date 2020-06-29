@@ -1,0 +1,28 @@
+.wrapper {
+  width: 100%;
+  background-color: #FEFEFE;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  padding: 30px;
+  font-family: 'Quicksand', sans-serif;
+  margin: 20px 0 0;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.header-subtext {
+  font-size: 0.95rem;
+  color: #999999;
+  cursor: pointer;
+}
+
+.header-subtext:hover {
+  color: #7670FF;
+}

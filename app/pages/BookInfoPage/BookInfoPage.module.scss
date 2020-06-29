@@ -54,7 +54,7 @@
 }
 
 .search-bar-container {
-  width: 100% - 17px;
+  width: calc(100% - 17px);
   margin: 20px 10px 10px;
   display: flex;
   justify-content: center;
@@ -75,14 +75,11 @@
 
 .left-section {
   padding-right: 10px;
-  /* background-color: #7670FF; */
   flex: 3;
-  /* height: 100px */
 }
 
 .right-section {
   padding-left: 10px;
-  background-color: aqua;
   flex: 2;
   height: 100px
 }
@@ -234,3 +231,64 @@
 .review-rating-bar {
 
 }
+
+.author-info-container {
+  display: flex;
+  flex-direction: column;
+
+  .author-photo-name-books {
+    display: flex;
+    flex-direction: row;
+
+    .author-photo {
+      width: 60px;
+      height: 60px;
+      border-radius: 100%;
+    }
+
+    .author-name-books {
+      display: flex;
+      flex-direction: column;
+      margin-left: 16px;
+
+      .author-name {
+        font-weight: 700;
+        font-size: 1.15rem;
+        color: #111;
+      }
+
+      .author-books {
+        font-weight: 500;
+        color: #999;
+        font-size: 1.1rem;
+      }
+    }
+  }
+  .author-about {
+    margin-top: 10px;
+    font-weight: 500;
+  }
+}
+
+.sub-book-cover {
+  width: 120px;
+}
+
+.aspect-ratio-container {
+  width: 100%;
+  padding-top: 150%;
+  position: relative;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.sub-cover-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  border-radius: inherit;
+}
+

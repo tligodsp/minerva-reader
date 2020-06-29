@@ -1,7 +1,8 @@
 export interface Author {
   id: string,
   name: string,
-  photo?: string
+  photo?: string,
+  about?: string,
 }
 
 export interface Review {
@@ -21,13 +22,15 @@ export interface Book {
   id: string,
   title: string,
   authors?: Author[],
+  authorIds?: string[],
   genres?: Genre[],
+  genreIds?: string[],
   cover?: string,
   ratingValue?: number,
   ratingCount?: number,
   sypnosis?: string,
   reviews?: Review[],
-  downloadLink: string,
+  downloadLink: string | undefined,
 }
 
 export interface User {

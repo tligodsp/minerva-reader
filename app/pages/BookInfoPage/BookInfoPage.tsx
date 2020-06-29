@@ -3,38 +3,85 @@ import { connect } from 'react-redux';
 import Divider from '@material-ui/core/Divider';
 import { useParams } from 'react-router-dom';
 
+import Carousel from 'nuka-carousel';
+
 import { RatingBar } from '../../components/common/atoms';
+import { SectionCard } from '../../components/common/molecules';
 import { LibraryPageTemplate } from '../../components/common/template';
+
 import { Review, User, Book } from '../../types';
 import { mockBooks } from '../../utils/mock-books';
 import { currentUser, mockUsers } from '../../utils/mock-users';
-import styles from './BookInfoPage.css';
+
+import styles from './BookInfoPage.module.scss';
+
 import { getBookById } from '../../actions/bookActions';
 import { getReviewsByBookId } from '../../actions/reviewActions';
 import { downloadBook } from '../../actions/localActions';
+import * as CONSTANTS from '../../utils/constants';
+import * as Service from '../../utils/serviceUtils';
 
 const { ipcRenderer } = require('electron');
 
 const BookInfoPage = (props) => {
   const _mockBooks = mockBooks.slice(0, 12);
   let { id } = useParams();
-  const _book: Book = props.books.currentBook;
-  const _reviews = props.reviews.currentBookReviews;
+  // const _book: Book = props.books.currentBook;
+  // const _reviews = props.reviews.currentBookReviews;
+  const [_book, _setBook] = useState<Book>();
+  const [_reviews, _setReviews] = useState<Review[]>([]);
+  const [authorBooks, setAuthorBooks] = useState<Book[]>([]);
+  const [similarBooks, setSimilarBooks] = useState<Book[]>([]);
   const [downloadProgress, setDownloadProgress] = useState(0);
 
   useEffect(() => {
-    props.getBookById(id);
-    props.getReviewsByBookId(id);
-    // console.log(props);
+    if (!id) {
+      /** REDIRECT TO PAGE NOT FOUND */
+      return;
+    }
+    // props.getBookById(id);
+    // props.getReviewsByBookId(id);
+    Service.getBookById(id)
+      .then((response: any) => {
+        _setBook(response.book);
+        if (response.book.authors && response.book.authors.length > 0) {
+          Service.getAuthorBooks(response.book.authors[0].id)
+            .then((response: any) => {
+              setAuthorBooks(response.books);
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        /** REDIRECT TO PAGE NOT FOUND */
+        return;
+      });
+    Service.getReviewsByBookId(id)
+      .then((reponse: any) => {
+        _setReviews(reponse.reviews);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    Service.getSimilarBooks(id)
+      .then((response: any) => {
+        setSimilarBooks(response.books);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
   }, []);
 
   const handleDownloadClick = () => {
     // console.log(downloadLink);
     const bookObj: Object = {
-      id: _book.id,
-      name: _book.title,
+      id: _book!.id,
+      name: _book!.title,
     }
-    props.downloadBook(bookObj, _book.downloadLink);
+    props.downloadBook(bookObj, _book!.downloadLink);
     // ipcRenderer.send('download-item', { url: downloadLink });
     // ipcRenderer.on('download-success', (event, arg) => {
     //   console.log(arg);
@@ -66,11 +113,11 @@ const BookInfoPage = (props) => {
                 {
                   !checkIsDownloading(_book.id) &&
                   <button
-                    className={styles['button-secondary']}
+                    className={styles['button-secondary'] + (!_book.downloadLink ? ' button-disabled' : '' )}
                     onClick={() => handleDownloadClick()}
-                    disabled={checkIsDownloading(_book.id)}
+                    disabled={!_book.downloadLink}
                   >
-                    Download
+                    {_book.downloadLink ? 'Download' : CONSTANTS.NO_DOWNLOAD_LINK}
                   </button>
                 }
                 {
@@ -82,22 +129,21 @@ const BookInfoPage = (props) => {
                 <div className={styles['book-title']}>{_book!.title}</div>
                 <div className={styles['book-author']}>by {_book.authors[0].name}</div>
                 <div className={styles['rating-bar']}>
-                  <RatingBar ratingValue={_book!.ratingValue ? _book!.ratingValue / 5 : 0}/>
+                  <RatingBar
+                    ratingValue={_book!.ratingValue ? _book!.ratingValue / 5 : 0}
+                    starStyle={{ fontSize: "1.75rem" }}
+                  />
                   <div style={{ fontWeight: 600, marginLeft: "10px" }}>({_book!.ratingCount})</div>
                 </div>
-                <p className={styles['book-sypnosis']}>{_book!.sypnosis}</p>
+                <p className={styles['book-sypnosis']}>{_book!.sypnosis ? _book!.sypnosis : CONSTANTS.NO_BOOK_SYPNOSIS}</p>
               </div>
             </div>
           }
           {/* REVIEWS CARD */}
-          <div
-            className={styles['review-card']}
+          <SectionCard
+            sectionName="Community Reviews"
+            showSubtext={false}
           >
-            <div className={styles['review-card-header']}>
-              <div>Community Reviews</div>
-              {/* <div className={defaultStyles['header-subtext']}>More</div> */}
-            </div>
-            <Divider style={{ margin: "10px 0" }}/>
             {/* START REVIEW */}
             <div className={styles['review-container']}>
               <div className={styles['user-avatar']}>
@@ -149,10 +195,76 @@ const BookInfoPage = (props) => {
                 </div>
               ))
             }
-          </div>
+          </SectionCard>
+
         </div>
         {/* RIGHT SECTION */}
-        <div className={styles['right-section']}></div>
+        <div className={styles['right-section']}>
+          <SectionCard
+            sectionName="Similar Books"
+            wrapperStyle={{ marginTop: 0 }}
+          >
+            <Carousel
+              slidesToShow={4}
+              slidesToScroll={2}
+              cellSpacing={30}
+              // framePadding="0 40px"
+              // slideWidth="436px"
+              defaultControlsConfig={{
+                nextButtonText: '›',
+                prevButtonText: '‹',
+                pagingDotsStyle: { display: "none" }
+              }}
+            >
+              {
+                similarBooks.map((book: Book, index: number) => (
+                  <div
+                    key={`book${index}`}
+                    style={{ height: "fit-content" }}
+                  >
+                    <div
+                      className={styles['sub-book-cover']}
+                    >
+                      <div className={styles['aspect-ratio-container']}>
+                        <img
+                          className={styles['sub-cover-img']}
+                          src={book.cover ? book.cover : CONSTANTS.NO_BOOK_IMAGE_LINK}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              }
+            </Carousel>
+          </SectionCard>
+          {
+            (_book?.authors && _book.authors.length > 0) &&
+            <div>
+              <SectionCard
+                sectionName={`About ${_book!.authors[0].name}`}
+                showSubtext={false}
+              >
+                <div className={styles['author-info-container']}>
+                  <div className={styles['author-photo-name-books']}>
+                    <div className={styles['author-photo']}>
+                      <img
+                        className={styles['author-photo']}
+                        src={_book!.authors[0].photo ? _book!.authors[0].photo : CONSTANTS.NO_PHOTO_LINK}
+                      />
+                    </div>
+                    <div className={styles['author-name-books']}>
+                      <div className={styles['author-name']}>{_book!.authors[0].name}</div>
+                      <div className={styles['author-books']}>{`${authorBooks.length} Books`}</div>
+                    </div>
+                  </div>
+                  <div className={styles['author-about']}>
+                    {_book!.authors[0].about ? _book!.authors[0].about : CONSTANTS.AUTHOR_NO_ABOUT}
+                  </div>
+                </div>
+              </SectionCard>
+            </div>
+          }
+        </div>
       </div>
     </LibraryPageTemplate>
   );

@@ -20,3 +20,23 @@ export const getBookById = (id) => {
     });
   }
 }
+
+// export const getSimilarBooks = (id: string) => {
+//   const books = [ ...MockBook.mockBooks ];
+//   return dispatch => {
+//     dispatch({
+//       type: GET_SIMILAR_BOOKS,
+//       payload: books,
+//     });
+//   }
+// }
+
+// export const getBooksByAuthor = (authorId: string) => {
+//   const books = [ ...MockBook.mockBooks ];
+//   return dispatch => {
+//     dispatch({
+//       type: GET_BOOKS_BY_AUTHOR,
+//       payload: books,
+//     });
+//   }
+// }

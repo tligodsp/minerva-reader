@@ -2,7 +2,9 @@ import { Author } from '../types';
 
 export const shakespeare: Author = {
   id: "shakespeare",
-  name: "William Shakespeare"
+  name: "William Shakespeare",
+  photo: `https://images.gr-assets.com/authors/1586700347p8/947.jpg`,
+  about: `William Shakespeare (baptised 26 April 1564) was an English poet and playwright, widely regarded as the greatest writer in the English language and the world's pre-eminent dramatist. He is often called England's national poet and the "Bard of Avon" (or simply "The Bard"). His surviving works consist of 38 plays, 154 sonnets, two long narrative poems, and several other poems. His plays have been translated into every major living language, and are performed more often than those of any other playwright.`,
 }
 
 export const julesVerne: Author = {
