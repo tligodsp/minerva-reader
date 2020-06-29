@@ -1,0 +1,26 @@
+.wrapper {
+  width: fit-content;
+  display: flex;
+  flex-direction: row;
+}
+
+.star-container {
+  position: relative;
+
+  .zone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    z-index: 100;
+
+    .half-zone {
+      flex: 1;
+      cursor: pointer;
+    }
+  }
+}
+

@@ -1,8 +1,11 @@
 import React from 'react';
+import { InteractiveRatingBar } from '../components/common/atoms';
 
 const AboutPage = (props) => {
   return (
-    <div>About</div>
+    <div>
+      <InteractiveRatingBar starSize={60}/>
+    </div>
   );
 }
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import Divider from '@material-ui/core/Divider';
 import { useParams } from 'react-router-dom';
 
 import Carousel from 'nuka-carousel';
@@ -10,10 +9,10 @@ import { SectionCard } from '../../components/common/molecules';
 import { LibraryPageTemplate } from '../../components/common/template';
 
 import { Review, User, Book } from '../../types';
-import { mockBooks } from '../../utils/mock-books';
 import { currentUser, mockUsers } from '../../utils/mock-users';
 
 import styles from './BookInfoPage.module.scss';
+import ReviewBookModal from './ReviewBookModal';
 
 import { getBookById } from '../../actions/bookActions';
 import { getReviewsByBookId } from '../../actions/reviewActions';
@@ -24,7 +23,6 @@ import * as Service from '../../utils/serviceUtils';
 const { ipcRenderer } = require('electron');
 
 const BookInfoPage = (props) => {
-  const _mockBooks = mockBooks.slice(0, 12);
   let { id } = useParams();
   // const _book: Book = props.books.currentBook;
   // const _reviews = props.reviews.currentBookReviews;
@@ -33,6 +31,7 @@ const BookInfoPage = (props) => {
   const [authorBooks, setAuthorBooks] = useState<Book[]>([]);
   const [similarBooks, setSimilarBooks] = useState<Book[]>([]);
   const [downloadProgress, setDownloadProgress] = useState(0);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -86,6 +85,14 @@ const BookInfoPage = (props) => {
     // ipcRenderer.on('download-success', (event, arg) => {
     //   console.log(arg);
     // });
+  }
+
+  const handleCloseReviewModal= () => {
+    setShowReviewModal(false);
+  }
+
+  const handleShowReviewModal = () => {
+    setShowReviewModal(true);
   }
 
   const checkIsDownloading = (id) => {
@@ -159,6 +166,7 @@ const BookInfoPage = (props) => {
                 </div>
                 <button
                   className={styles['button-secondary'] + ' ' + styles['start-review-button']}
+                  onClick={handleShowReviewModal}
                 >
                   Add Review
                 </button>
@@ -266,6 +274,11 @@ const BookInfoPage = (props) => {
           }
         </div>
       </div>
+      <ReviewBookModal
+        open={showReviewModal}
+        handleClose={handleCloseReviewModal}
+        user={currentUser}
+      />
     </LibraryPageTemplate>
   );
 }
