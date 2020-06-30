@@ -25,6 +25,7 @@ interface InteractiveRatingBarProps {
   wrapperStyle?: React.CSSProperties;
   starStyle?: React.CSSProperties;
   starSize?: number;
+  onValueChange?: Function;
 }
 
 const InteractiveStar = ({ starSize, starStyle, ratingValue, starIndex, onChange, onClick }) => {
@@ -106,17 +107,20 @@ const InteractiveStar = ({ starSize, starStyle, ratingValue, starIndex, onChange
   );
 }
 
-const InteractiveRatingBar = ({ ratingValue, wrapperStyle, starStyle, starSize } : InteractiveRatingBarProps) => {
+const InteractiveRatingBar = ({ ratingValue, wrapperStyle, starStyle, starSize, onValueChange } : InteractiveRatingBarProps) => {
   const [_ratingValue, _setRatingValue] = useState(0);
   const [_chosenRatingValue, _setChosenRatingValue] = useState(0);
   const _starSize = starSize ? starSize : STAR_SIZE;
   const _numOfStars = NUM_OF_STARS
 
   useEffect(() => {
-    if (ratingValue && ratingValue >= 0 && ratingValue <= 1) {
+    if (ratingValue && ratingValue >= 0 && ratingValue <= _numOfStars) {
       _setRatingValue(ratingValue)
     }
-  });
+    else if (ratingValue == -1) {
+      _setRatingValue(0);
+    }
+  }, [ratingValue]);
 
   const onStarHover = (value: number) => {
     if (value == -1) {
@@ -125,11 +129,13 @@ const InteractiveRatingBar = ({ ratingValue, wrapperStyle, starStyle, starSize }
     else {
       _setRatingValue(value);
     }
-    console.log(value);
   }
 
   const onStarClick = () => {
     _setChosenRatingValue(_ratingValue);
+    if (onValueChange) {
+      onValueChange(_ratingValue);
+    }
   }
 
   return (

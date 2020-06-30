@@ -2,7 +2,7 @@ import { Review } from '../types';
 import * as MockBooks from './mock-books';
 import * as MockUsers from './mock-users';
 
-export const mockReviews: Review[] = [
+export let mockReviews: Review[] = [
   {
     id: 'book02review00',
     ratingValue: 4,

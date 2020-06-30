@@ -1,0 +1,36 @@
+.header {
+  font-weight: 700 !important;
+  font-family: 'Quicksand', sans-serif !important;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Quicksand', sans-serif !important;
+
+  .user-photo-n-rating {
+    display: flex;
+    flex-direction: row;
+
+    .user-photo {
+      width: 60px;
+      height: 60px;
+      border-radius: 100%;
+    }
+
+    .user-rating {
+      display: flex;
+      flex-direction: column;
+      margin-left: 16px;
+
+      .text {
+        font-weight: 500;
+        font-size: 1.15rem;
+        color: #111;
+      }
+    }
+  }
+  .text-field {
+    width: 100%;
+  }
+}

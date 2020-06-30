@@ -103,45 +103,6 @@
   border-radius: 20px;
 }
 
-.button {
-  border-radius: 10px;
-  background-color: #7670FF;
-  border: none;
-  color: #FFFFFF;
-  text-align: center;
-  padding: 5px 17px;
-  transition: all 0.3s;
-  /* cursor: pointer; */
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 500;
-}
-
-.button:hover {
-  background-color: #8B82FF;
-  transition: 0.2s;
-}
-
-.button-secondary {
-  border-radius: 10px;
-  background-color: #FEFEFE;
-  border: 2px solid #7670FF;
-  color: #7670FF;
-  text-align: center;
-  padding: 5px 17px;
-  transition: all 0.3s;
-  /* cursor: pointer; */
-  margin: 5px 0 0;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 500;
-}
-
-.button-secondary:hover {
-  background-color: #7670FF;
-  border: 2px solid #7670FF;
-  color: #FEFEFE;
-  transition: 0.2s;
-}
-
 .book-text-info {
   display: flex;
   flex: 3;

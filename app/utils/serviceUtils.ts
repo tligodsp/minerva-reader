@@ -1,6 +1,13 @@
 import { mockBooks } from './mock-books';
 import { mockReviews } from './mock-reviews';
-import { Book, Review } from '../types/index';
+import { Book, Review, ReviewInput } from '../types/index';
+
+var ID = function () {
+  // Math.random should be unique because of its seeding algorithm.
+  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+  // after the decimal.
+  return '_' + Math.random().toString(36).substr(2, 9);
+};
 
 const isElemInList = (elem: any, list: any[] | undefined) => {
   if (!list) {
@@ -55,5 +62,13 @@ export const getReviewsByBookId = (bookId: string) => {
   const reviews : Review[] = mockReviews.filter(review => review.book.id === bookId);
   return new Promise((resolve, reject) => {
     resolve({ reviews });
+  });
+}
+
+export const createReview = (reviewInput: ReviewInput) => {
+  const review: Review = { id: ID(), ...reviewInput };
+  return new Promise((resolve, reject) => {
+    mockReviews.push(review);
+    resolve({ review });
   });
 }

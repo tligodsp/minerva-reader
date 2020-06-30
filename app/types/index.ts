@@ -13,6 +13,13 @@ export interface Review {
   book: Book
 }
 
+export interface ReviewInput {
+  ratingValue: number,
+  content: string,
+  user: User,
+  book: Book
+}
+
 export interface Genre {
   id: string,
   name: string
