@@ -1,5 +1,7 @@
 import { mockBooks } from './mock-books';
 import { mockReviews } from './mock-reviews';
+import { mockGenres } from './mock-genres';
+import { mockAuthors } from './mock-authors';
 import { Book, Review, ReviewInput } from '../types/index';
 
 var ID = function () {
@@ -24,18 +26,32 @@ export const getBookById = (id: string) => {
   });
 }
 
-export const getBookByFilters = (authorIds: string[], genreIds: string[]) => {
+export const getBookByFilters = (searchTerm: string, authorIds: string[], genreIds: string[]) => {
   /** API REPLACE */
   const books = mockBooks;
-  let filteredBooks: any[] = [];
+  console.log('start');
+  console.log(searchTerm);
+  console.log(authorIds);
+  console.log(genreIds);
+  let filteredBooks = mockBooks;
+  console.log(filteredBooks);
   for (let authorId of authorIds) {
-    filteredBooks = [ ...filteredBooks, books.filter(book => isElemInList(authorId, book.authorIds)) ];
+    filteredBooks = [ ...filteredBooks.filter(book => isElemInList(authorId, book.authorIds)) ];
   }
+  console.log('authorId');
+  console.log(filteredBooks);
   for (let genreId of genreIds) {
-    filteredBooks = [ ...filteredBooks, books.filter(book => isElemInList(genreId, book.genreIds)) ];
+    filteredBooks = [ ...filteredBooks.filter(book => isElemInList(genreId, book.genreIds)) ];
   }
+  console.log('genreId');
+  console.log(filteredBooks);
+  if (searchTerm && searchTerm.length > 0) {
+    filteredBooks = [ ...filteredBooks.filter(book => book.title.toLowerCase().includes(searchTerm)) ];
+  }
+  console.log('searchTerm');
+  console.log(filteredBooks);
   // remove duplicates
-  filteredBooks = filteredBooks.filter((book, index) => filteredBooks.indexOf(book) === index);
+  // filteredBooks = filteredBooks.filter((book, index) => filteredBooks.indexOf(book) === index);
   return new Promise((resolve, reject) => {
     resolve({ books: filteredBooks });
   });
@@ -70,5 +86,19 @@ export const createReview = (reviewInput: ReviewInput) => {
   return new Promise((resolve, reject) => {
     mockReviews.push(review);
     resolve({ review });
+  });
+}
+
+export const getGenres = () => {
+  const genres = mockGenres;
+  return new Promise((resolve, reject) => {
+    resolve({ genres });
+  });
+}
+
+export const getAuthors = () => {
+  const authors = mockAuthors;
+  return new Promise((resolve, reject) => {
+    resolve({ authors });
   });
 }
