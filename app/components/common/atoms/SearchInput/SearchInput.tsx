@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -33,9 +33,15 @@ const useStyles = makeStyles((theme: Theme) =>
 const SearchInput = () => {
   const classes = useStyles();
   let history = useHistory();
+  const [ searchInput, setSearchInput ] = useState('');
 
   const handleSearchClick = () => {
-    history.push('/search');
+    history.push({ pathname: '/search', state: { passedSearchTerm: searchInput } });
+  }
+
+  const onChangeInput = (e) => {
+    console.log(e.target.value);
+    setSearchInput(e.target.value);
   }
 
   return (
@@ -44,6 +50,8 @@ const SearchInput = () => {
         className={classes.input}
         placeholder="Search Books"
         inputProps={{ 'aria-label': 'search books' }}
+        value={searchInput}
+        onChange={onChangeInput}
       />
       <IconButton
         className={classes.iconButton}

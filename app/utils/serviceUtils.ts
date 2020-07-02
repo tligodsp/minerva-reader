@@ -29,27 +29,18 @@ export const getBookById = (id: string) => {
 export const getBookByFilters = (searchTerm: string, authorIds: string[], genreIds: string[]) => {
   /** API REPLACE */
   const books = mockBooks;
-  console.log('start');
-  console.log(searchTerm);
-  console.log(authorIds);
-  console.log(genreIds);
   let filteredBooks = mockBooks;
-  console.log(filteredBooks);
   for (let authorId of authorIds) {
+    console.log(authorId);
     filteredBooks = [ ...filteredBooks.filter(book => isElemInList(authorId, book.authorIds)) ];
+    console.log(filteredBooks);
   }
-  console.log('authorId');
-  console.log(filteredBooks);
   for (let genreId of genreIds) {
     filteredBooks = [ ...filteredBooks.filter(book => isElemInList(genreId, book.genreIds)) ];
   }
-  console.log('genreId');
-  console.log(filteredBooks);
   if (searchTerm && searchTerm.length > 0) {
     filteredBooks = [ ...filteredBooks.filter(book => book.title.toLowerCase().includes(searchTerm)) ];
   }
-  console.log('searchTerm');
-  console.log(filteredBooks);
   // remove duplicates
   // filteredBooks = filteredBooks.filter((book, index) => filteredBooks.indexOf(book) === index);
   return new Promise((resolve, reject) => {

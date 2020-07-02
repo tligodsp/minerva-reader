@@ -28,9 +28,9 @@ const CustomChip = (props: any) => {
 const SearchResultsPage = () => {
   const location: any = useLocation();
   // const { searchTerm, passedAuthorsFilter, passedGenresFilter } = location.state as any;
-  const passedSearchTerm = location.state ? location.state.passedSearchTerm : '';
-  const passedAuthorIds = location.state ? location.state.passedAuthorIds : [];
-  const passedGenreIds = location.state ? location.state.passedGenreIds: [];
+  const passedSearchTerm = location.state && location.state.passedSearchTerm ? location.state.passedSearchTerm : '';
+  const passedAuthorIds = location.state && location.state.passedAuthorIds ? location.state.passedAuthorIds : [];
+  const passedGenreIds = location.state && location.state.passedGenreIds ? location.state.passedGenreIds: [];
   const [ allGenres, setAllGenres ] = useState([]);
   const [ allAuthors, setAllAuthors ] = useState([]);
   const [ filteredBooks, setFilteredBooks ] = useState([]);
@@ -38,14 +38,25 @@ const SearchResultsPage = () => {
   const [ genresFilter, setGenresFilter ] = useState<Genre[]>([]);
   const [ authorsFilter, setAuthorsFilter ] = useState<Author[]>([]);
 
+
   useEffect(() => {
-    Service.getBookByFilters(passedSearchTerm, passedAuthorIds, passedGenreIds)
-      .then((response: any) => {
-        setFilteredBooks(response.books);
-      })
-      .catch(error => {
-        console.log(error);
-      })
+    console.log(location.state);
+    if (location.state && location.state.passedAuthors) {
+      setAuthorsFilter([ ...location.state.passedAuthors ]);
+    }
+    if (location.state && location.state.passedGenres) {
+      setGenresFilter([ ...location.state.passedGenres ]);
+    }
+    if (location.state && location.state.passedSearchTerm) {
+      setSearchTerm(location.state.passedSearchTerm);
+    }
+    // Service.getBookByFilters(passedSearchTerm, passedAuthorIds, passedGenreIds)
+    //   .then((response: any) => {
+    //     setFilteredBooks(response.books);
+    //   })
+    //   .catch(error => {
+    //     console.log(error);
+    //   })
     Service.getGenres()
       .then((response: any) => {
         setAllGenres(response.genres);
@@ -66,7 +77,7 @@ const SearchResultsPage = () => {
 
   useEffect(() => {
     updateFilteredBooks();
-  }, [genresFilter, authorsFilter])
+  }, [genresFilter, authorsFilter, searchTerm])
 
   const updateFilteredBooks = () => {
     const genreIds = genresFilter ? genresFilter.map(genre => genre.id) : [];
@@ -113,23 +124,23 @@ const SearchResultsPage = () => {
             wrapperStyle={{ margin: "0 14px" }}
           >
             <Chips
-							placeholder="Type a genre name"
-							value={genresFilter}
-							onChange={onSelectedGenresChange}
-							suggestions={allGenres}
-							renderChip={(genre: Genre) => (<CustomChip>{genre.name}</CustomChip>)}
-							renderSuggestion={(genre: Genre, p: any) => (
-								<div className={styles['suggestion']} key={genre.id}>{genre.name}</div>
-							)}
-							suggestionsFilter={(opt: any, val: any) => (
-                opt.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
-                && (!genresFilter ||
-                    genresFilter?.findIndex(genre => genre.name == opt.name) === -1)
-							)}
-							getSuggestionValue={(genre: Genre) => genre.name}
-							fromSuggestionsOnly={true}
-							uniqueChips={true}
-						/>
+				placeholder="Type a genre name"
+				value={genresFilter}
+				onChange={onSelectedGenresChange}
+				suggestions={allGenres}
+				renderChip={(genre: Genre) => (<CustomChip>{genre.name}</CustomChip>)}
+				renderSuggestion={(genre: Genre, p: any) => (
+					<div className={styles['suggestion']} key={genre.id}>{genre.name}</div>
+				)}
+				suggestionsFilter={(opt: any, val: any) => (
+					opt.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
+					&& (!genresFilter ||
+						genresFilter?.findIndex(genre => genre.name == opt.name) === -1)
+				)}
+				getSuggestionValue={(genre: Genre) => genre.name}
+				fromSuggestionsOnly={true}
+				uniqueChips={true}
+			/>
           </FilterCard>
           <FilterCard
             criteriaName="Authors"
@@ -137,23 +148,23 @@ const SearchResultsPage = () => {
             wrapperStyle={{ margin: "14px 14px 0" }}
           >
             <Chips
-							placeholder="Type an author name"
-							value={authorsFilter}
-							onChange={onSelectedAuthorsChange}
-							suggestions={allAuthors}
-							renderChip={(author: Author) => (<CustomChip>{author.name}</CustomChip>)}
-							renderSuggestion={(author: Author, p: any) => (
-								<div className={styles['suggestion']} key={author.id}>{author.name}</div>
-							)}
-							suggestionsFilter={(opt: any, val: any) => (
-                opt.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
-                && (!authorsFilter ||
-                    authorsFilter?.findIndex(author => author.name == opt.name) === -1)
-							)}
-							getSuggestionValue={(author: Author) => author.name}
-							fromSuggestionsOnly={true}
-							uniqueChips={true}
-						/>
+				placeholder="Type an author name"
+				value={authorsFilter}
+				onChange={onSelectedAuthorsChange}
+				suggestions={allAuthors}
+				renderChip={(author: Author) => (<CustomChip>{author.name}</CustomChip>)}
+				renderSuggestion={(author: Author, p: any) => (
+					<div className={styles['suggestion']} key={author.id}>{author.name}</div>
+				)}
+				suggestionsFilter={(opt: any, val: any) => (
+					opt.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
+					&& (!authorsFilter ||
+						authorsFilter?.findIndex(author => author.name == opt.name) === -1)
+				)}
+				getSuggestionValue={(author: Author) => author.name}
+				fromSuggestionsOnly={true}
+				uniqueChips={true}
+			/>
           </FilterCard>
         </div>
         {/* SEARCH RESULTS SECTION */}

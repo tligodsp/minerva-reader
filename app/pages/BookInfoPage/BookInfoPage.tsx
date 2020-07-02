@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import Carousel from 'nuka-carousel';
 
@@ -24,6 +24,7 @@ const { ipcRenderer } = require('electron');
 
 const BookInfoPage = (props) => {
   let { id } = useParams();
+  let history = useHistory();
   // const _book: Book = props.books.currentBook;
   // const _reviews = props.reviews.currentBookReviews;
   const [_book, _setBook] = useState<Book>();
@@ -77,6 +78,11 @@ const BookInfoPage = (props) => {
       })
   }, []);
 
+  const handleAuthorBooksClick = () => {
+    console.log('asdds');
+    history.push({ pathname: '/search', state: { passedAuthorIds: [ _book!.authorIds![0] ], passedAuthors: [ _book!.authors![0] ] } });
+  }
+
   const handleDownloadClick = () => {
     // console.log(downloadLink);
     const bookObj: Object = {
@@ -99,11 +105,9 @@ const BookInfoPage = (props) => {
   }
 
   const onNewReviewCreated = () => {
-    console.log('no');
     handleCloseReviewModal();
     setIsReviewsLoading(true);
     if (!id) {
-      console.log('no id');
       /** REDIRECT TO PAGE NOT FOUND */
       return;
     }
@@ -289,7 +293,7 @@ const BookInfoPage = (props) => {
                         </div>
                         <div className={styles['author-name-books']}>
                           <div className={styles['author-name']}>{_book!.authors[0].name}</div>
-                          <div className={styles['author-books']}>{`${authorBooks.length} Books`}</div>
+                          <div className={styles['author-books']} onClick={handleAuthorBooksClick}>{`${authorBooks.length} Books`}</div>
                         </div>
                       </div>
                       <div className={styles['author-about']}>
