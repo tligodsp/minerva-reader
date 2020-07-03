@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,18 +30,28 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const SearchInput = () => {
+const SearchInput = (props) => {
   const classes = useStyles();
   let history = useHistory();
+  let location = useLocation();
   const [ searchInput, setSearchInput ] = useState('');
 
+  console.log(location);
+
   const handleSearchClick = () => {
-    history.push({ pathname: '/search', state: { passedSearchTerm: searchInput } });
+    if (location.pathname.includes('/search')) {
+      history.go(0);
+      history.replace({ pathname: '/search', state: { passedSearchTerm: searchInput } });
+    }
+    else {
+      history.push({ pathname: '/search', state: { passedSearchTerm: searchInput } });
+    }
   }
 
   const onChangeInput = (e) => {
     console.log(e.target.value);
     setSearchInput(e.target.value);
+    // props.onChangeSearchInput(e.target.value);
   }
 
   return (

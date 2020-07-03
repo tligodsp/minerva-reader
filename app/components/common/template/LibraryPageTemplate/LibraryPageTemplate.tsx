@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { LibraryPageTopBar, LibraryPageRightDrawer } from '../../organisms';
 
 import defaultStyles from './LibraryPageTemplate.css';
+
+interface LibraryPageTemplateProps {
+  children: ReactNode,
+  onChangeSearchInput?: Function,
+}
 
 const LibraryPageTemplate = ({ children }) => {
   const [open, setOpen] = useState(false);
@@ -23,6 +28,7 @@ const LibraryPageTemplate = ({ children }) => {
             {/* SEARCH BAR */}
             <LibraryPageTopBar
               onDrawerClick={handleDrawerClick}
+              // onChangeSearchInput={onChangeSearchInput}
             />
             {/* CHILDREN */}
             { children }

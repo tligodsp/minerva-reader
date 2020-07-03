@@ -17,7 +17,9 @@ const LibraryPageTopBar = (props) => {
   const classes = useStyles();
   return (
     <div className={defaultStyles['search-bar-container']}>
-      <SearchInput />
+      <SearchInput
+        // onChangeSearchInput={props.onChangeSearchInput}
+      />
       <div className={defaultStyles['menu-button-container']}>
         <IconButton className={classes.iconButton} onClick={props.onDrawerClick}>
           <MenuIcon />

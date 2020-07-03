@@ -40,16 +40,7 @@ const SearchResultsPage = () => {
 
 
   useEffect(() => {
-    console.log(location.state);
-    if (location.state && location.state.passedAuthors) {
-      setAuthorsFilter([ ...location.state.passedAuthors ]);
-    }
-    if (location.state && location.state.passedGenres) {
-      setGenresFilter([ ...location.state.passedGenres ]);
-    }
-    if (location.state && location.state.passedSearchTerm) {
-      setSearchTerm(location.state.passedSearchTerm);
-    }
+    setFilterValues();
     // Service.getBookByFilters(passedSearchTerm, passedAuthorIds, passedGenreIds)
     //   .then((response: any) => {
     //     setFilteredBooks(response.books);
@@ -78,6 +69,25 @@ const SearchResultsPage = () => {
   useEffect(() => {
     updateFilteredBooks();
   }, [genresFilter, authorsFilter, searchTerm])
+
+  useEffect(() => {
+    setFilterValues();
+  }, [location.state])
+
+  const setFilterValues = () => {
+    if (location.state && location.state.passedAuthors) {
+      setAuthorsFilter([ ...location.state.passedAuthors ]);
+    }
+    if (location.state && location.state.passedGenres) {
+      setGenresFilter([ ...location.state.passedGenres ]);
+    }
+    if (location.state && location.state.passedSearchTerm) {
+      setSearchTerm(location.state.passedSearchTerm);
+    }
+    else {
+      setSearchTerm('');
+    }
+  }
 
   const updateFilteredBooks = () => {
     const genreIds = genresFilter ? genresFilter.map(genre => genre.id) : [];
@@ -169,7 +179,7 @@ const SearchResultsPage = () => {
         </div>
         {/* SEARCH RESULTS SECTION */}
         <BookListSection
-          sectionTitle="Search Result Books"
+          sectionTitle={`Search Results for "${searchTerm}"`}
           wrapperStyle={{ flex: 1, margin: "0 14px" }}
           headerContainerStyle={{
             fontFamily: "Quicksand, sans-serif",
