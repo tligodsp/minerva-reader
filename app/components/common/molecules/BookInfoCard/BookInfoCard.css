@@ -3,7 +3,6 @@
   width: 100%;
   height: fit-content;
   display: flex;
-  flex-direction: row;
   background-color: #FEFEFE;
   border-radius: 1.5rem;
   padding: 5%;
@@ -14,6 +13,14 @@
   white-space: nowrap;
 
   cursor: pointer;
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.horizontal {
+  flex-direction: row;
 }
 
 .book-cover-container {
