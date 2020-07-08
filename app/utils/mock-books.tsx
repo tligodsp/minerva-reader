@@ -1,6 +1,6 @@
 import * as MockAuthors from './mock-authors';
 import * as MockGenres from './mock-genres';
-import { Book } from '../types';
+import { Book, LocalBook } from '../types';
 
 export const mockBooks: Book[] = [
   {
@@ -161,3 +161,17 @@ export const mockBooks: Book[] = [
     downloadLink: 'https://firebasestorage.googleapis.com/v0/b/fb-cloud-functions-demo-4de69.appspot.com/o/PointyPixelPenetration_2018jan.pdf?alt=media&token=f6a55e4d-eb08-47e1-a122-ac9aabca1b34',
   },
 ]
+
+export const getLocalBooks = () => {
+  let localBooks: LocalBook[] = [];
+  for (let book of mockBooks) {
+    localBooks.push({
+      book,
+      readingProgress: 0.5,
+      readingTime: 5,
+      dateAdded: Date.now.toString(),
+      lastRead: Date.now.toString(),
+    })
+  }
+  return localBooks;
+}

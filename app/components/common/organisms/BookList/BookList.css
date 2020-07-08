@@ -10,3 +10,13 @@
   width: 300px;
   margin: 10px;
 }
+
+.simple-rating {
+  margin-top: 5px;
+  font-weight: 700;
+  color: #555;
+}
+
+.rating-value {
+  color: #333;
+}

@@ -10,6 +10,7 @@ import TestPage from './pages/TestPage';
 import HomePage from './pages/HomePage/HomePage';
 import SearchResultsPage from './pages/SearchResultsPage/SearchResultsPage';
 import BookInfoPage from './pages/BookInfoPage/BookInfoPage';
+import LocalLibraryPage from './pages/LocalLibraryPage/LocalLibraryPage';
 import ReaderPage from './pages/ReaderPage';
 import AboutPage from './pages/AboutPage';
 
@@ -39,11 +40,17 @@ export const routes = [
     isOnNavBar: false,
   },
   {
+    path: '/local-library',
+    name: 'LocalLibrary',
+    component: LocalLibraryPage,
+    isOnNavBar: true,
+    icon: <ImportContactsOutlinedIcon style={styles}/>,
+  },
+  {
     path: '/reader',
     name: 'Reader',
     component: ReaderPage,
-    isOnNavBar: true,
-    icon: <ImportContactsOutlinedIcon style={styles}/>,
+    isOnNavBar: false,
   },
   {
     path: '/test',

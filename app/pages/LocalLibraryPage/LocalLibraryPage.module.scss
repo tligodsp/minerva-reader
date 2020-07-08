@@ -1,0 +1,28 @@
+.container {
+  padding: 20px 40px;
+}
+
+.tabs {
+  display: flex;
+  flex-direction: row;
+  font-weight: 700;
+  font-family: 'Quicksand', sans-serif;
+
+  .tab-active {
+    color: #FEFEFE;
+    background-color: #8B82FF;
+    border-radius: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+  }
+
+  .tab-inactive {
+    color: #666;
+    cursor: pointer;
+    padding: 10px 16px;
+  }
+
+  .tab-inactive:hover {
+    color: #8B82FF;
+  }
+}

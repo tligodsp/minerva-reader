@@ -40,6 +40,14 @@ export interface Book {
   downloadLink: string | undefined,
 }
 
+export interface LocalBook {
+  book: Book,
+  readingProgress: number,
+  readingTime: number,
+  dateAdded: string,
+  lastRead: string,
+}
+
 export interface User {
   id: string,
   displayName: string,

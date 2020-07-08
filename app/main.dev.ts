@@ -106,6 +106,7 @@ const createWindow = async () => {
 
 // const BOOKSHELF_PATH = 'books';
 const BOOKSHELF_FOLDER_NAME = 'books';
+const APP_NAME = 'Minerva Reader';
 // const BOOKSHELF_PATH = path.join(__dirname, "bookss");
 
 let downloadingQueue: any[] = [];
@@ -118,7 +119,7 @@ const continueDownload = (win, info) => {
 }
 
 const downloadBook = (win, { event, info }) => {
-  const downloadTo = path.join(app.getPath('userData'), BOOKSHELF_FOLDER_NAME, info.bookObj.id);
+  const downloadTo = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, info.bookObj.id);
   if (fs.existsSync(downloadTo)) {
     console.log('blah');
     win.webContents.send(`folder-already-exist`, { blah: 'blah' });
