@@ -167,6 +167,7 @@ export const getLocalBooks = () => {
   for (let book of mockBooks) {
     localBooks.push({
       book,
+      bookFilePath: `C:\\Users\\tligsp\\Documents\\Minerva Reader\\books\\test\\abc.epub`,
       readingProgress: 0.5,
       readingTime: 5,
       dateAdded: Date.now.toString(),

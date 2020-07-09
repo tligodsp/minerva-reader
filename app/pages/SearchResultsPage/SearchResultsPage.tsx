@@ -134,23 +134,23 @@ const SearchResultsPage = () => {
             wrapperStyle={{ margin: "0 14px" }}
           >
             <Chips
-				placeholder="Type a genre name"
-				value={genresFilter}
-				onChange={onSelectedGenresChange}
-				suggestions={allGenres}
-				renderChip={(genre: Genre) => (<CustomChip>{genre.name}</CustomChip>)}
-				renderSuggestion={(genre: Genre, p: any) => (
-					<div className={styles['suggestion']} key={genre.id}>{genre.name}</div>
-				)}
-				suggestionsFilter={(opt: any, val: any) => (
-					opt.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
-					&& (!genresFilter ||
-						genresFilter?.findIndex(genre => genre.name == opt.name) === -1)
-				)}
-				getSuggestionValue={(genre: Genre) => genre.name}
-				fromSuggestionsOnly={true}
-				uniqueChips={true}
-			/>
+              placeholder="Type a genre name"
+              value={genresFilter}
+              onChange={onSelectedGenresChange}
+              suggestions={allGenres}
+              renderChip={(genre: Genre) => (<CustomChip>{genre.name}</CustomChip>)}
+              renderSuggestion={(genre: Genre, p: any) => (
+                <div className={styles['suggestion']} key={genre.id}>{genre.name}</div>
+              )}
+              suggestionsFilter={(opt: any, val: any) => (
+                opt.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
+                && (!genresFilter ||
+                  genresFilter?.findIndex(genre => genre.name == opt.name) === -1)
+              )}
+              getSuggestionValue={(genre: Genre) => genre.name}
+              fromSuggestionsOnly={true}
+              uniqueChips={true}
+            />
           </FilterCard>
           <FilterCard
             criteriaName="Authors"
@@ -158,23 +158,23 @@ const SearchResultsPage = () => {
             wrapperStyle={{ margin: "14px 14px 0" }}
           >
             <Chips
-				placeholder="Type an author name"
-				value={authorsFilter}
-				onChange={onSelectedAuthorsChange}
-				suggestions={allAuthors}
-				renderChip={(author: Author) => (<CustomChip>{author.name}</CustomChip>)}
-				renderSuggestion={(author: Author, p: any) => (
-					<div className={styles['suggestion']} key={author.id}>{author.name}</div>
-				)}
-				suggestionsFilter={(opt: any, val: any) => (
-					opt.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
-					&& (!authorsFilter ||
-						authorsFilter?.findIndex(author => author.name == opt.name) === -1)
-				)}
-				getSuggestionValue={(author: Author) => author.name}
-				fromSuggestionsOnly={true}
-				uniqueChips={true}
-			/>
+              placeholder="Type an author name"
+              value={authorsFilter}
+              onChange={onSelectedAuthorsChange}
+              suggestions={allAuthors}
+              renderChip={(author: Author) => (<CustomChip>{author.name}</CustomChip>)}
+              renderSuggestion={(author: Author, p: any) => (
+                <div className={styles['suggestion']} key={author.id}>{author.name}</div>
+              )}
+              suggestionsFilter={(opt: any, val: any) => (
+                opt.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
+                && (!authorsFilter ||
+                  authorsFilter?.findIndex(author => author.name == opt.name) === -1)
+              )}
+              getSuggestionValue={(author: Author) => author.name}
+              fromSuggestionsOnly={true}
+              uniqueChips={true}
+            />
           </FilterCard>
         </div>
         {/* SEARCH RESULTS SECTION */}

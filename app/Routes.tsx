@@ -11,7 +11,8 @@ import HomePage from './pages/HomePage/HomePage';
 import SearchResultsPage from './pages/SearchResultsPage/SearchResultsPage';
 import BookInfoPage from './pages/BookInfoPage/BookInfoPage';
 import LocalLibraryPage from './pages/LocalLibraryPage/LocalLibraryPage';
-import ReaderPage from './pages/ReaderPage';
+// import ReaderPage from './pages/ReaderPage';
+import ReaderPage from './pages/ReaderPage/ReaderPage';
 import AboutPage from './pages/AboutPage';
 
 const styles: React.CSSProperties = {
@@ -47,7 +48,7 @@ export const routes = [
     icon: <ImportContactsOutlinedIcon style={styles}/>,
   },
   {
-    path: '/reader',
+    path: '/reader/:id',
     name: 'Reader',
     component: ReaderPage,
     isOnNavBar: false,

@@ -42,6 +42,7 @@ export interface Book {
 
 export interface LocalBook {
   book: Book,
+  bookFilePath: string,
   readingProgress: number,
   readingTime: number,
   dateAdded: string,

@@ -4,6 +4,7 @@ import defaultStyles from './BookList.css';
 import { BookInfoCard } from '../../molecules';
 import { RatingBar } from '../../atoms';
 import { Book, LocalBook, Author, Genre } from '../../../../types';
+import {useHistory} from 'react-router-dom';
 
 interface BookInfoCardStyleProps {
   wrapperStyle?: React.CSSProperties;
@@ -36,6 +37,7 @@ const BookList = ({
     useProgressForChildren, isVerticalBookCard, hideSubInfo, showSimpleRating }
   : BookListProps) => {
   const _books: any = books ? books : [];
+  let history = useHistory();
   const _getAuthorsString = (authors: Author[]) => {
     let res: string = authors?.reduce((accumulator, currentAuthor: Author) => (accumulator + currentAuthor.name + ", "), "");
     res = res.match(/^(.+),\s$/)![1];
@@ -57,6 +59,15 @@ const BookList = ({
       return 'Chapter 1';
     }
     return book.genres ? _getGenresString(book.genres) : "";
+  }
+
+  const _handleBookClick = (id: string) => {
+    if (isLocalBooks) {
+      history.push(`/reader/${id}`)
+    }
+    else {
+      history.push(`/book-info/${id}`)
+    }
   }
 
   const renderBookList = () => {
@@ -93,6 +104,7 @@ const BookList = ({
                     ...bookProps?.bookTitleStyle
                   }}
                   isVertical={isVerticalBookCard}
+                  onBookClick={_handleBookClick}
                 >
                   {
                     useProgressForChildren ?
@@ -167,6 +179,7 @@ const BookList = ({
                     ...bookProps?.bookTitleStyle
                   }}
                   isVertical={isVerticalBookCard}
+                  onBookClick={_handleBookClick}
                 >
                   {
                     useProgressForChildren ?

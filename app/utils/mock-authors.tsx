@@ -100,3 +100,7 @@ export const harperLee: Author = {
 export const mockAuthors: Author[] = [
   harperLee, georgeOrwell, rNarita, hgWells, dBrown, jDeaver
 ]
+
+export const getMockLocalAuthors = () => {
+  return mockAuthors;
+}

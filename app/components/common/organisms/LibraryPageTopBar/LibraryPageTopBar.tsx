@@ -17,6 +17,7 @@ const LibraryPageTopBar = (props) => {
   const classes = useStyles();
   return (
     <div className={defaultStyles['search-bar-container']}>
+      { props.leftElement }
       <SearchInput
         // onChangeSearchInput={props.onChangeSearchInput}
       />

@@ -2,6 +2,15 @@
   padding: 20px 40px;
 }
 
+.contents {
+  display: flex;
+  flex-direction: row;
+}
+
+.main-section {
+  flex: 1;
+}
+
 .tabs {
   display: flex;
   flex-direction: row;
@@ -25,4 +34,51 @@
   .tab-inactive:hover {
     color: #8B82FF;
   }
+}
+
+.menu-button-container {
+  position: absolute;
+  left: 20px;
+}
+
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.custom-chip-container {
+	padding: 5px;
+	background-color: #009be5;
+	margin: 2.5px;
+	border-radius: 10px;
+	cursor: default;
+	font-weight: bold;
+	color: #fefefe;
+	display: flex;
+	align-items: center;
+	padding: 6px 8px;
+
+
+}
+.chip-x-icon {
+  cursor: pointer;
+  border-radius: 100%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  margin-left: 4px;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.chip-x-icon:hover {
+  transition: 100ms ease-in;
+  background-color: #fefefe;
+  color: #009be5;
+}
+
+.suggestion {
+	cursor: pointer;
 }

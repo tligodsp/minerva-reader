@@ -19,13 +19,14 @@ export interface BookInfoCardProps {
   bookSubInfoStyle?: React.CSSProperties;
   smartBackgroundColor?: boolean;
   isVertical?: boolean;
+  onBookClick?: Function;
 }
 
 const BookInfoCard = ({
   id, title, authors, cover, subInfo, children,
   wrapperStyle, bookCoverStyle, bookInfoContainerStyle,
   bookTitleStyle, bookAuthorsStyle, bookSubInfoStyle,
-  smartBackgroundColor, isVertical
+  smartBackgroundColor, isVertical, onBookClick
 }: BookInfoCardProps) => {
   const _cover = cover ? cover : 'https://lazioeventi.com/wp-content/uploads/2014/05/No-image-available.jpg';
   const { data, loading, error } = usePalette(_cover);
@@ -33,7 +34,12 @@ const BookInfoCard = ({
   let history = useHistory();
 
   const _handleClick = () => {
-    history.push(`/book-info/${id}`)
+    if (onBookClick) {
+      onBookClick(id);
+    }
+    else {
+      history.push(`/book-info/${id}`);
+    }
   }
 
   const renderHorizontally = () => {

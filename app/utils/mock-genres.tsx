@@ -87,3 +87,7 @@ export const dystopia: Genre = {
 export const mockGenres: Genre[] = [
   dystopia, politics, scifi, literature, crime, philosophy, classics, mystery, fiction, romance, lightNovel
 ]
+
+export const getMockLocalGenres = () => {
+  return mockGenres;
+}

@@ -7,9 +7,10 @@ import defaultStyles from './LibraryPageTemplate.css';
 interface LibraryPageTemplateProps {
   children: ReactNode,
   onChangeSearchInput?: Function,
+  topBarLeft?: ReactNode,
 }
 
-const LibraryPageTemplate = ({ children }) => {
+const LibraryPageTemplate = ({ children, topBarLeft }: LibraryPageTemplateProps) => {
   const [open, setOpen] = useState(false);
 
   const handleDrawerClick = () => {
@@ -28,6 +29,7 @@ const LibraryPageTemplate = ({ children }) => {
             {/* SEARCH BAR */}
             <LibraryPageTopBar
               onDrawerClick={handleDrawerClick}
+              leftElement={topBarLeft}
               // onChangeSearchInput={onChangeSearchInput}
             />
             {/* CHILDREN */}
