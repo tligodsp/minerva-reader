@@ -3,7 +3,7 @@ import { Reader } from '../components/app';
 
 const ReaderPage = (props) => {
   return (
-    <Reader />
+    <Reader fullScreen={true}/>
   );
 }
 

@@ -27,7 +27,7 @@ const ReaderPage = () => {
     <div>
       {
         localBook &&
-        <Reader localBook={localBook}/>
+        <Reader localBook={localBook} fullScreen/>
       }
     </div>
   );
