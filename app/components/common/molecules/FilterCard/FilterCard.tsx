@@ -8,10 +8,11 @@ interface FilterCardProps {
   criteriaName: string,
   values: any[],
   wrapperStyle?: React.CSSProperties,
+  headerStyle?: React.CSSProperties,
   children?: ReactNode,
 }
 
-const FilterCard = ({ criteriaName, values, wrapperStyle, children }: FilterCardProps) => {
+const FilterCard = ({ criteriaName, values, wrapperStyle, headerStyle, children }: FilterCardProps) => {
   const [_checks, _setChecks] = useState(new Array(values.length).fill(false));
 
   const handleCheck = (index: number) => {
@@ -25,9 +26,15 @@ const FilterCard = ({ criteriaName, values, wrapperStyle, children }: FilterCard
       className={defaultStyles['wrapper']}
       style={{ ...wrapperStyle }}
     >
-      <div className={defaultStyles['header']}>
+      <div
+        className={defaultStyles['header']}
+        style={{ ...headerStyle }}
+      >
         <div>{criteriaName}</div>
-        <div className={defaultStyles['header-subtext']}>More</div>
+        <div
+          className={defaultStyles['header-subtext']}
+          style={{ display: 'none' }}
+        >More</div>
       </div>
       <Divider style={{ margin: "10px 0" }}/>
       {

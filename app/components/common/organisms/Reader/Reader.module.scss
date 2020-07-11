@@ -1,0 +1,19 @@
+.buttons-container {
+  opacity: 0.3;
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  // right: 50px;
+  transition: all 0.3s ease 0s;
+  z-index: 100;
+
+  .icon-button {
+    width: fit-content;
+    height: fit-content;
+  }
+}
+
+.buttons-container:hover {
+  opacity: 1;
+}
+

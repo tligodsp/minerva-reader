@@ -7,8 +7,10 @@ import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import { Colors, Sizing } from '../../../styles';
+import CTheme from '../../../styles/themes';
 import transitions from '@material-ui/core/styles/transitions';
 import { useLocation } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -20,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: Colors.PRIMARY_LIGHTER,
+    // backgroundColor: Colors.PRIMARY_LIGHTER,
     borderRadius: 'unset',
   },
   tabs: {
@@ -44,7 +46,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
   },
   tabSelected: {
-    color: Colors.PRIMARY_LIGHTER,
+    // color: Colors.PRIMARY_LIGHTER,
+    color: CTheme.light.navBarBGColor,
+    backgroundColor: Colors.WHITE
+  },
+  tabSelectedDark: {
+    color: CTheme.dark.navBarBGColor,
     backgroundColor: Colors.WHITE
   },
   icon: {
@@ -52,20 +59,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: Colors.WHITE
   }
 }));
-
-const renderNavItems = (routes: any) => {
-  const classes = useStyles();
-  var filteredRoutes = routes.filter(({ isOnNavBar }) => isOnNavBar);
-  return filteredRoutes.map(({ path, name, icon }, index: number) =>
-    <Tab
-      key={'nav-item-' + index}
-      classes={{ root: classes.tab, selected: classes.tabSelected }}
-      icon={icon}
-      aria-label={name.toLowerCase()}
-      value={path}
-    />
-  )
-}
 
 const NavBar = (props: any) => {
   const classes = useStyles();
@@ -76,6 +69,25 @@ const NavBar = (props: any) => {
     : '/home');
   const { routes } = props;
   var history = useHistory();
+  const { theme } = props.local;
+  // console.log(theme);
+
+  const renderNavItems = (routes: any) => {
+    const classes = useStyles();
+    var filteredRoutes = routes.filter(({ isOnNavBar }) => isOnNavBar);
+    return filteredRoutes.map(({ path, name, icon }, index: number) =>
+      <Tab
+        key={'nav-item-' + index}
+        classes={{
+          root: classes.tab,
+          selected: theme.name == 'light' ? classes.tabSelected : classes.tabSelectedDark,
+        }}
+        icon={icon}
+        aria-label={name.toLowerCase()}
+        value={path}
+      />
+    )
+  }
 
 	const handleChange = (event: React.ChangeEvent<{}>, newPath: string) => {
     setCurrentPath(newPath);
@@ -87,7 +99,11 @@ const NavBar = (props: any) => {
   }, [currentPath]);
 
 	return (
-    <Paper className={classes.paper}>
+    <Paper
+      id="navbar"
+      className={classes.paper}
+      style={{ backgroundColor: theme.navBarBGColor }}
+    >
       {/* TODO: Make logo an element */}
       <img
         src={"file:///resources/logo.png"}
@@ -114,4 +130,8 @@ const NavBar = (props: any) => {
   );
 }
 
-export default NavBar;
+const mapStateToProps = (state) => ({
+  local: state.local,
+});
+
+export default connect(mapStateToProps)(NavBar);

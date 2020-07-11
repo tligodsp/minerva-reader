@@ -13,6 +13,7 @@ import { Book } from '../../types';
 
 const HomePage = (props) => {
   const _allBooks = props.books.allBooks.slice(0, 12);
+  const { theme } = props.local;
 
   useEffect(() => {
     props.fetchBooks();
@@ -20,7 +21,7 @@ const HomePage = (props) => {
   }, []);
 
   return (
-    <LibraryPageTemplate>
+    <LibraryPageTemplate backgroundColor={theme.backgroundColor}>
       <BookListSection
         sectionTitle="You Might Like"
         buttonLabel="View All"
@@ -29,9 +30,10 @@ const HomePage = (props) => {
           fontFamily: "Quicksand, sans-serif",
           fontSize: "1.15rem",
           fontWeight: "bold",
-          padding: "15px 20px"
+          padding: "15px 20px",
+          color: theme.sectionHeaderColor,
         }}
-        buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
+        // buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
       >
         <Carousel
           slidesToShow={3}
@@ -67,7 +69,10 @@ const HomePage = (props) => {
                   title={book.title}
                   cover={book.cover}
                   authors={book.authors ? `by ${book.authors[0].name}` : ""}
-                  smartBackgroundColor={true}
+                  smartBackgroundColor={theme.name == 'light'}
+                  wrapperStyle={
+                    theme.name == 'light' ? undefined : { backgroundColor: theme.bookCardBGColor }
+                  }
                   bookTitleStyle={{
                     color: Colors.WHITE,
                     textShadow: "0px 0px 10px #000000",
@@ -104,25 +109,36 @@ const HomePage = (props) => {
       <BookListSection
         sectionTitle="Popular Books"
         buttonLabel="View All"
-        wrapperStyle={{ padding: "0 40px" }}
+        wrapperStyle={{ padding: "0 40px", marginTop: '45px' }}
         headerContainerStyle={{
           fontFamily: "Quicksand, sans-serif",
           fontSize: "1.15rem",
           fontWeight: "bold",
-          padding: "15px 20px"
+          padding: "0 20px",
+          color: theme.sectionHeaderColor,
         }}
-        buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
+        // buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
       >
         <BookList
           books={_allBooks}
           wrapperStyle={{
             justifyContent: 'flex-start',
-            backgroundColor: Colors.WHITE,
+            backgroundColor: theme.backgroundColor ,
             borderRadius: "20px",
             padding: "10px"
           }}
-          bookContainerStyle={{ width: "23%", margin: "1%", fontSize: "0.85rem" }}
-          bookProps={{ bookTitleStyle: { fontSize: "1rem" } }}
+          bookContainerStyle={{
+            width: "23%",
+            margin: "1%",
+            fontSize: "0.85rem",
+          }}
+          bookProps={{
+            bookTitleStyle: { fontSize: "1rem", color: theme.bookTitleColor },
+            bookAuthorsStyle: { fontWeight: 500, color: theme.bookAuthorsColor },
+            wrapperStyle: { backgroundColor: theme.bookCardBGColor },
+          }}
+          starColor={theme.starColor}
+          showBookRatingCount
         />
       </BookListSection>
     </LibraryPageTemplate>
@@ -130,7 +146,8 @@ const HomePage = (props) => {
 }
 
 const mapStateToProps = (state) => ({
-  books: state.books
+  books: state.books,
+  local: state.local,
 })
 
 export default connect(mapStateToProps, { fetchBooks })(HomePage);

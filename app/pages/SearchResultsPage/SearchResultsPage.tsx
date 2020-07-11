@@ -12,10 +12,14 @@ import Chips, { Chip } from 'react-chips'
 import { useLocation } from 'react-router-dom';
 import * as Service from '../../utils/serviceUtils';
 import styles from './SearchResultsPage.css';
+import { connect } from 'react-redux';
 
 const CustomChip = (props: any) => {
 	return (
-		<div className={styles['custom-chip-container']}>
+    <div
+      className={styles['custom-chip-container']}
+      style={{ backgroundColor: props.chipColor }}
+    >
 			{props.children}
 			<div
 				className={styles['chip-x-icon']}
@@ -25,7 +29,7 @@ const CustomChip = (props: any) => {
 	);
 }
 
-const SearchResultsPage = () => {
+const SearchResultsPage = (props) => {
   const location: any = useLocation();
   // const { searchTerm, passedAuthorsFilter, passedGenresFilter } = location.state as any;
   const passedSearchTerm = location.state && location.state.passedSearchTerm ? location.state.passedSearchTerm : '';
@@ -37,6 +41,7 @@ const SearchResultsPage = () => {
   const [ searchTerm, setSearchTerm ] = useState('');
   const [ genresFilter, setGenresFilter ] = useState<Genre[]>([]);
   const [ authorsFilter, setAuthorsFilter ] = useState<Author[]>([]);
+  const { theme } = props.local;
 
 
   useEffect(() => {
@@ -113,7 +118,7 @@ const SearchResultsPage = () => {
 	}
 
   return (
-    <LibraryPageTemplate>
+    <LibraryPageTemplate backgroundColor={theme.backgroundColor}>
       <div className={styles['page-content']}>
         {/* FILTER SECTION */}
         <div className={styles['filter-section']}>
@@ -123,7 +128,8 @@ const SearchResultsPage = () => {
               fontFamily: "Quicksand, sans-serif",
               fontSize: "1.15rem",
               fontWeight: "bold",
-              padding: "15px 20px"
+              padding: "15px 20px",
+              color: theme.sectionHeaderColor,
             }}
           >
             <div>Filters</div>
@@ -131,14 +137,17 @@ const SearchResultsPage = () => {
           <FilterCard
             criteriaName="Genres"
             values={mockGenres}
-            wrapperStyle={{ margin: "0 14px" }}
+            wrapperStyle={{ margin: "20px 14px 0", backgroundColor: theme.cardBGColor, }}
+            headerStyle={{ color: theme.sectionHeaderColor, }}
           >
             <Chips
               placeholder="Type a genre name"
               value={genresFilter}
               onChange={onSelectedGenresChange}
               suggestions={allGenres}
-              renderChip={(genre: Genre) => (<CustomChip>{genre.name}</CustomChip>)}
+              renderChip={(genre: Genre) => (
+                <CustomChip chipColor={theme.chipColor}>{genre.name}</CustomChip>
+              )}
               renderSuggestion={(genre: Genre, p: any) => (
                 <div className={styles['suggestion']} key={genre.id}>{genre.name}</div>
               )}
@@ -155,14 +164,17 @@ const SearchResultsPage = () => {
           <FilterCard
             criteriaName="Authors"
             values={mockAuthors}
-            wrapperStyle={{ margin: "14px 14px 0" }}
+            wrapperStyle={{ margin: "14px 14px 0", backgroundColor: theme.cardBGColor, }}
+            headerStyle={{ color: theme.sectionHeaderColor, }}
           >
             <Chips
               placeholder="Type an author name"
               value={authorsFilter}
               onChange={onSelectedAuthorsChange}
               suggestions={allAuthors}
-              renderChip={(author: Author) => (<CustomChip>{author.name}</CustomChip>)}
+              renderChip={(author: Author) => (
+                <CustomChip chipColor={theme.chipColor}>{author.name}</CustomChip>
+              )}
               renderSuggestion={(author: Author, p: any) => (
                 <div className={styles['suggestion']} key={author.id}>{author.name}</div>
               )}
@@ -185,20 +197,30 @@ const SearchResultsPage = () => {
             fontFamily: "Quicksand, sans-serif",
             fontSize: "1.15rem",
             fontWeight: "bold",
-            padding: "15px 20px"
+            padding: "15px 20px",
+            color: theme.sectionHeaderColor,
           }}
-          showButton={false}
         >
           <BookList
             books={filteredBooks}
             wrapperStyle={{
               justifyContent: 'flex-start',
-              backgroundColor: Colors.WHITE,
-              borderRadius: "20px",
-              padding: "10px"
+              // backgroundColor: Colors.WHITE,
+              backgroundColor: theme.backgroundColor ,
+              borderRadius: "10px",
+              padding: "0"
             }}
-            bookContainerStyle={{ width: "31%", margin: "1%", fontSize: "0.85rem" }}
-            bookProps={{ bookTitleStyle: { fontSize: "1rem" } }}
+            // bookContainerStyle={{ width: "31%", margin: "1%", fontSize: "0.85rem" }}
+            bookContainerStyle={{ width: "165px", margin: "20px 10px", fontSize: "0.85rem" }}
+            // bookProps={{ bookTitleStyle: { fontSize: "1rem" } }}
+            bookProps={{
+              wrapperStyle: { borderRadius: "10px", padding: "14px", backgroundColor: theme.bookCardBGColor },
+              bookTitleStyle: { fontSize: "0.85rem", color: theme.bookTitleColor },
+              bookAuthorsStyle: { fontSize: "0.8rem", fontWeight: 500, color: theme.bookAuthorsColor },
+              bookCoverStyle: { borderRadius: "10px" }
+            }}
+            starColor={theme.starColor}
+            isVerticalBookCard
           />
         </BookListSection>
       </div>
@@ -206,4 +228,8 @@ const SearchResultsPage = () => {
   );
 }
 
-export default SearchResultsPage;
+const mapStateToProps = (state) => ({
+  local: state.local,
+});
+
+export default connect(mapStateToProps)(SearchResultsPage);

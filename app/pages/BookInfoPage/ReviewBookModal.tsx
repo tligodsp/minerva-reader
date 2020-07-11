@@ -14,6 +14,9 @@ import { InteractiveRatingBar } from '../../components/common/atoms';
 import TextField from '@material-ui/core/TextField';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import * as Service from '../../utils/serviceUtils';
+import { colors } from '@material-ui/core';
+import CTheme from '../../styles/themes';
+import $ from 'jquery';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children?: React.ReactElement<any, any> },
@@ -24,17 +27,45 @@ const Transition = React.forwardRef(function Transition(
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
+    rootLight: {
       fontFamily: "'Quicksand', sans-serif",
       marginTop: "20px",
       fontWeight: 500,
       '& .MuiInputLabel-outlined': {
         fontFamily: "'Quicksand', sans-serif",
         fontWeight: 500,
+        color: CTheme.light.textColor,
       },
       '& .MuiOutlinedInput-input': {
         fontFamily: "'Quicksand', sans-serif",
         fontWeight: 500,
+      },
+      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderColor: CTheme.light.textFieldActiveColor
+      },
+      '& .MuiFormLabel-root.Mui-focused': {
+        color: CTheme.light.textFieldActiveColor
+      },
+    },
+    rootDark: {
+      fontFamily: "'Quicksand', sans-serif",
+      marginTop: "20px",
+      fontWeight: 500,
+      '& .MuiInputLabel-outlined': {
+        fontFamily: "'Quicksand', sans-serif",
+        fontWeight: 500,
+        color: CTheme.dark.textColor,
+      },
+      '& .MuiOutlinedInput-input': {
+        fontFamily: "'Quicksand', sans-serif",
+        fontWeight: 500,
+        color: CTheme.dark.textColor
+      },
+      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderColor: CTheme.dark.textFieldActiveColor
+      },
+      '& .MuiFormLabel-root.Mui-focused': {
+        color: CTheme.dark.textFieldActiveColor
       },
     },
   }),
@@ -46,9 +77,10 @@ interface ReviewBookModalProps {
   user: User,
   book: Book,
   onSubmitted: Function,
+  theme: any,
 }
 
-const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted }: ReviewBookModalProps) => {
+const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted, theme }: ReviewBookModalProps) => {
   const classes = useStyles();
   const [rating, setRating] = useState(-1);
   const [comment, setComment] = useState('');
@@ -67,6 +99,11 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted }: ReviewB
     setRating(-1);
     setComment('');
     console.log("enter");
+    const dialogContainerElem = $('#dialog div[role="dialog"]');
+    dialogContainerElem.css({
+      'background-color': theme.cardBGColor,
+      'color': theme.textColor
+    });
   }
 
   const handleSubmit = () => {
@@ -81,8 +118,11 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted }: ReviewB
   }
 
   return (
-    <div className={styles['container']}>
+    <div
+      className={styles['container']}
+    >
       <Dialog
+        id="dialog"
         open={open}
         TransitionComponent={Transition}
         keepMounted
@@ -92,7 +132,10 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted }: ReviewB
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle id="alert-dialog-slide-title">
-          <div className={styles['header']}>{`Share your opinion on ${book.title}`}</div>
+          <div
+            className={styles['header']}
+            style={{ fontWeight: 600 }}
+          >{`Share your opinion on ${book.title}`}</div>
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
@@ -105,14 +148,18 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted }: ReviewB
                   />
                 </div>
                 <div className={styles['user-rating']}>
-                  <div className={styles['text']}>Your rating:</div>
+                  <div
+                    className={styles['text']}
+                    style={{ color: theme.textColor }}
+                  >Your rating:</div>
                   <InteractiveRatingBar
                     ratingValue={rating}
                     onValueChange={onRatingValueChange}
+                    starStyle={{ color: theme.starColor }}
                   />
                 </div>
               </div>
-              <div className={classes.root}>
+              <div className={theme.name == 'light' ? classes.rootLight : classes.rootDark}>
                 <TextField
                   id="outlined-multiline-static"
                   label="Your review"

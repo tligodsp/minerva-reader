@@ -11,6 +11,7 @@ import { makeStyles, createStyles } from '@material-ui/core/styles';
 import Chips, { Chip } from 'react-chips';
 import { FilterCard } from '../../components/common/molecules';
 import { Colors } from '../../styles';
+import { connect } from 'react-redux';
 
 const TAB = {
 	RECENTLY_READ: 'Recently Read',
@@ -36,7 +37,10 @@ const useStyles = makeStyles(() =>
 
 const CustomChip = (props: any) => {
 	return (
-		<div className={styles['custom-chip-container']}>
+    <div
+      className={styles['custom-chip-container']}
+      style={{ backgroundColor: props.chipColor }}
+    >
 			{props.children}
 			<div
 				className={styles['chip-x-icon']}
@@ -46,7 +50,7 @@ const CustomChip = (props: any) => {
 	);
 }
 
-const LocalLibrary = () => {
+const LocalLibrary = (props) => {
   const [chosenTab, setChosenTab] = useState(TAB.RECENTLY_READ);
   const [books, setBooks] = useState<LocalBook[]>([]);
   const [allGenres, setAllGenres] = useState<Genre[]>([]);
@@ -55,6 +59,7 @@ const LocalLibrary = () => {
   const [ authorsFilter, setAuthorsFilter ] = useState<Author[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const classes = useStyles();
+  const { theme } = props.local;
 
   useEffect(() => {
     Local.getLocalGenres()
@@ -136,6 +141,7 @@ const LocalLibrary = () => {
 	return (
 		<LibraryPageTemplate
       topBarLeft={renderFilterButton()}
+      backgroundColor={theme.backgroundColor}
     >
       <div className={styles['container']}>
 
@@ -145,6 +151,7 @@ const LocalLibrary = () => {
                 <div
                   key={`tab-${index}`}
                   className={tab == chosenTab ? styles['tab-active'] : styles['tab-inactive']}
+                  style={tab == chosenTab ? { backgroundColor: theme.cardBGColor } : undefined}
                   onClick={() => setChosenTab(tab)}
                 >
                   {tab}
@@ -160,14 +167,15 @@ const LocalLibrary = () => {
                   <FilterCard
                     criteriaName="Genres"
                     values={allGenres}
-                    wrapperStyle={{ margin: "0 14px", width: "340px" }}
+                    wrapperStyle={{ margin: "0 14px", width: "340px", backgroundColor: theme.cardBGColor, }}
+                    headerStyle={{ color: theme.sectionHeaderColor, }}
                   >
                     <Chips
                       placeholder="Type a genre name"
                       value={genresFilter}
                       onChange={onSelectedGenresChange}
                       suggestions={allGenres}
-                      renderChip={(genre: Genre) => (<CustomChip>{genre.name}</CustomChip>)}
+                      renderChip={(genre: Genre) => (<CustomChip chipColor={theme.chipColor}>{genre.name}</CustomChip>)}
                       renderSuggestion={(genre: Genre, p: any) => (
                         <div className={styles['suggestion']} key={genre.id}>{genre.name}</div>
                       )}
@@ -184,14 +192,15 @@ const LocalLibrary = () => {
                   <FilterCard
                     criteriaName="Authors"
                     values={allAuthors}
-                    wrapperStyle={{ margin: "14px 14px 0", width: "340px" }}
+                    wrapperStyle={{ margin: "14px 14px 0", width: "340px", backgroundColor: theme.cardBGColor, }}
+                    headerStyle={{ color: theme.sectionHeaderColor, }}
                   >
                     <Chips
                       placeholder="Type an author name"
                       value={authorsFilter}
                       onChange={onSelectedAuthorsChange}
                       suggestions={allAuthors}
-                      renderChip={(author: Author) => (<CustomChip>{author.name}</CustomChip>)}
+                      renderChip={(author: Author) => (<CustomChip chipColor={theme.chipColor}>{author.name}</CustomChip>)}
                       renderSuggestion={(author: Author, p: any) => (
                         <div className={styles['suggestion']} key={author.id}>{author.name}</div>
                       )}
@@ -219,15 +228,19 @@ const LocalLibrary = () => {
               }}
               bookContainerStyle={{ width: "165px", margin: "20px 10px", fontSize: "0.85rem" }}
               bookProps={{
-                wrapperStyle: { borderRadius: "10px", padding: "14px" },
-                bookTitleStyle: { fontSize: "0.85rem" },
-                bookAuthorsStyle: { fontSize: "0.8rem" },
+                wrapperStyle: { borderRadius: "10px", padding: "14px", backgroundColor: theme.bookCardBGColor },
+                bookTitleStyle: { fontSize: "0.85rem", color: theme.bookTitleColor },
+                bookAuthorsStyle: { fontSize: "0.8rem", fontWeight: 500, color: theme.bookAuthorsColor },
                 bookCoverStyle: { borderRadius: "10px" }
               }}
               isVerticalBookCard
               useProgressForChildren={chosenTab == TAB.RECENTLY_READ}
               hideSubInfo
-              showSimpleRating
+              progressPathColor={theme.progressPathColor}
+              progressTrailColor={theme.progressTrailColor}
+              progressTextColor={theme.progressTextColor}
+              starColor={theme.starColor}
+              // showSimpleRating
             />
             </div>
           </div>
@@ -236,4 +249,8 @@ const LocalLibrary = () => {
 	);
 }
 
-export default LocalLibrary;
+const mapStateToProps = (state) => ({
+  local: state.local,
+});
+
+export default connect(mapStateToProps)(LocalLibrary);

@@ -17,7 +17,7 @@ const BookListSection = ({
   wrapperStyle, headerContainerStyle, buttonColor,
   showButton
 }: BookListSectionProps) => {
-  const _showButton = showButton != undefined ? showButton : true;
+  // const _showButton = showButton != undefined ? showButton : true;
   return (
     <div
       className={defaultStyles['wrapper']}
@@ -29,7 +29,7 @@ const BookListSection = ({
       >
         <div>{sectionTitle}</div>
         {
-          _showButton &&
+          showButton &&
           (<button
             className={defaultStyles['button']}
             style={buttonColor ? { background: buttonColor } : undefined }

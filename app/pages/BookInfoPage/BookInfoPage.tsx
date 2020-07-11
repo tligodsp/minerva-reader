@@ -34,6 +34,7 @@ const BookInfoPage = (props) => {
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [isReviewsLoading, setIsReviewsLoading] = useState(true);
+  const { theme } = props.local;
 
   useEffect(() => {
     if (!id) {
@@ -128,7 +129,7 @@ const BookInfoPage = (props) => {
   }
 
   return (
-    <LibraryPageTemplate>
+    <LibraryPageTemplate backgroundColor={theme.backgroundColor}>
       { _book &&
         (<div>
           <div className={styles['page-content']}>
@@ -137,7 +138,13 @@ const BookInfoPage = (props) => {
               {/* BOOK INFO CARD */}
               {
                 (_book && _book.authors) &&
-                <div className={styles['book-info-card']}>
+                <div
+                  className={styles['book-info-card']}
+                  style={{
+                    backgroundColor: theme.cardBGColor,
+                    color: theme.textColor
+                  }}
+                >
                   <div className={styles['book-cover-and-buttons']}>
                     <div style={{ marginBottom: '5px' }}>
                       <img src={_book!.cover} alt='cover' className={styles['cover-img']}/>
@@ -164,12 +171,24 @@ const BookInfoPage = (props) => {
                     }
                   </div>
                   <div className={styles['book-text-info']}>
-                    <div className={styles['book-title']}>{_book!.title}</div>
-                    <div className={styles['book-author']}>by {_book.authors[0].name}</div>
+                    <div
+                      className={styles['book-title']}
+                      style={{ color: theme.bookTitleColor }}
+                    >{_book!.title}</div>
+                    <div
+                      className={styles['book-author']}
+                      style={{
+                        color: theme.bookAuthorsColor,
+                        fontWeight: 600,
+                      }}
+                    >by {_book.authors[0].name}</div>
                     <div className={styles['rating-bar']}>
                       <RatingBar
                         ratingValue={_book!.ratingValue ? _book!.ratingValue / 5 : 0}
-                        starStyle={{ fontSize: "1.75rem" }}
+                        starStyle={{
+                          fontSize: "1.75rem",
+                          color: theme.starColor
+                        }}
                       />
                       <div style={{ fontWeight: 600, marginLeft: "10px" }}>({_book!.ratingCount})</div>
                     </div>
@@ -181,9 +200,16 @@ const BookInfoPage = (props) => {
               <SectionCard
                 sectionName="Community Reviews"
                 showSubtext={false}
+                wrapperStyle={{
+                  backgroundColor: theme.cardBGColor,
+                  color: theme.textColor
+                }}
               >
                 {/* START REVIEW */}
-                <div className={styles['review-container']}>
+                <div
+                  className={styles['review-container']}
+
+                >
                   <div className={styles['user-avatar']}>
                     <img
                       className={styles['user-avatar']}
@@ -192,7 +218,10 @@ const BookInfoPage = (props) => {
                   </div>
                   <div className={styles['review-bold-text-and-content']}>
                     <div className={styles['review-bold-text']}>
-                      <span className={styles['review-username-clickable']}>{currentUser.displayName}</span>
+                      <span
+                        className={styles['review-username-clickable']}
+                        style={{ color: theme.usernameColor }}
+                      >{currentUser.displayName}</span>
                       , start your review of Deception Point
                     </div>
                     <button
@@ -219,11 +248,14 @@ const BookInfoPage = (props) => {
                       </div>
                       <div className={styles['review-bold-text-and-content']}>
                         <div className={styles['review-bold-text']}>
-                          <span className={styles['review-username-clickable']}>{review.user.displayName}</span>
+                          <span
+                            className={styles['review-username-clickable']}
+                            style={{ color: theme.usernameColor }}
+                          >{review.user.displayName}</span>
                           &nbsp;rated it&nbsp;
                           <span>
                             <RatingBar
-                              starStyle={{ fontSize: '1.25rem' }}
+                              starStyle={{ fontSize: '1.25rem', color: theme.starColor }}
                               wrapperStyle={{ display: 'flex' }}
                               ratingValue={review.ratingValue / 5}
                             />
@@ -241,7 +273,12 @@ const BookInfoPage = (props) => {
             <div className={styles['right-section']}>
               <SectionCard
                 sectionName="Similar Books"
-                wrapperStyle={{ marginTop: 0 }}
+                wrapperStyle={{
+                  backgroundColor: theme.cardBGColor,
+                  color: theme.textColor,
+                  marginTop: 0,
+                }}
+                showSubtext={false}
               >
                 <Carousel
                   slidesToShow={4}
@@ -282,6 +319,10 @@ const BookInfoPage = (props) => {
                   <SectionCard
                     sectionName={`About ${_book!.authors[0].name}`}
                     showSubtext={false}
+                    wrapperStyle={{
+                      backgroundColor: theme.cardBGColor,
+                      color: theme.textColor
+                    }}
                   >
                     <div className={styles['author-info-container']}>
                       <div className={styles['author-photo-name-books']}>
@@ -292,7 +333,10 @@ const BookInfoPage = (props) => {
                           />
                         </div>
                         <div className={styles['author-name-books']}>
-                          <div className={styles['author-name']}>{_book!.authors[0].name}</div>
+                          <div
+                            className={styles['author-name']}
+                            style={{ color: theme.bookAuthorsColor }}
+                          >{_book!.authors[0].name}</div>
                           <div className={styles['author-books']} onClick={handleAuthorBooksClick}>{`${authorBooks.length} Books`}</div>
                         </div>
                       </div>
@@ -311,6 +355,7 @@ const BookInfoPage = (props) => {
             user={currentUser}
             book={_book!}
             onSubmitted={onNewReviewCreated}
+            theme={theme}
           />
         </div>)
       }

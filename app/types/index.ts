@@ -56,3 +56,8 @@ export interface User {
   recentlyRead?: Book[];
   wishlist?: Book[];
 }
+
+export interface DisplayConfig {
+  theme: 'light' | 'dark',
+  fontSize: 'small' | 'large' | 'medium',
+}

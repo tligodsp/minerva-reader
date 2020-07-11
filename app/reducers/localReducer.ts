@@ -1,10 +1,15 @@
 import { DOWNLOAD_BOOK, ADD_BOOK_TO_DOWNLOADING_LIST, REMOVE_BOOK_FROM_DOWNLOADING_LIST,
     UPDATE_CURRENT_DOWNLOAD_PROGRESS } from '../actions/types';
+import { getDefaultDisplayConfig, getThemeByName } from '../utils/localUtils';
 
 const initialState = {
   downloadingBooks: [],
   currentDownloadProgress: 0,
   currentDownloadingBookId: '',
+  commonTheme: getDefaultDisplayConfig(),
+  navBarTheme: 'light',
+  // theme: getThemeByName('light'),
+  theme: getThemeByName('dark'),
 }
 
 const localReducer = (state = initialState, action) => {

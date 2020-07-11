@@ -8,9 +8,10 @@ interface LibraryPageTemplateProps {
   children: ReactNode,
   onChangeSearchInput?: Function,
   topBarLeft?: ReactNode,
+  backgroundColor?: string,
 }
 
-const LibraryPageTemplate = ({ children, topBarLeft }: LibraryPageTemplateProps) => {
+const LibraryPageTemplate = ({ children, topBarLeft, backgroundColor }: LibraryPageTemplateProps) => {
   const [open, setOpen] = useState(false);
 
   const handleDrawerClick = () => {
@@ -20,6 +21,7 @@ const LibraryPageTemplate = ({ children, topBarLeft }: LibraryPageTemplateProps)
   return (
     <div
       className={defaultStyles['page']}
+      style={{ backgroundColor: backgroundColor }}
     >
       <div
         className={defaultStyles['main-display']}

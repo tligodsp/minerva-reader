@@ -4,7 +4,7 @@ import defaultStyles from './BookList.css';
 import { BookInfoCard } from '../../molecules';
 import { RatingBar } from '../../atoms';
 import { Book, LocalBook, Author, Genre } from '../../../../types';
-import {useHistory} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 interface BookInfoCardStyleProps {
   wrapperStyle?: React.CSSProperties;
@@ -28,13 +28,20 @@ interface BookListProps {
   isVerticalBookCard?: boolean;
   hideSubInfo?: boolean;
   showSimpleRating?: boolean;
+  starColor?: string;
+  showBookRatingCount?: boolean;
+  progressPathColor?: string;
+  progressTrailColor?: string;
+  progressTextColor?: string;
   // TODO: Add book card display type: Rating|Progress
 }
 
 const BookList = ({
     books, isLocalBooks, bookTitleFontSize, bookDefaultFontSize,
     wrapperStyle, bookContainerStyle, bookProps, useProgressForSubInfo,
-    useProgressForChildren, isVerticalBookCard, hideSubInfo, showSimpleRating }
+    useProgressForChildren, isVerticalBookCard, hideSubInfo, showSimpleRating,
+    starColor,showBookRatingCount, progressPathColor, progressTrailColor,
+    progressTextColor }
   : BookListProps) => {
   const _books: any = books ? books : [];
   let history = useHistory();
@@ -43,6 +50,9 @@ const BookList = ({
     res = res.match(/^(.+),\s$/)![1];
     return res;
   }
+  const _progressPathColor = progressPathColor ? progressPathColor : '#333333';
+  const _progressTrailColor = progressTrailColor ? progressTrailColor : '#DDDDDD';
+  const _progressTextColor = progressTextColor ? progressTextColor : '#333333';
 
   const _getGenresString = (genres: Genre[]) => {
     let res: string = genres?.reduce((accumulator, currentGenre: Genre) => (accumulator + currentGenre.name + ", "), "");
@@ -115,12 +125,20 @@ const BookList = ({
                             value={66}
                             styles={{
                               path: {
-                                stroke: "#7670FF"
+                                stroke: _progressPathColor
                               },
+                              trail: {
+                                stroke: _progressTrailColor
+                              }
                             }}
                           />
                         </div>
-                        <div style={{ marginLeft: "5px", fontWeight: "bold", color: "#7670FF" }}>66%</div>
+                        <div
+                          style={{
+                            marginLeft: "5px",
+                            fontWeight: "bold",
+                            color: _progressTextColor
+                          }}>66%</div>
                       </div>
                     )
                     : (<div
@@ -132,8 +150,14 @@ const BookList = ({
                         paddingRight: "16%"
                       }}
                     >
-                      <RatingBar ratingValue={book.ratingValue ? book.ratingValue / 5 : 0}/>
-                      <div style={{ fontWeight: "bold", marginLeft: "10px" }}>({book.ratingCount})</div>
+                      <RatingBar
+                        ratingValue={book.ratingValue ? book.ratingValue / 5 : 0}
+                        starStyle={starColor ? { color: starColor } : undefined}
+                      />
+                      {
+                        showBookRatingCount &&
+                        <div style={{ fontWeight: "bold", marginLeft: "10px", visibility: 'hidden' }}>({book.ratingCount})</div>
+                      }
                     </div>)
                   }
                 </BookInfoCard>
@@ -187,15 +211,23 @@ const BookList = ({
                       <div style={{ display: "flex", flexDirection: "row", alignItems: "flex-end" }}>
                         <div style={{ width: "25px", marginTop: "5px"}}>
                           <CircularProgressbar
-                            value={readingProgress * 100}
+                            value={66}
                             styles={{
                               path: {
-                                stroke: "#7670FF"
+                                stroke: _progressPathColor
                               },
+                              trail: {
+                                stroke: _progressTrailColor
+                              }
                             }}
                           />
                         </div>
-                        <div style={{ marginLeft: "5px", fontWeight: "bold", color: "#7670FF" }}>66%</div>
+                        <div
+                          style={{
+                            marginLeft: "5px",
+                            fontWeight: "bold",
+                            color: _progressTextColor
+                          }}>66%</div>
                       </div>
                     )
                     : ( showSimpleRating ?
@@ -211,8 +243,14 @@ const BookList = ({
                             paddingRight: "16%"
                           }}
                         >
-                      <RatingBar ratingValue={book.ratingValue ? book.ratingValue / 5 : 0}/>
-                      <div style={{ fontWeight: "bold", marginLeft: "10px" }}>({book.ratingCount})</div>
+                      <RatingBar
+                        ratingValue={book.ratingValue ? book.ratingValue / 5 : 0}
+                        starStyle={starColor ? { color: starColor } : undefined}
+                      />
+                      {
+                        showBookRatingCount &&
+                        <div style={{ fontWeight: "bold", marginLeft: "10px", visibility: 'hidden' }}>({book.ratingCount})</div>
+                      }
                     </div>)
                   }
                 </BookInfoCard>

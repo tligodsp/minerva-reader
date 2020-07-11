@@ -1,7 +1,9 @@
-import { LocalBook, Genre, Author } from '../types';
+import { LocalBook, Genre, Author, DisplayConfig } from '../types';
 import { getLocalBooks } from './mock-books';
 import { getMockLocalGenres } from './mock-genres';
 import { getMockLocalAuthors } from './mock-authors';
+import { getMockDisplayConfig } from './mock-display-config';
+import Theme from '../styles/themes';
 
 export const getRecentlyAddedBooks = () => {
 	const books: LocalBook[] = getLocalBooks();
@@ -55,5 +57,32 @@ export const getLocalBookById = (id: string) => {
     else {
       reject('Not found');
     }
-  })
+  });
+}
+
+export const getCommonDisplayConfig = () => {
+  let config: DisplayConfig | undefined = getMockDisplayConfig();
+  if (!config) {
+    config = {
+      theme: 'dark',
+      fontSize: 'medium'
+    }
+  }
+  return new Promise((resolve, reject) => {
+    resolve({config});
+  });
+}
+
+export const getDefaultDisplayConfig = () => {
+  return {
+    theme: 'light',
+    fontSize: 'medium'
+  }
+}
+
+export const getThemeByName = (name: string) => {
+  if (name == 'dark') {
+    return Theme.dark;
+  }
+  return Theme.light;
 }
