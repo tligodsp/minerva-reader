@@ -8,8 +8,8 @@ const initialState = {
   currentDownloadingBookId: '',
   commonTheme: getDefaultDisplayConfig(),
   navBarTheme: 'light',
-  // theme: getThemeByName('light'),
-  theme: getThemeByName('dark'),
+  theme: getThemeByName('light'),
+  // theme: getThemeByName('dark'),
 }
 
 const localReducer = (state = initialState, action) => {

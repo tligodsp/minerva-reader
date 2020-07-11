@@ -77,7 +77,7 @@ const BookInfoPage = (props) => {
       .catch((error) => {
         console.log(error);
       })
-  }, []);
+  }, [id]);
 
   const handleAuthorBooksClick = () => {
     console.log('asdds');
@@ -95,6 +95,12 @@ const BookInfoPage = (props) => {
     // ipcRenderer.on('download-success', (event, arg) => {
     //   console.log(arg);
     // });
+  }
+
+  const handleSimilarBookClick = (id) => {
+    console.log('similar');
+    history.push(`/book-info/${id}`);
+    // window.location.href = `/book-info/${id}`;
   }
 
   const handleCloseReviewModal= () => {
@@ -297,6 +303,7 @@ const BookInfoPage = (props) => {
                       <div
                         key={`book${index}`}
                         style={{ height: "fit-content" }}
+                        onClick={() => handleSimilarBookClick(book.id)}
                       >
                         <div
                           className={styles['sub-book-cover']}

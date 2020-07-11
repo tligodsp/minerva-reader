@@ -38,6 +38,8 @@ export interface Book {
   sypnosis?: string,
   reviews?: Review[],
   downloadLink: string | undefined,
+  createAt?: string,
+  releaseAt?: string,
 }
 
 export interface LocalBook {
