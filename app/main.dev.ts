@@ -370,6 +370,36 @@ ipcMain.on('update-book-reading-progress', (event, info) => {
   };
 });
 
+ipcMain.on('update-book-display-config', (event, info) => {
+  try {
+    const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
+    let userData: any = {};
+    if (fs.existsSync(userDataPath)) {
+      const userRawData = fs.readFileSync(userDataPath);
+      userData = JSON.parse(userRawData);
+      if (userData && userData.localBooks) {
+        let bookIndex = userData.localBooks.findIndex(lb => lb.book.id === info.bookId);
+        if (bookIndex != -1) {
+          let localBooks =  userData.localBooks;
+          let book = localBooks[bookIndex];
+          book.displayConfig = info.displayConfig;
+          book.useCommonDisplay = info.useCommonDisplay;
+          localBooks[bookIndex] = book;
+          userData.localBooks = [ ...localBooks ];
+          fs.writeFileSync(
+            userDataPath,
+            JSON.stringify(userData, null, 2)
+          );
+        }
+      }
+    }
+  }
+  catch(err) {
+    // event.sender.send(`get-user-data-done`, { result: 'ERROR', userData: {} });
+    console.log(err);
+  };
+});
+
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed

@@ -52,6 +52,7 @@ export interface LocalBook {
   dateAdded: string,
   lastRead?: string,
   displayConfig?: DisplayConfig,
+  useCommonDisplay?: boolean,
 }
 
 export interface User {

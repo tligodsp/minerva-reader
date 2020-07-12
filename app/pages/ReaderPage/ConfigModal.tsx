@@ -7,8 +7,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import Switch from '@material-ui/core/Switch';
 import { TransitionProps } from '@material-ui/core/transitions';
-import { LocalBook } from '../../types';
+import { LocalBook, DisplayConfig } from '../../types';
 import styles from './ConfigModal.module.scss';
+import * as Local from '../../utils/localUtils';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children?: React.ReactElement<any, any> },
@@ -20,23 +21,65 @@ const Transition = React.forwardRef(function Transition(
 interface ConfigModalProps {
   open: boolean,
   localBook: LocalBook,
+  onApply: Function,
   onClose: Function,
 }
 
-const ConfigModal = ({ open, onClose }: ConfigModalProps) => {
-  const [useCommonChecked, setUseCommonChecked] = useState(true);
-  // const [theme, setTheme] = useState()
+const ConfigModal = ({ open, localBook, onApply, onClose }: ConfigModalProps) => {
+  const [ useCommonChecked, setUseCommonChecked ] = useState(true);
+  const [ display, setDisplay ] = useState<any>(Local.getDefaultDisplayConfig());
 
   useEffect(() => {
-
   }, []);
 
   const handleClose = () => {
     onClose();
   };
 
+  const onEnter = () => {
+    if (localBook.useCommonDisplay == null || localBook.useCommonDisplay || localBook.displayConfig == null) {
+      setUseCommonChecked(true);
+    }
+    else {
+      setUseCommonChecked(false);
+    }
+    if (localBook.displayConfig) {
+      setDisplay(localBook.displayConfig);
+    }
+    else {
+      setDisplay(Local.getDefaultDisplayConfig());
+    }
+  }
+
   const handleCheckChange = () => {
     setUseCommonChecked(!useCommonChecked);
+  }
+
+  const handleApplyConfig = () => {
+    Local.updateBookDisplayConfig(localBook.book.id, display, useCommonChecked);
+    onApply(display);
+    onClose();
+  }
+
+  const onThemeClick = (chosenTheme: string) => {
+    if (chosenTheme == 'dark') {
+      setDisplay({ ...display, theme: 'dark' });
+    }
+    else {
+      setDisplay({ ...display, theme: 'light' });
+    }
+  }
+
+  const onFontSizeClick = (chosenFontSize: string) => {
+    if (chosenFontSize == 'small') {
+      setDisplay({ ...display, fontSize: 'small' });
+    }
+    else if (chosenFontSize == 'large') {
+      setDisplay({ ...display, fontSize: 'large' });
+    }
+    else {
+      setDisplay({ ...display, fontSize: 'medium' });
+    }
   }
 
   return (
@@ -45,6 +88,7 @@ const ConfigModal = ({ open, onClose }: ConfigModalProps) => {
         open={open}
         TransitionComponent={Transition}
         keepMounted
+        onEnter={onEnter}
         onClose={handleClose}
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
@@ -68,16 +112,31 @@ const ConfigModal = ({ open, onClose }: ConfigModalProps) => {
               <div className={styles['config-group']}>
                 <div className={styles['group-header']}>Theme:</div>
                 <div className={styles['button-group']}>
-                  <div className={'button-secondary ' + styles['left-button']}>Dark</div>
-                  <div className={'button-secondary ' + styles['right-button']}>Light</div>
+                <div
+                  className={`button${display.theme == 'dark' ? '' : '-secondary'} ` + styles['left-button']}
+                  onClick={() => onThemeClick('dark')}
+                >Dark</div>
+                <div
+                  className={`button${display.theme == 'light' ? '' : '-secondary'} ` + styles['right-button']}
+                  onClick={() => onThemeClick('light')}
+                >Light</div>
                 </div>
               </div>
               <div className={styles['config-group']}>
                 <div className={styles['group-header']}>Font Size:</div>
                 <div className={styles['button-group']}>
-                  <div className={'button-secondary ' + styles['left-button']}>Small</div>
-                  <div className={'button-secondary ' + styles['middle-button']}>Medium</div>
-                  <div className={'button-secondary ' + styles['right-button']}>Large</div>
+                <div
+                  className={`button${display.fontSize == 'small' ? '' : '-secondary'} ` + styles['left-button']}
+                  onClick={() => onFontSizeClick('small')}
+                >Small</div>
+                <div
+                  className={`button${display.fontSize == 'medium' ? '' : '-secondary'} ` + styles['middle-button']}
+                  onClick={() => onFontSizeClick('medium')}
+                >Medium</div>
+                <div
+                  className={`button${display.fontSize == 'large' ? '' : '-secondary'} ` + styles['right-button']}
+                  onClick={() => onFontSizeClick('large')}
+                >Large</div>
                 </div>
               </div>
               {
@@ -110,7 +169,7 @@ const ConfigModal = ({ open, onClose }: ConfigModalProps) => {
           </button>
           <button
             className="button-secondary"
-            onClick={handleClose}
+            onClick={handleApplyConfig}
             style={{
               borderWidth: 0,
             }}

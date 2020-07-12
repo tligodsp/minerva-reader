@@ -181,6 +181,7 @@ export const getDefaultDisplayConfig = () => {
 }
 
 export const getThemeByName = (name: string) => {
+  console.log(name);
   if (name == 'dark') {
     return Theme.dark;
   }
@@ -189,6 +190,10 @@ export const getThemeByName = (name: string) => {
 
 export const updateBookProgress = (bookId: string, progressCFI: string) => {
   ipcRenderer.send('update-book-reading-progress', { bookId, progressCFI });
+}
+
+export const updateBookDisplayConfig = (bookId: string, displayConfig: DisplayConfig, useCommonDisplay: boolean) => {
+  ipcRenderer.send('update-book-display-config', { bookId, displayConfig, useCommonDisplay });
 }
 
 export const setCommonDisplayConfig = (commonDisplay: DisplayConfig) => {

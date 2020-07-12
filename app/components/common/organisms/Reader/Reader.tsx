@@ -39,6 +39,7 @@ const TOC_WIDTH = 256;
 interface ReaderProps {
   localBook: LocalBook,
   theme: any,
+  fontSize: 'small' | 'medium' | 'large',
   fullScreen?: boolean,
   showConfigButton?:boolean,
   onConfigClick?: Function,
@@ -46,9 +47,9 @@ interface ReaderProps {
   onScreenSizeClick?: Function,
 }
 
-const Reader = ({ localBook, theme, fullScreen, showConfigButton, onConfigClick, showScreenSizeButton, onScreenSizeClick }: ReaderProps) => {
+const Reader = ({ localBook, theme, fontSize, fullScreen, showConfigButton, onConfigClick, showScreenSizeButton, onScreenSizeClick }: ReaderProps) => {
   const [location, setLocation] = useState(localBook.readingProgressCFI ? localBook.readingProgressCFI : 0);
-  const [rendition, setRendition] = useState(null);
+  const [rendition, setRendition] = useState<any>();
   const [contentsLeftOffset, setContentsLeftOffset] = useState(0);
   const [contentsElem, setContentsElem] = useState<any>();
   const classes = useStyles();
@@ -58,14 +59,45 @@ const Reader = ({ localBook, theme, fullScreen, showConfigButton, onConfigClick,
     Local.updateBookProgress(localBook.book.id, location);
   }
 
+  // useEffect(() => {
+  //   const chaptersToggleButtonElem = $('#reader button[style*="width: 32px"]');
+  //   chaptersToggleButtonElem.attr("id", "chapters-toggle");
+  //   chaptersToggleButtonElem.css("display", "none");
+  //   const readContentsElem = chaptersToggleButtonElem.parent();
+  //   console.log(readContentsElem);
+  //   readContentsElem.css("background", theme.readerBackgroundColor);
+  // }, []);
+
   useEffect(() => {
+    const chaptersElem = $('#reader [style*="width: 256px"]');
+    // console.log(chaptersElem.html());
+    // chaptersElem.attr("id", "1000");
+    // chaptersElem.css({"background-color": "red", "z-index": "1000"});
+    chaptersElem.css({
+      "background-color": theme.readerBackgroundColor,
+      "color": theme.readerTextColor,
+    });
     const chaptersToggleButtonElem = $('#reader button[style*="width: 32px"]');
     chaptersToggleButtonElem.attr("id", "chapters-toggle");
     chaptersToggleButtonElem.css("display", "none");
     const readContentsElem = chaptersToggleButtonElem.parent();
     console.log(readContentsElem);
     readContentsElem.css("background", theme.readerBackgroundColor);
-  }, []);
+    if (rendition) {
+      console.log('rendition');
+      console.log(fontSize);
+      rendition.themes.select(theme.name);
+      if (fontSize == 'small') {
+        rendition.themes.fontSize("80%");
+      }
+      else if (fontSize == 'large') {
+        rendition.themes.fontSize("120%");
+      }
+      else {
+        rendition.themes.fontSize("100%");
+      }
+    }
+  }, [theme]);
 
   // useEffect(() => {
   //   _setFullScreen(fullScreen);
@@ -79,24 +111,18 @@ const Reader = ({ localBook, theme, fullScreen, showConfigButton, onConfigClick,
   const getRendition = rend => {
     setRendition(rend);
     // rend.themes.fontSize("140%");
-    // rend.themes.register("light", { "body": { "color": "purple"}});
-    // rend.themes.register("dark", { "body": { "color": "purple"}});
-    // // rend.themes.select("light");
-    // rend.themes.register({ "background": "#000" });
-    // rend.themes.default({
-    //   body: {
-    //     'font-size': '32px',
-    //     color: 'purple'
-    //   },
-    //   p: {
-    //     "margin": '10px'
-    //   }
-    // });
-    // rend.themes.default({ "body": { "background-color": "red !important"}});
-    // rend.themes.register("dark", { "body": { "background-color": "#666", color: "white !important"}});
     rend.themes.register("dark", dark);
     rend.themes.register("light", light);
     rend.themes.select(theme.name);
+    if (fontSize == 'small') {
+      rend.themes.fontSize("80%");
+    }
+    else if (fontSize == 'large') {
+      rend.themes.fontSize("120%");
+    }
+    else {
+      rend.themes.fontSize("100%");
+    }
   }
 
   const onToggleTOC = () => {
