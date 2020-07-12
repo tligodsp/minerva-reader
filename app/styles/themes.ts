@@ -18,6 +18,7 @@ const Theme = {
     progressTextColor: '#7670FF',
     readerBackgroundColor: '#FEFEFE',
     readerTextColor: '#111111',
+    primaryButtonColor: '#7670FF'
   },
   'dark': {
     name: 'dark',
@@ -38,6 +39,7 @@ const Theme = {
     progressTextColor: '#FEFEFE',
     readerBackgroundColor: '#333333',
     readerTextColor: '#FEFEFE',
+    primaryButtonColor: '#3A3B3C'
   }
 };
 

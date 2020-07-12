@@ -151,7 +151,7 @@ const LocalLibrary = (props) => {
                 <div
                   key={`tab-${index}`}
                   className={tab == chosenTab ? styles['tab-active'] : styles['tab-inactive']}
-                  style={tab == chosenTab ? { backgroundColor: theme.cardBGColor } : undefined}
+                  style={tab == chosenTab ? { backgroundColor: theme.primaryButtonColor } : undefined}
                   onClick={() => setChosenTab(tab)}
                 >
                   {tab}

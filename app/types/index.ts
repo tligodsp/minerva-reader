@@ -45,10 +45,13 @@ export interface Book {
 export interface LocalBook {
   book: Book,
   bookFilePath: string,
+  bookPhotoPath?:string,
   readingProgress: number,
+  readingProgressCFI?: string,
   readingTime: number,
   dateAdded: string,
-  lastRead: string,
+  lastRead?: string,
+  displayConfig?: DisplayConfig,
 }
 
 export interface User {

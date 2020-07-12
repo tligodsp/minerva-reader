@@ -12,6 +12,7 @@ import defaultStyles from './Reader.module.scss';
 import { dark, light } from './readerThemes';
 import $ from 'jquery';
 import Theme from '../../../../styles/themes';
+import * as Local from '../../../../utils/localUtils';
 
 const globalAny:any = global;
 
@@ -46,11 +47,7 @@ interface ReaderProps {
 }
 
 const Reader = ({ localBook, theme, fullScreen, showConfigButton, onConfigClick, showScreenSizeButton, onScreenSizeClick }: ReaderProps) => {
-  const [location, setLocation] = useState(
-    storage && storage.getItem('epub-location')
-          ? storage.getItem('epub-location')
-          : 0
-  );
+  const [location, setLocation] = useState(localBook.readingProgressCFI ? localBook.readingProgressCFI : 0);
   const [rendition, setRendition] = useState(null);
   const [contentsLeftOffset, setContentsLeftOffset] = useState(0);
   const [contentsElem, setContentsElem] = useState<any>();
@@ -58,6 +55,7 @@ const Reader = ({ localBook, theme, fullScreen, showConfigButton, onConfigClick,
 
   const onLocationChanged = (location: any) => {
     setLocation(location);
+    Local.updateBookProgress(localBook.book.id, location);
   }
 
   useEffect(() => {
@@ -73,10 +71,10 @@ const Reader = ({ localBook, theme, fullScreen, showConfigButton, onConfigClick,
   //   _setFullScreen(fullScreen);
   // }, [fullScreen]);
 
-  useEffect(() => {
-    storage && storage.setItem('epub-location', location);
-    console.log('eff ' + storage.getItem('epub-location'));
-  }, [location]);
+  // useEffect(() => {
+  //   storage && storage.setItem('epub-location', location);
+  //   console.log('eff ' + storage.getItem('epub-location'));
+  // }, [location]);
 
   const getRendition = rend => {
     setRendition(rend);

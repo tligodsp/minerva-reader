@@ -9,10 +9,21 @@ import { mockBooks } from '../../utils/mock-books';
 import { mockGenres } from '../../utils/mock-genres';
 import { mockAuthors } from '../../utils/mock-authors';
 import Chips, { Chip } from 'react-chips'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import * as Service from '../../utils/serviceUtils';
 import styles from './SearchResultsPage.css';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
+import IconButton from '@material-ui/core/IconButton';
+import HomeIcon from '@material-ui/icons/Home';
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    iconButton: {
+      fontSize: "2rem"
+    },
+  }),
+);
 
 const CustomChip = (props: any) => {
 	return (
@@ -41,8 +52,9 @@ const SearchResultsPage = (props) => {
   const [ searchTerm, setSearchTerm ] = useState('');
   const [ genresFilter, setGenresFilter ] = useState<Genre[]>([]);
   const [ authorsFilter, setAuthorsFilter ] = useState<Author[]>([]);
+  const classes = useStyles();
   const { theme } = props.local;
-
+  let history = useHistory();
 
   useEffect(() => {
     setFilterValues();
@@ -115,10 +127,30 @@ const SearchResultsPage = (props) => {
   const onSelectedAuthorsChange = (authors: Author[]) => {
     setAuthorsFilter([...authors]);
 		// console.log(genresFilter);
-	}
+  }
+
+  const renderHomeButton = () => {
+    return (
+      <div style={{
+        position: 'absolute',
+        left: '20px',
+      }}>
+        <IconButton className={classes.iconButton} onClick={handleHomeClick}>
+          <HomeIcon />
+        </IconButton>
+      </div>
+    );
+  }
+
+  const handleHomeClick = () => {
+    history.push(`/home`);
+  }
 
   return (
-    <LibraryPageTemplate backgroundColor={theme.backgroundColor}>
+    <LibraryPageTemplate
+      backgroundColor={theme.backgroundColor}
+      topBarLeft={renderHomeButton()}
+    >
       <div className={styles['page-content']}>
         {/* FILTER SECTION */}
         <div className={styles['filter-section']}>

@@ -8,10 +8,11 @@ import { RatingBar } from '../../components/common/atoms';
 import { SectionCard } from '../../components/common/molecules';
 import { LibraryPageTemplate } from '../../components/common/template';
 
-import { Review, User, Book } from '../../types';
+import { Review, User, Book, LocalBook } from '../../types';
 import { currentUser, mockUsers } from '../../utils/mock-users';
 
 import styles from './BookInfoPage.module.scss';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import ReviewBookModal from './ReviewBookModal';
 
 import { getBookById } from '../../actions/bookActions';
@@ -19,8 +20,20 @@ import { getReviewsByBookId } from '../../actions/reviewActions';
 import { downloadBook } from '../../actions/localActions';
 import * as CONSTANTS from '../../utils/constants';
 import * as Service from '../../utils/serviceUtils';
+import * as Local from '../../utils/localUtils';
+
+import IconButton from '@material-ui/core/IconButton';
+import HomeIcon from '@material-ui/icons/Home';
 
 const { ipcRenderer } = require('electron');
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    iconButton: {
+      fontSize: "2rem"
+    },
+  }),
+);
 
 const BookInfoPage = (props) => {
   let { id } = useParams();
@@ -34,6 +47,8 @@ const BookInfoPage = (props) => {
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [isReviewsLoading, setIsReviewsLoading] = useState(true);
+  const [isDownloaded, setIsDownloaded] = useState(false);
+  const classes = useStyles();
   const { theme } = props.local;
 
   useEffect(() => {
@@ -43,6 +58,7 @@ const BookInfoPage = (props) => {
     }
     // props.getBookById(id);
     // props.getReviewsByBookId(id);
+    checkBookIsDownloaded();
     Service.getBookById(id)
       .then((response: any) => {
         _setBook(response.book);
@@ -90,17 +106,60 @@ const BookInfoPage = (props) => {
       id: _book!.id,
       name: _book!.title,
     }
-    props.downloadBook(bookObj, _book!.downloadLink);
+    props.downloadBook(_book, _book!.downloadLink);
     // ipcRenderer.send('download-item', { url: downloadLink });
     // ipcRenderer.on('download-success', (event, arg) => {
     //   console.log(arg);
     // });
+    ipcRenderer.on(`download-end-${id}`, (event, arg) => {
+      checkBookIsDownloaded();
+    })
+  }
+
+  const checkBookIsDownloaded = () => {
+    if (!id) {
+      return;
+    }
+    Local.getLocalBookById(id)
+      .then((response: any) => {
+        if (response.localBook != null) {
+          setIsDownloaded(true);
+        }
+        else {
+          setIsDownloaded(false);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        setIsDownloaded(false);
+      })
+  }
+
+  const renderHomeButton = () => {
+    return (
+      <div style={{
+        position: 'absolute',
+        left: '20px',
+      }}>
+        <IconButton className={classes.iconButton} onClick={handleHomeClick}>
+          <HomeIcon />
+        </IconButton>
+      </div>
+    );
   }
 
   const handleSimilarBookClick = (id) => {
     console.log('similar');
     history.push(`/book-info/${id}`);
     // window.location.href = `/book-info/${id}`;
+  }
+
+  const handleHomeClick = () => {
+    history.push(`/home`);
+  }
+
+  const handleReadBookClick = () => {
+    history.push(`/reader/${id}`);
   }
 
   const handleCloseReviewModal= () => {
@@ -130,12 +189,15 @@ const BookInfoPage = (props) => {
       });
   }
 
-  const checkIsDownloading = (id) => {
+  const isDownloading = (id) => {
     return props.local.downloadingBooks.includes(id);
   }
 
   return (
-    <LibraryPageTemplate backgroundColor={theme.backgroundColor}>
+    <LibraryPageTemplate
+      topBarLeft={renderHomeButton()}
+      backgroundColor={theme.backgroundColor}
+    >
       { _book &&
         (<div>
           <div className={styles['page-content']}>
@@ -162,7 +224,16 @@ const BookInfoPage = (props) => {
                       Want to Read
                     </button>
                     {
-                      !checkIsDownloading(_book.id) &&
+                      isDownloaded &&
+                      <button
+                        className={"button-secondary"}
+                        onClick={() => handleReadBookClick()}
+                      >
+                        Read Book
+                      </button>
+                    }
+                    {
+                      (!isDownloaded && !isDownloading(_book.id)) &&
                       <button
                         className={!_book.downloadLink ? "button-disabled" : "button-secondary"}
                         onClick={() => handleDownloadClick()}
@@ -172,8 +243,13 @@ const BookInfoPage = (props) => {
                       </button>
                     }
                     {
-                      checkIsDownloading(_book.id) &&
-                      <div>{props.local.currentDownloadingBookId === _book.id ? props.local.currentDownloadProgress : 'Pending'}</div>
+                      (!isDownloaded && isDownloading(_book.id)) &&
+                      <button
+                        className={"button-disabled"}
+                        disabled
+                      >
+                        {props.local.currentDownloadingBookId === _book.id ? `${Math.round(props.local.currentDownloadProgress * 100)}%` : 'Pending'}
+                      </button>
                     }
                   </div>
                   <div className={styles['book-text-info']}>

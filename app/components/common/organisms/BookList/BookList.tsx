@@ -175,8 +175,8 @@ const BookList = ({
         style={{ ...wrapperStyle }}
       >
         {
-          _books.map(({ book, readingProgress }: LocalBook, index: number) => {
-            console.log(book);
+          _books.map((localBook: LocalBook, index: number) => {
+            const { book, readingProgress } = localBook;
             return(
               <div
                 key={`book-${index}`}
@@ -188,7 +188,7 @@ const BookList = ({
                   title={book.title}
                   authors={book.authors ? _getAuthorsString(book.authors) : ""}
                   subInfo={_getSubInfo(book)}
-                  cover={book.cover}
+                  cover={localBook.bookPhotoPath}
                   wrapperStyle={{ ...bookProps?.wrapperStyle }}
                   bookCoverStyle={{ ...bookProps?.bookCoverStyle }}
                   bookInfoContainerStyle={{

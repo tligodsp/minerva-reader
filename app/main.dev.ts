@@ -14,6 +14,8 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { download } from 'electron-dl';
+import { parseJSON } from 'jquery';
+import * as Utils from './mainUtils';
 const fs = require("fs");
 // import { download } from 'edl';
 
@@ -107,6 +109,7 @@ const createWindow = async () => {
 // const BOOKSHELF_PATH = 'books';
 const BOOKSHELF_FOLDER_NAME = 'books';
 const APP_NAME = 'Minerva Reader';
+const USER_DATA_NAME = 'user-data.json';
 // const BOOKSHELF_PATH = path.join(__dirname, "bookss");
 
 let downloadingQueue: any[] = [];
@@ -126,6 +129,7 @@ const downloadBook = (win, { event, info }) => {
     continueDownload(win, info);
     return;
   }
+  /** Download Book */
   download(win!, info.url, {
     directory: downloadTo,
     onProgress: currentProgress => {
@@ -134,13 +138,83 @@ const downloadBook = (win, { event, info }) => {
       })
     }
   })
-  .then(() => {
-    // console.log(`success-${info.bookObj.id}`);
-    fs.writeFileSync(
-      path.join(downloadTo, "data.json"),
-      JSON.stringify(info.bookObj, null, 2)
-    );
-    event.sender.send(`download-end-${info.bookObj.id}`, { result: 'SUCCESS', url: info.url});
+  .then((fileRes: any) => {
+    const fileName = fileRes.getFilename();
+    /** Download Photo */
+    download(win!, info.bookObj.cover, {
+      directory: downloadTo,
+    })
+    .then((photoRes: any) => {
+      const photoResponse = photoRes;
+      /** Save Book JSON File */
+      const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
+      const timeNow = new Date();
+      const newLocalBookData = {
+        book: info.bookObj,
+        bookFilePath: path.join(downloadTo, fileName),
+        bookPhotoPath: path.join(downloadTo, photoResponse.getFilename()),
+        readingProgress: 0,
+        readingTime: 0,
+        dateAdded: timeNow.toISOString(),
+      };
+      fs.writeFileSync(
+        path.join(downloadTo, `${info.bookObj.id}.json`),
+        JSON.stringify(newLocalBookData, null, 2)
+      );
+      let userData;
+      if (fs.existsSync(userDataPath)) {
+        const userRawData = fs.readFileSync(userDataPath);
+        userData = JSON.parse(userRawData);
+        if (!userData.localBooks) {
+          userData.localBooks = [];
+        }
+        userData = {
+          ...userData,
+          localBooks: [
+            ...userData.localBooks,
+            newLocalBookData
+          ]
+        };
+        /** Save local genres */
+        if (userData.localGenres) {
+          userData = {
+            ...userData,
+            localGenres: Utils.addBookGenresToGenreList(userData.localGenres, info.bookObj)
+          }
+        }
+        else {
+          userData = {
+            ...userData,
+            localGenres: [ ...info.bookObj.genres ]
+          }
+        }
+        /** Save local authors */
+        if (userData.localAuthors) {
+          userData = {
+            ...userData,
+            localAuthors: Utils.addBookAuthorsToAuthorList(userData.localAuthors, info.bookObj)
+          }
+        }
+        else {
+          userData = {
+            ...userData,
+            localAuthors: [ ...info.bookObj.authors ]
+          }
+        }
+      }
+      else {
+        userData = {
+          localBooks: [ newLocalBookData ],
+          localGenres: [ ...info.bookObj.genres ],
+          localAuthors: [ ...info.bookObj.authors ],
+        };
+      }
+      fs.writeFileSync(
+        userDataPath,
+        JSON.stringify(userData, null, 2)
+      );
+      event.sender.send(`download-end-${info.bookObj.id}`, { result: 'SUCCESS', url: info.url});
+    })
   })
   .catch((err) => {
     // console.log(`${err}-${info.bookObj.id}`);
@@ -163,6 +237,52 @@ ipcMain.on('download-item', async (event, info) => {
   if (downloadingQueue[0].info.bookObj.id === info.bookObj.id) {
     downloadBook(win, downloadingQueue[0]);
   }
+});
+
+ipcMain.on('get-user-data', (event) => {
+  try {
+    const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
+    let userData = {};
+    if (fs.existsSync(userDataPath)) {
+      const userRawData = fs.readFileSync(userDataPath);
+      userData = JSON.parse(userRawData);
+    }
+    event.sender.send(`get-user-data-done`, { result: 'SUCCESS', userData });
+  }
+  catch(err) {
+    event.sender.send(`get-user-data-done`, { result: 'ERROR', userData: {} });
+  };
+});
+
+ipcMain.on('update-book-reading-progress', (event, info) => {
+  try {
+    const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
+    let userData: any = {};
+    if (fs.existsSync(userDataPath)) {
+      const userRawData = fs.readFileSync(userDataPath);
+      userData = JSON.parse(userRawData);
+      if (userData && userData.localBooks) {
+        let bookIndex = userData.localBooks.findIndex(lb => lb.book.id === info.bookId);
+        if (bookIndex != -1) {
+          let localBooks =  userData.localBooks;
+          let book = localBooks[bookIndex];
+          const timeNow = new Date();
+          book.lastRead = timeNow.toISOString();
+          book.readingProgressCFI = info.progressCFI;
+          localBooks[bookIndex] = book;
+          userData.localBooks = [ ...localBooks ];
+          fs.writeFileSync(
+            userDataPath,
+            JSON.stringify(userData, null, 2)
+          );
+        }
+      }
+    }
+  }
+  catch(err) {
+    // event.sender.send(`get-user-data-done`, { result: 'ERROR', userData: {} });
+    console.log(err);
+  };
 });
 
 app.on('window-all-closed', () => {
