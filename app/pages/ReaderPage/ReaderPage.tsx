@@ -73,7 +73,14 @@ const ReaderPage = (props) => {
           onScreenSizeClick={onScreenSizeClick}
         />
       }
-      <ConfigModal open={configModalOpen} onClose={() => setConfigModalOpen(false)} />
+      {
+        localBook &&
+        <ConfigModal
+          open={configModalOpen}
+          localBook={localBook}
+          onClose={() => setConfigModalOpen(false)}
+        />
+      }
     </div>
   );
 }

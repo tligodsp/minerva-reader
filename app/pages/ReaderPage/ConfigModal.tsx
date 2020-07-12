@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
+import React, { useState, useEffect } from 'react';
+// import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import Switch from '@material-ui/core/Switch';
 import { TransitionProps } from '@material-ui/core/transitions';
+import { LocalBook } from '../../types';
 import styles from './ConfigModal.module.scss';
 
 const Transition = React.forwardRef(function Transition(
@@ -19,11 +19,18 @@ const Transition = React.forwardRef(function Transition(
 
 interface ConfigModalProps {
   open: boolean,
+  localBook: LocalBook,
   onClose: Function,
 }
 
 const ConfigModal = ({ open, onClose }: ConfigModalProps) => {
   const [useCommonChecked, setUseCommonChecked] = useState(true);
+  // const [theme, setTheme] = useState()
+
+  useEffect(() => {
+
+  }, []);
+
   const handleClose = () => {
     onClose();
   };

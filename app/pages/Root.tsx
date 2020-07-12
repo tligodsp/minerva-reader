@@ -10,6 +10,8 @@ import { Switch, Route } from 'react-router-dom';
 
 import { currentUser } from '../utils/mock-users';
 import { setCurrentUserAction } from '../actions/userActions';
+import { setDefaultDisplay } from '../actions/localActions';
+import * as Local from '../utils/localUtils';
 
 type Props = {
   store: Store;
@@ -23,6 +25,11 @@ const renderRoutes = (routes: any) => {
 const Root = ({ store, history }: Props) => {
   useEffect(() => {
     store.dispatch(setCurrentUserAction(currentUser));
+    // console.log('alo alo');
+    Local.getCommonDisplayConfig()
+      .then((response: any) => {
+        store.dispatch(setDefaultDisplay(response.displayStyle));
+      });
   }, []);
   return (
     <Provider store={store}>

@@ -149,15 +149,16 @@ export const getLocalBookById = (id: string) => {
 }
 
 export const getCommonDisplayConfig = () => {
-  let config: DisplayConfig | undefined = getMockDisplayConfig();
-  if (!config) {
-    config = {
-      theme: 'dark',
-      fontSize: 'medium'
-    }
-  }
   return new Promise((resolve, reject) => {
-    resolve({config});
+    ipcRenderer.send('get-default-display-style');
+    ipcRenderer.on('get-default-display-style-done', (event, res) => {
+      if (res.result == 'SUCCESS') {
+        resolve({ displayStyle: res.displayStyle });
+      }
+      else {
+        resolve({ displayStyle: {theme: 'light',fontSize: 'medium'} });
+      }
+    });
   });
 }
 
@@ -166,6 +167,17 @@ export const getDefaultDisplayConfig = () => {
     theme: 'light',
     fontSize: 'medium'
   }
+  // return new Promise((resolve, reject) => {
+  //   ipcRenderer.send('get-default-display-style');
+  //   ipcRenderer.on('get-default-display-style-done', (event, res) => {
+  //     if (res.result == 'SUCCESS') {
+  //       resolve({ displayStyle: res.displayStyle });
+  //     }
+  //     else {
+  //       resolve({ displayStyle: {theme: 'light',fontSize: 'medium'} });
+  //     }
+  //   });
+  // });
 }
 
 export const getThemeByName = (name: string) => {
@@ -177,4 +189,8 @@ export const getThemeByName = (name: string) => {
 
 export const updateBookProgress = (bookId: string, progressCFI: string) => {
   ipcRenderer.send('update-book-reading-progress', { bookId, progressCFI });
+}
+
+export const setCommonDisplayConfig = (commonDisplay: DisplayConfig) => {
+  ipcRenderer.send('set-default-display-style', { displayStyle: commonDisplay });
 }

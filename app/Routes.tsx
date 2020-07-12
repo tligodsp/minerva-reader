@@ -13,6 +13,7 @@ import BookInfoPage from './pages/BookInfoPage/BookInfoPage';
 import LocalLibraryPage from './pages/LocalLibraryPage/LocalLibraryPage';
 // import ReaderPage from './pages/ReaderPage';
 import ReaderPage from './pages/ReaderPage/ReaderPage';
+import SettingsPage from './pages/SettingsPage/SettingsPage';
 import AboutPage from './pages/AboutPage';
 
 const styles: React.CSSProperties = {
@@ -54,9 +55,9 @@ export const routes = [
     isOnNavBar: false,
   },
   {
-    path: '/test',
-    name: 'Test',
-    component: TestPage,
+    path: '/settings',
+    name: 'Setting',
+    component: SettingsPage,
     isOnNavBar: true,
     icon: <SettingsOutlinedIcon style={styles}/>,
   },

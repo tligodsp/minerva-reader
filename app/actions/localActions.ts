@@ -1,7 +1,8 @@
 import { DOWNLOAD_BOOK, ADD_BOOK_TO_DOWNLOADING_LIST, REMOVE_BOOK_FROM_DOWNLOADING_LIST,
     UPDATE_CURRENT_DOWNLOAD_PROGRESS, LOCAL_GET_ALL_DOWNLOADED, LOCAL_GET_RECENTLY_ADDED,
-    LOCAL_GET_RECENTLY_READ, LOCAL_GET_WANT_TO_READ } from './types';
+    LOCAL_GET_RECENTLY_READ, LOCAL_GET_WANT_TO_READ, SET_DEFAULT_DISPLAY } from './types';
 import { getLocalBooks } from '../utils/mock-books';
+import { DisplayConfig } from '../types';
 const { ipcRenderer } = require('electron');
 
 export const downloadBook = (bookObj, url) => {
@@ -17,6 +18,27 @@ export const downloadBook = (bookObj, url) => {
     ipcRenderer.on(`download-end-${bookObj.id}`, (event, arg) => {
       dispatch(removeBookToDownloadingList(bookObj.id));
     })
+  }
+}
+
+export const getDefaultDisplay = () => {
+  return dispatch => {
+    ipcRenderer.send('get-default-display-style');
+    ipcRenderer.on('get-default-display-style-done', (event, res) => {
+      if (res.result == 'SUCCESS') {
+        dispatch(setDefaultDisplay(res.displayStyle));
+      }
+      else {
+        dispatch(setDefaultDisplay({theme: 'light',fontSize: 'medium'}));
+      }
+    });
+  }
+}
+
+export const setDefaultDisplay = (displayStyle: DisplayConfig) => {
+  return {
+    type: SET_DEFAULT_DISPLAY,
+    payload: displayStyle,
   }
 }
 

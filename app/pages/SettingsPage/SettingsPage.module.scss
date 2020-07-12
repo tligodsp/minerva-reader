@@ -1,0 +1,72 @@
+.contents {
+  font-family: 'Quicksand', sans-serif !important;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  width: fit-content;
+}
+
+.config-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 20px;
+  width: 500px;
+  border-radius: 20px;
+
+  .header {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .config-group {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+
+    .group-header {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+  }
+
+  .button-group {
+    display: flex;
+    flex-direction: row;
+    .left-button {
+      flex: 1;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right-width: 0.75px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .middle-button {
+      flex: 1;
+      border-radius: 0;
+      border-left-width: 0.75px;
+      border-right-width: 0.75px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .right-button {
+      flex: 1;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-left-width: 0.75px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}

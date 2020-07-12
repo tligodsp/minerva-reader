@@ -239,6 +239,91 @@ ipcMain.on('download-item', async (event, info) => {
   }
 });
 
+ipcMain.on('get-default-display-style', (event) => {
+  try {
+    const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
+    let userData: any = {};
+    let displayStyle = {};
+    if (fs.existsSync(userDataPath)) {
+      const userRawData = fs.readFileSync(userDataPath);
+      userData = JSON.parse(userRawData);
+      if (userData && userData.defaultDisplayStyle) {
+        displayStyle = userData.defaultDisplayStyle;
+      }
+      else if (userData && !userData.defaultDisplayStyle) {
+        userData = {
+          ...userData,
+          defaultDisplayStyle: {
+            theme: 'light',
+            fontSize: 'medium',
+          }
+        };
+        fs.writeFileSync(
+          userDataPath,
+          JSON.stringify(userData, null, 2)
+        );
+        displayStyle = userData.defaultDisplayStyle;
+      }
+      else {
+        userData = {
+          defaultDisplayStyle: {
+            theme: 'light',
+            fontSize: 'medium',
+          }
+        };
+        fs.writeFileSync(
+          userDataPath,
+          JSON.stringify(userData, null, 2)
+        );
+        displayStyle = userData.defaultDisplayStyle;
+      }
+    }
+    else {
+      userData = {
+        defaultDisplayStyle: {
+          theme: 'light',
+          fontSize: 'medium',
+        }
+      };
+      fs.writeFileSync(
+        userDataPath,
+        JSON.stringify(userData, null, 2)
+      );
+      displayStyle = userData.defaultDisplayStyle;
+    }
+    event.sender.send(`get-default-display-style-done`, { result: 'SUCCESS', displayStyle });
+  } catch (error) {
+    event.sender.send(`get-default-display-style-done`, { result: 'ERROR', displayStyle: {} });
+  }
+});
+
+ipcMain.on('set-default-display-style', (event, info) => {
+  try {
+    const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
+    let userData: any = {};
+    let displayStyle = info.displayStyle;
+    if (fs.existsSync(userDataPath)) {
+      const userRawData = fs.readFileSync(userDataPath);
+      userData = JSON.parse(userRawData);
+      if (userData) {
+        userData.defaultDisplayStyle = displayStyle;
+      }
+      else {
+        userData = { defaultDisplayStyle: displayStyle };
+      }
+    }
+    else {
+      userData = { defaultDisplayStyle: displayStyle };
+    }
+    fs.writeFileSync(
+      userDataPath,
+      JSON.stringify(userData, null, 2)
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 ipcMain.on('get-user-data', (event) => {
   try {
     const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
