@@ -2,7 +2,9 @@ import { mockBooks } from './mock-books';
 import { mockReviews } from './mock-reviews';
 import { mockGenres } from './mock-genres';
 import { mockAuthors } from './mock-authors';
-import { Book, Review, ReviewInput } from '../types/index';
+import { Book, Review, ReviewInput, User, Genre, Author } from '../types/index';
+import * as userAPI from '../api/userAPI';
+import * as genreAPI from '../api/genreAPI';
 
 var ID = function () {
   // Math.random should be unique because of its seeding algorithm.
@@ -80,16 +82,134 @@ export const createReview = (reviewInput: ReviewInput) => {
   });
 }
 
-export const getGenres = () => {
-  const genres = mockGenres;
-  return new Promise((resolve, reject) => {
-    resolve({ genres });
-  });
-}
+// export const getGenres = () => {
+//   const genres = mockGenres;
+//   return new Promise((resolve, reject) => {
+//     resolve({ genres });
+//   });
+// }
 
 export const getAuthors = () => {
   const authors = mockAuthors;
   return new Promise((resolve, reject) => {
     resolve({ authors });
   });
+}
+
+export const saveUserAndToken = (user, token) => {
+  localStorage.setItem('user', user);
+  localStorage.setItem('token', token);
+}
+
+export const getUserByUsername = (username: string) => {
+  return new Promise((resolve, reject) => {
+    userAPI.getUserByUsername(username)
+      .then((response: any) => {
+        // console.log(response);
+        const convertedUser = convertUserModel(response.data.user);
+        resolve({ user: convertedUser });
+      })
+      .catch((error) => {
+        reject(error);
+      })
+  });
+}
+
+export const getGenres = () => {
+  return new Promise((resolve, reject) => {
+    genreAPI.getAllGenres()
+      .then((response: any) => {
+        const convertedGenres = response.data.categories.map(genreRes => convertGenreModel(genreRes));
+        resolve({ genres: convertedGenres });
+      })
+      .catch((error) => {
+        reject(error);
+      })
+  });
+}
+
+export const addFavoriteGenres = (genreIds: string[]) => {
+  return new Promise((resolve, reject) => {
+    const promiseList = genreIds.map(genreId => userAPI.addFavoriteGenre(genreId));
+    Promise.all(promiseList)
+      .then((responses: any) => {
+        resolve({ result: 'SUCCESS' });
+      })
+      .catch((error) => {
+        reject(error);
+      })
+  });
+}
+
+const convertUserModel = (userRes) => {
+  const { id, username, fullName, favoriteIds, favoriteCategoryIds,
+      favoriteBooks, favoriteCategories} = userRes;
+  const user: User = {
+    id: userRes.id,
+    username: username,
+    fullName: fullName,
+    profilePicture: `https://avatars2.githubusercontent.com/u/43437080?s=460&u=beb1f0fce8a61b11c99160291b4544a1e077314f&v=4`,
+    wishlist: favoriteBooks ? favoriteBooks.map(bookRes => convertBookModel(bookRes)) : [],
+    wishlistIds: favoriteIds,
+    favoriteGenres: favoriteCategories ? favoriteCategories.map(genreRes => convertGenreModel(genreRes)) : [],
+    favoriteGenreIds: favoriteCategoryIds,
+  }
+  return user;
+}
+
+const convertBookModel = (bookRes) => {
+  const { id, createAt, releaseAt, title, categoryIds, authorIds, image,
+      description, link, categories, authors, rating } = bookRes;
+  const book = {
+    id: id,
+    title: title,
+    authors: authors ? authors.map(authorRes => convertAuthorModel(authorRes)) : [],
+    authorIds: authorIds,
+    genres: categories ? categories.map(genreRes => convertGenreModel(genreRes)) : [],
+    genreIds: categoryIds,
+    cover: image,
+    ratingValue: rating,
+    sypnosis: description,
+    downloadLink: link,
+    createAt: createAt,
+    releaseAt: releaseAt,
+  }
+  return book;
+}
+
+const convertAuthorModel = (authorRes) => {
+  const { id, name, about, PhotoURL } = authorRes;
+  const author: Author = {
+    id: id,
+    name: name,
+    about: about,
+    photo: PhotoURL,
+  }
+  return author;
+}
+
+const convertGenreModel = (genreRes) => {
+  const { id, name } = genreRes;
+  const genre: Genre = {
+    id: id,
+    name: name,
+  }
+  return genre;
+}
+
+const convertReviewModel = (reviewRes) => {
+  const { id, updateAt, comment, bookId, username, rating,
+      upvotes, reports, upvoteCount, reportCount } = reviewRes;
+  const review: Review = {
+    id: id,
+    ratingValue: rating,
+    content: comment,
+    username: username,
+    bookId: bookId,
+    upvoteCount: upvoteCount,
+    reportCount: reportCount,
+    reportUsers: reports ? reports.map(report => report.username) : [],
+    upvoteUsers: upvotes
+  }
+  return review;
 }

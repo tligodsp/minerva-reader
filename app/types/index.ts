@@ -5,12 +5,26 @@ export interface Author {
   about?: string,
 }
 
+export interface Report {
+  id: string,
+  createAt: string,
+  reason: string,
+  username: string,
+  reviewId: string,
+}
+
 export interface Review {
   id: string,
   ratingValue: number,
   content: string,
-  user: User,
-  book: Book
+  // user: User,
+  // book: Book,
+  username: string,
+  bookId: string,
+  upvoteCount?: number,
+  reportCount?: number,
+  reportUsers?: string[],
+  upvoteUsers?: string[]
 }
 
 export interface ReviewInput {
@@ -57,10 +71,14 @@ export interface LocalBook {
 
 export interface User {
   id: string,
-  displayName: string,
+  username: string,
+  fullName?: string,
   profilePicture: string,
   recentlyRead?: Book[];
   wishlist?: Book[];
+  wishlistIds?: string[],
+  favoriteGenres?: Genre[],
+  favoriteGenreIds?: Genre[],
 }
 
 export interface DisplayConfig {

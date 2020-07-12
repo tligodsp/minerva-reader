@@ -303,7 +303,7 @@ const BookInfoPage = (props) => {
                       <span
                         className={styles['review-username-clickable']}
                         style={{ color: theme.usernameColor }}
-                      >{currentUser.displayName}</span>
+                      >{currentUser.username}</span>
                       , start your review of Deception Point
                     </div>
                     <button
@@ -333,7 +333,7 @@ const BookInfoPage = (props) => {
                           <span
                             className={styles['review-username-clickable']}
                             style={{ color: theme.usernameColor }}
-                          >{review.user.displayName}</span>
+                          >{review.user.username}</span>
                           &nbsp;rated it&nbsp;
                           <span>
                             <RatingBar

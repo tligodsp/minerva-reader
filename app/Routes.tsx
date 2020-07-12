@@ -15,6 +15,8 @@ import LocalLibraryPage from './pages/LocalLibraryPage/LocalLibraryPage';
 import ReaderPage from './pages/ReaderPage/ReaderPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import AboutPage from './pages/AboutPage';
+import LoginPage from './pages/LoginPage/LoginPage';
+import SignUpPage from './pages/SignUpPage/SignUpPage';
 
 const styles: React.CSSProperties = {
   fontSize: Sizing.NAVBAR_ICON_SIZE,
@@ -56,7 +58,7 @@ export const routes = [
   },
   {
     path: '/settings',
-    name: 'Setting',
+    name: 'Settings',
     component: SettingsPage,
     isOnNavBar: true,
     icon: <SettingsOutlinedIcon style={styles}/>,
@@ -67,5 +69,20 @@ export const routes = [
     component: AboutPage,
     isOnNavBar: true,
     icon: <HelpOutlineOutlinedIcon style={styles}/>,
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginPage,
+    isOnNavBar: true,
+    hideNavBar: true,
+    icon: <HelpOutlineOutlinedIcon style={styles}/>,
+  },
+  {
+    path: '/signup',
+    name: 'SignUp',
+    component: SignUpPage,
+    hideNavBar: true,
+    isOnNavBar: false,
   },
 ];

@@ -166,7 +166,7 @@ export const getDefaultDisplayConfig = () => {
   return {
     theme: 'light',
     fontSize: 'medium'
-  }
+  };
   // return new Promise((resolve, reject) => {
   //   ipcRenderer.send('get-default-display-style');
   //   ipcRenderer.on('get-default-display-style-done', (event, res) => {
@@ -178,6 +178,14 @@ export const getDefaultDisplayConfig = () => {
   //     }
   //   });
   // });
+}
+
+export const getGuessUser = () => {
+  return {
+    id: 'guess123456',
+    username: 'Guess',
+    profilePicture: `https://genslerzudansdentistry.com/wp-content/uploads/2015/11/anonymous-user.png`,
+  };
 }
 
 export const getThemeByName = (name: string) => {

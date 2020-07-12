@@ -63,7 +63,7 @@ const LibraryPageRightDrawer = (props) => {
               src={_currentUser.profilePicture}
               className={classes.avatarLarge}
             />
-            <div style={{ marginLeft: '10px' }}>{_currentUser.displayName}</div>
+            <div style={{ marginLeft: '10px' }}>{_currentUser.username}</div>
           </div>
         </div>
         <Divider style={{ margin: "10px 0" }}/>
