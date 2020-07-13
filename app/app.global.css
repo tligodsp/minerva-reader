@@ -179,6 +179,10 @@ a:hover {
   margin-left: -12px;
 }
 
+.linear-center {
+  top: 50%;
+}
+
 .custom-chip-container {
 	padding: 5px;
 	background-color: #009be5;

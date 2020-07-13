@@ -1,0 +1,14 @@
+.header {
+  font-weight: 700 !important;
+  font-family: 'Quicksand', sans-serif !important;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Quicksand', sans-serif !important;
+
+  .text-field {
+    width: 100%;
+  }
+}

@@ -17,7 +17,7 @@ export interface Review {
   id: string,
   ratingValue: number,
   content: string,
-  // user: User,
+  user: User,
   // book: Book,
   username: string,
   bookId: string,
@@ -30,8 +30,9 @@ export interface Review {
 export interface ReviewInput {
   ratingValue: number,
   content: string,
-  user: User,
-  book: Book
+  // user: User,
+  // book: Book,
+  bookId: string
 }
 
 export interface Genre {

@@ -8,7 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import { TransitionProps } from '@material-ui/core/transitions';
 import { Review, ReviewInput, User, Book } from '../../types';
-import styles from './ReviewBookModal.module.scss';
+import styles from './ReportReviewModal.module.scss';
 import * as CONSTANTS from '../../utils/constants';
 import { InteractiveRatingBar } from '../../components/common/atoms';
 import { LoadingOverlay } from '../../components/common/molecules';
@@ -72,45 +72,26 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface ReviewBookModalProps {
+interface ReportReviewModalProps {
   open: boolean,
   handleClose: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
-  user: User,
-  book: Book,
+  review: Review
   onSubmitted: Function,
   theme: any,
-  isEdit?: boolean,
-  reviewToEdit?: Review
 }
 
-const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted, theme, isEdit, reviewToEdit }: ReviewBookModalProps) => {
+const ReportReviewModal = ({ open, handleClose, review, onSubmitted, theme }: ReportReviewModalProps) => {
   const classes = useStyles();
-  const [rating, setRating] = useState(-1);
-  const [comment, setComment] = useState('');
+  const [reason, setReason] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onRatingValueChange = (newRating: number) => {
-    setRating(newRating);
-    console.log(newRating);
-  }
-
-  const onCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setComment(event.target.value);
-    console.log(event.target.value);
+  const onReasonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setReason(event.target.value);
   }
 
   const onDialogEnter = () => {
-    console.log(reviewToEdit);
-    if (reviewToEdit) {
-      setRating(reviewToEdit.ratingValue);
-      setComment(reviewToEdit.content);
-    }
-    else {
-      setRating(-1);
-      setComment('');
-      console.log("enter");
-    }
-    const dialogContainerElem = $('#dialog div[role="dialog"]');
+    setReason('');
+    const dialogContainerElem = $('#dialog-report div[role="dialog"]');
     dialogContainerElem.css({
       'background-color': theme.cardBGColor,
       'color': theme.textColor,
@@ -120,41 +101,35 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted, theme, is
 
   const handleSubmit = () => {
     setIsSubmitting(true);
-    const reviewInput: ReviewInput = { ratingValue: rating < 0 ? 0 : rating, content: comment, bookId: book.id };
-    if (reviewToEdit) {
-      Service.updateReview(reviewToEdit.id, reviewInput)
-        .then((response) => {
-          setIsSubmitting(false);
-          onSubmitted();
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-    }
-    else {
-      Service.createReview(reviewInput)
-        .then((response) => {
-          setIsSubmitting(false);
-          onSubmitted();
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-    }
-  }
-
-  const handleDelete = () => {
-    setIsSubmitting(true);
-    if (reviewToEdit) {
-      Service.deleteReview(reviewToEdit.id)
-        .then((response) => {
-          setIsSubmitting(false);
-          onSubmitted();
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-    }
+    Service.reportReview(reason, review.id)
+      .then((response: any) => {
+        setIsSubmitting(false);
+        onSubmitted();
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    // const reviewInput: ReviewInput = { ratingValue: rating < 0 ? 0 : rating, content: comment, bookId: book.id };
+    // if (reviewToEdit) {
+    //   Service.updateReview(reviewToEdit.id, reviewInput)
+    //     .then((response) => {
+    //       setIsSubmitting(false);
+    //       onSubmitted();
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     })
+    // }
+    // else {
+    //   Service.createReview(reviewInput)
+    //     .then((response) => {
+    //       setIsSubmitting(false);
+    //       onSubmitted();
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     })
+    // }
   }
 
   return (
@@ -162,7 +137,7 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted, theme, is
       className={styles['container']}
     >
       <Dialog
-        id="dialog"
+        id="dialog-report"
         open={open}
         TransitionComponent={Transition}
         keepMounted
@@ -177,39 +152,20 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted, theme, is
           <div
             className={styles['header']}
             style={{ fontWeight: 600 }}
-          >{`Share your opinion on ${book.title}`}</div>
+          >{`Report ${review.username}'s review`}</div>
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
             <div className={styles['modal-content']}>
-              <div className={styles['user-photo-n-rating']}>
-                <div className={styles['user-photo']}>
-                  <img
-                    className={styles['user-photo']}
-                    src={user.profilePicture ? user.profilePicture : CONSTANTS.NO_PHOTO_LINK}
-                  />
-                </div>
-                <div className={styles['user-rating']}>
-                  <div
-                    className={styles['text']}
-                    style={{ color: theme.textColor }}
-                  >Your rating:</div>
-                  <InteractiveRatingBar
-                    ratingValue={rating}
-                    onValueChange={onRatingValueChange}
-                    starStyle={{ color: theme.starColor }}
-                  />
-                </div>
-              </div>
               <div className={theme.name == 'light' ? classes.rootLight : classes.rootDark}>
                 <TextField
                   id="outlined-multiline-static"
-                  label="Your review"
+                  label="Your reason to report"
                   multiline
                   rows={4}
                   defaultValue=""
-                  value={comment}
-                  onChange={onCommentChange}
+                  value={reason}
+                  onChange={onReasonChange}
                   variant="outlined"
                   className={styles['text-field']}
                 />
@@ -224,15 +180,6 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted, theme, is
           >
             Cancel
           </button>
-          {
-            isEdit &&
-            <button
-              className="button"
-              onClick={handleDelete}
-            >
-              Delete
-            </button>
-          }
           <button
             className="button"
             onClick={handleSubmit}
@@ -245,4 +192,4 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted, theme, is
   );
 }
 
-export default ReviewBookModal;
+export default ReportReviewModal;

@@ -5,15 +5,16 @@ import { useParams, useHistory } from 'react-router-dom';
 import Carousel from 'nuka-carousel';
 
 import { RatingBar } from '../../components/common/atoms';
-import { SectionCard } from '../../components/common/molecules';
+import { SectionCard, LoadingOverlay } from '../../components/common/molecules';
 import { LibraryPageTemplate } from '../../components/common/template';
 
 import { Review, User, Book, LocalBook } from '../../types';
-import { currentUser, mockUsers } from '../../utils/mock-users';
+// import { currentUser, mockUsers } from '../../utils/mock-users';
 
 import styles from './BookInfoPage.module.scss';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import ReviewBookModal from './ReviewBookModal';
+import ReportReviewModal from './ReportReviewModal';
 
 import { getBookById } from '../../actions/bookActions';
 import { getReviewsByBookId } from '../../actions/reviewActions';
@@ -24,6 +25,10 @@ import * as Local from '../../utils/localUtils';
 
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
+import FlagIcon from '@material-ui/icons/Flag';
+import EditIcon from '@material-ui/icons/Edit';
+// import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 
 const { ipcRenderer } = require('electron');
 
@@ -31,6 +36,11 @@ const useStyles = makeStyles(() =>
   createStyles({
     iconButton: {
       fontSize: "2rem"
+    },
+    iconButtonSmall: {
+      fontSize: "0.2rem !important",
+      color: "rgba(0, 0, 0, 0.2)",
+      padding: "6px"
     },
   }),
 );
@@ -46,10 +56,19 @@ const BookInfoPage = (props) => {
   const [similarBooks, setSimilarBooks] = useState<Book[]>([]);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [isReviewsLoading, setIsReviewsLoading] = useState(true);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [isDownloaded, setIsDownloaded] = useState(false);
+  const [isReviewsLoading, setIsReviewsLoading] = useState(true);
+  const [isBookInfoLoading, setIsBookInfoLoading] = useState(true);
+  const [isAuthorInfoLoading, setIsAuthorInfoLoading] = useState(true);
+  const [isSimilarLoading, setIsSimilarLoading] = useState(true);
+  const [reviewToEdit, setReviewToEdit] = useState<any>();
+  const [reviewToReport, setReviewToReport] = useState<any>();
   const classes = useStyles();
   const { theme } = props.local;
+  const { currentUser, isLoggedIn } = props.user;
+  const [isVoting, setIsVoting] = useState(false);
+  const [ agreedList, setAgreedList ] = useState<string[]>([]);
 
   useEffect(() => {
     if (!id) {
@@ -58,14 +77,24 @@ const BookInfoPage = (props) => {
     }
     // props.getBookById(id);
     // props.getReviewsByBookId(id);
+    setIsBookInfoLoading(true);
+    setIsAuthorInfoLoading(true);
+    setIsSimilarLoading(true);
+    setIsReviewsLoading(true);
+    setReviewToEdit(null);
+    setReviewToReport(null);
+    setIsVoting(false);
+    setAgreedList([]);
     checkBookIsDownloaded();
     Service.getBookById(id)
       .then((response: any) => {
         _setBook(response.book);
+        setIsBookInfoLoading(false);
         if (response.book.authors && response.book.authors.length > 0) {
           Service.getAuthorBooks(response.book.authors[0].id)
             .then((response: any) => {
               setAuthorBooks(response.books);
+              setIsAuthorInfoLoading(false);
             })
             .catch((error) => {
               console.log(error);
@@ -74,7 +103,7 @@ const BookInfoPage = (props) => {
       })
       .catch((error) => {
         console.log(error);
-        /** REDIRECT TO PAGE NOT FOUND */
+        /** TODO: REDIRECT TO PAGE NOT FOUND */
         return;
       });
     Service.getReviewsByBookId(id)
@@ -85,19 +114,51 @@ const BookInfoPage = (props) => {
       .catch((error) => {
         console.log(error);
         setIsReviewsLoading(false);
+        _setReviews([]);
       });
-    Service.getSimilarBooks(id)
+    Service.getSimilarBooks(id, 9)
       .then((response: any) => {
+        console.log('similar');
+        console.log(response);
         setSimilarBooks(response.books);
+        setIsSimilarLoading(false);
       })
       .catch((error) => {
+        console.log('similar err');
         console.log(error);
+        setSimilarBooks([]);
       })
   }, [id]);
+
+  useEffect(() => {
+    const agreedReviews = _reviews.filter(review => isAlreadyAgreed(review));
+    const newAgreedList = agreedReviews.map(review => review.id);
+    setAgreedList([ ...newAgreedList ]);
+  }, [_reviews]);
 
   const handleAuthorBooksClick = () => {
     console.log('asdds');
     history.push({ pathname: '/search', state: { passedAuthorIds: [ _book!.authorIds![0] ], passedAuthors: [ _book!.authors![0] ] } });
+  }
+
+  const showFlagButton = (review: Review) => {
+    if (!currentUser || !currentUser.username) {
+      return true;
+    }
+    if (review.username == currentUser.username) {
+      return false;
+    }
+    if (isAlreadyReported(review)) {
+      return false;
+    }
+    return true;
+  }
+
+  const showAgreed = (review) => {
+    if (!currentUser || !currentUser.username) {
+      return false;
+    }
+    return Service.isElemInList(review.id, agreedList);
   }
 
   const handleDownloadClick = () => {
@@ -114,6 +175,47 @@ const BookInfoPage = (props) => {
     ipcRenderer.on(`download-end-${id}`, (event, arg) => {
       checkBookIsDownloaded();
     })
+  }
+
+  const handleVoteClick = (review: Review) => {
+    if (isVoting) {
+      return;
+    }
+    setIsVoting(true);
+    if (Service.isElemInList(review.id, agreedList)) {
+      Service.unvoteReview(review.id)
+        .then(() => {
+          setIsVoting(false);
+          setAgreedList([ ...agreedList.filter(id => id != review.id) ]);
+        })
+        .catch((error) => {
+          setIsVoting(false);
+          console.log(error);
+        })
+    }
+    else {
+      Service.upvoteReview(review.id)
+        .then(() => {
+          setIsVoting(false);
+          setAgreedList([ ...agreedList, review.id ]);
+        })
+        .catch((error) => {
+          setIsVoting(false);
+          console.log(error);
+        })
+    }
+  }
+
+  const isUserAlreadyReviewed = () => {
+    return Service.isElemInList(currentUser.username, _reviews.map(review => review.username));
+  }
+
+  const isAlreadyReported = (review: Review) => {
+    return Service.isElemInList(currentUser.username, review.reportUsers);
+  }
+
+  const isAlreadyAgreed = (review: Review) => {
+    return Service.isElemInList(currentUser.username, review.upvoteUsers);
   }
 
   const checkBookIsDownloaded = () => {
@@ -162,16 +264,36 @@ const BookInfoPage = (props) => {
     history.push(`/reader/${id}`);
   }
 
+  const handleEditReviewClick = (review: Review) => {
+    setReviewToEdit(review);
+    handleShowReviewModal();
+  }
+
   const handleCloseReviewModal= () => {
     setShowReviewModal(false);
+    setReviewToEdit(null);
   }
 
   const handleShowReviewModal = () => {
     setShowReviewModal(true);
   }
 
-  const onNewReviewCreated = () => {
-    handleCloseReviewModal();
+  const handleReportReviewClick = (review: Review) => {
+    setReviewToReport(review);
+    handleShowReportModal();
+
+  }
+
+  const handleCloseReportModal = () => {
+    setShowReportModal(false);
+    setReviewToReport(null);
+  }
+
+  const handleShowReportModal = () => {
+    setShowReportModal(true);
+  }
+
+  const fetchReviews = () => {
     setIsReviewsLoading(true);
     if (!id) {
       /** REDIRECT TO PAGE NOT FOUND */
@@ -189,6 +311,16 @@ const BookInfoPage = (props) => {
       });
   }
 
+  const onReported = () => {
+    handleCloseReportModal();
+    fetchReviews();
+  }
+
+  const onReviewCreatedOrUpdate = () => {
+    handleCloseReviewModal();
+    fetchReviews();
+  }
+
   const isDownloading = (id) => {
     return props.local.downloadingBooks.includes(id);
   }
@@ -198,19 +330,33 @@ const BookInfoPage = (props) => {
       topBarLeft={renderHomeButton()}
       backgroundColor={theme.backgroundColor}
     >
-      { _book &&
+      { true &&
         (<div>
           <div className={styles['page-content']}>
             {/* LEFT SECTION */}
             <div className={styles['left-section']}>
               {/* BOOK INFO CARD */}
               {
-                (_book && _book.authors) &&
+                isBookInfoLoading &&
                 <div
                   className={styles['book-info-card']}
                   style={{
                     backgroundColor: theme.cardBGColor,
-                    color: theme.textColor
+                    color: theme.textColor,
+                    position: 'relative',
+                    height: '500px'
+                  }}
+                >
+                  <LoadingOverlay show={isBookInfoLoading} />
+                </div>
+              }
+              {
+                ( !isBookInfoLoading && _book && _book.authors) &&
+                <div
+                  className={styles['book-info-card']}
+                  style={{
+                    backgroundColor: theme.cardBGColor,
+                    color: theme.textColor,
                   }}
                 >
                   <div className={styles['book-cover-and-buttons']}>
@@ -272,60 +418,58 @@ const BookInfoPage = (props) => {
                           color: theme.starColor
                         }}
                       />
-                      <div style={{ fontWeight: 600, marginLeft: "10px" }}>({_book!.ratingCount})</div>
+                      {/* <div style={{ fontWeight: 600, marginLeft: "10px" }}>({_book!.ratingCount})</div> */}
                     </div>
                     <p className={styles['book-sypnosis']}>{_book!.sypnosis ? _book!.sypnosis : CONSTANTS.NO_BOOK_SYPNOSIS}</p>
                   </div>
                 </div>
               }
               {/* REVIEWS CARD */}
-              <SectionCard
-                sectionName="Community Reviews"
-                showSubtext={false}
-                wrapperStyle={{
-                  backgroundColor: theme.cardBGColor,
-                  color: theme.textColor
-                }}
-              >
-                {/* START REVIEW */}
-                <div
-                  className={styles['review-container']}
-
+              {
+                (isReviewsLoading) &&
+                <SectionCard
+                  sectionName="Community Reviews"
+                  showSubtext={false}
+                  wrapperStyle={{
+                    backgroundColor: theme.cardBGColor,
+                    color: theme.textColor,
+                    height: '300px',
+                    position: 'relative'
+                  }}
                 >
-                  <div className={styles['user-avatar']}>
-                    <img
-                      className={styles['user-avatar']}
-                      src={currentUser.profilePicture}
-                    />
+                  <div style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    borderRadius: '20px'
+                  }}>
+                    <LoadingOverlay show={isReviewsLoading}/>
                   </div>
-                  <div className={styles['review-bold-text-and-content']}>
-                    <div className={styles['review-bold-text']}>
-                      <span
-                        className={styles['review-username-clickable']}
-                        style={{ color: theme.usernameColor }}
-                      >{currentUser.username}</span>
-                      , start your review of Deception Point
-                    </div>
-                    <button
-                      className={'button-secondary ' + styles['start-review-button']}
-                      onClick={handleShowReviewModal}
-                    >
-                      Add Review
-                    </button>
-                  </div>
-                </div>
-                {/* REVIEWS */}
-                {
-                  _reviews &&
-                  _reviews.map((review, index) => (
+                </SectionCard>
+              }
+              {
+                (!isReviewsLoading) &&
+                <SectionCard
+                  sectionName="Community Reviews"
+                  showSubtext={false}
+                  wrapperStyle={{
+                    backgroundColor: theme.cardBGColor,
+                    color: theme.textColor
+                  }}
+                >
+                  {/* START REVIEW */}
+                  {
+                    (isLoggedIn && !isUserAlreadyReviewed()) &&
                     <div
-                      id={`review${index}`}
                       className={styles['review-container']}
+
                     >
                       <div className={styles['user-avatar']}>
                         <img
                           className={styles['user-avatar']}
-                          src={review.user.profilePicture}
+                          src={currentUser.profilePicture}
                         />
                       </div>
                       <div className={styles['review-bold-text-and-content']}>
@@ -333,71 +477,186 @@ const BookInfoPage = (props) => {
                           <span
                             className={styles['review-username-clickable']}
                             style={{ color: theme.usernameColor }}
-                          >{review.user.username}</span>
-                          &nbsp;rated it&nbsp;
-                          <span>
-                            <RatingBar
-                              starStyle={{ fontSize: '1.25rem', color: theme.starColor }}
-                              wrapperStyle={{ display: 'flex' }}
-                              ratingValue={review.ratingValue / 5}
-                            />
-                          </span>
+                          >{currentUser.username}</span>
+                          , start your review of {_book?.title}
                         </div>
-                        <p>{review.content}</p>
+                        <button
+                          className={'button-secondary ' + styles['start-review-button']}
+                          onClick={handleShowReviewModal}
+                        >
+                          Add Review
+                        </button>
                       </div>
                     </div>
-                  ))
-                }
-              </SectionCard>
-
-            </div>
-            {/* RIGHT SECTION */}
-            <div className={styles['right-section']}>
-              <SectionCard
-                sectionName="Similar Books"
-                wrapperStyle={{
-                  backgroundColor: theme.cardBGColor,
-                  color: theme.textColor,
-                  marginTop: 0,
-                }}
-                showSubtext={false}
-              >
-                <Carousel
-                  slidesToShow={4}
-                  slidesToScroll={2}
-                  cellSpacing={30}
-                  // framePadding="0 40px"
-                  // slideWidth="436px"
-                  defaultControlsConfig={{
-                    nextButtonText: '›',
-                    prevButtonText: '‹',
-                    pagingDotsStyle: { display: "none" }
-                  }}
-                >
+                  }
+                  {/* REVIEWS */}
                   {
-                    similarBooks.map((book: Book, index: number) => (
+                    _reviews &&
+                    _reviews.map((review, index) => (
                       <div
-                        key={`book${index}`}
-                        style={{ height: "fit-content" }}
-                        onClick={() => handleSimilarBookClick(book.id)}
+                        id={`review${index}`}
+                        className={styles['review-container']}
                       >
-                        <div
-                          className={styles['sub-book-cover']}
-                        >
-                          <div className={styles['aspect-ratio-container']}>
-                            <img
-                              className={styles['sub-cover-img']}
-                              src={book.cover ? book.cover : CONSTANTS.NO_BOOK_IMAGE_LINK}
-                            />
+                        <div className={styles['user-avatar']}>
+                          <img
+                            className={styles['user-avatar']}
+                            src={review.user.profilePicture}
+                          />
+                        </div>
+                        <div className={styles['review-bold-text-and-content']}>
+                          <div className={styles['review-bold-text']}>
+                            <span
+                              className={styles['review-username-clickable']}
+                              style={{ color: theme.usernameColor }}
+                            >{review.user.username}</span>
+                            &nbsp;rated it&nbsp;
+                            <span>
+                              <RatingBar
+                                starStyle={{ fontSize: '1.25rem', color: theme.starColor }}
+                                wrapperStyle={{ display: 'flex' }}
+                                ratingValue={review.ratingValue / 5}
+                              />
+                            </span>
+                          </div>
+                          <p>{review.content}</p>
+                        </div>
+                        <div style={{ flex: 1, position: 'relative' }}>
+                          <div style={{
+                            position: 'absolute',
+                            right: '20px',
+                          }}>
+                            {
+                              (review.username == currentUser.username) &&
+                              <IconButton className={classes.iconButtonSmall} onClick={() => handleEditReviewClick(review)}>
+                                <EditIcon />
+                              </IconButton>
+                            }
+                            <IconButton
+                              className={classes.iconButtonSmall}
+                              onClick={() => handleVoteClick(review)}
+                            >
+                              {
+                                showAgreed(review)
+                                ? <ThumbUpIcon style={{ color: theme.iconColor }}/>
+                                : <ThumbUpIcon />
+                              }
+                            </IconButton>
+                            {
+                              (showFlagButton(review)) &&
+                              <IconButton className={classes.iconButtonSmall} onClick={() => handleReportReviewClick(review)}>
+                                <FlagIcon />
+                              </IconButton>
+                            }
                           </div>
                         </div>
                       </div>
                     ))
                   }
-                </Carousel>
-              </SectionCard>
+                </SectionCard>
+              }
+
+            </div>
+            {/* RIGHT SECTION */}
+            <div className={styles['right-section']}>
               {
-                (_book?.authors && _book.authors.length > 0) &&
+                isSimilarLoading &&
+                <SectionCard
+                  sectionName="Similar Books"
+                  showSubtext={false}
+                  wrapperStyle={{
+                    backgroundColor: theme.cardBGColor,
+                    color: theme.textColor,
+                    height: '300px',
+                    marginTop: 0,
+                    position: 'relative',
+                    borderRadius: '20px'
+                  }}
+                >
+                  <div style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    borderRadius: '20px'
+                  }}>
+                    <LoadingOverlay show={isSimilarLoading}/>
+                  </div>
+                </SectionCard>
+              }
+              {
+                !isSimilarLoading &&
+                <SectionCard
+                  sectionName="Similar Books"
+                  wrapperStyle={{
+                    backgroundColor: theme.cardBGColor,
+                    color: theme.textColor,
+                    marginTop: 0,
+                  }}
+                  showSubtext={false}
+                >
+                  <Carousel
+                    slidesToShow={4}
+                    slidesToScroll={2}
+                    cellSpacing={30}
+                    // framePadding="0 40px"
+                    // slideWidth="436px"
+                    defaultControlsConfig={{
+                      nextButtonText: '›',
+                      prevButtonText: '‹',
+                      pagingDotsStyle: { display: "none" }
+                    }}
+                  >
+                    {
+                      similarBooks.map((book: Book, index: number) => (
+                        <div
+                          key={`book${index}`}
+                          style={{ height: "fit-content" }}
+                          onClick={() => handleSimilarBookClick(book.id)}
+                        >
+                          <div
+                            className={styles['sub-book-cover']}
+                          >
+                            <div className={styles['aspect-ratio-container']}>
+                              <img
+                                className={styles['sub-cover-img']}
+                                src={book.cover ? book.cover : CONSTANTS.NO_BOOK_IMAGE_LINK}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </Carousel>
+                </SectionCard>
+              }
+              {
+                isBookInfoLoading &&
+                <SectionCard
+                  sectionName={`About Author`}
+                  showSubtext={false}
+                  wrapperStyle={{
+                    backgroundColor: theme.cardBGColor,
+                    color: theme.textColor,
+                    height: '300px',
+                    position: 'relative',
+                    borderRadius: '20px'
+                  }}
+                >
+                  <div style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    borderRadius: '20px'
+                  }}>
+                    <LoadingOverlay show={isAuthorInfoLoading}/>
+                  </div>
+                </SectionCard>
+              }
+              {
+                (!isBookInfoLoading && _book?.authors && _book.authors.length > 0) &&
                 <div>
                   <SectionCard
                     sectionName={`About ${_book!.authors[0].name}`}
@@ -420,7 +679,23 @@ const BookInfoPage = (props) => {
                             className={styles['author-name']}
                             style={{ color: theme.bookAuthorsColor }}
                           >{_book!.authors[0].name}</div>
-                          <div className={styles['author-books']} onClick={handleAuthorBooksClick}>{`${authorBooks.length} Books`}</div>
+                          {
+                            isAuthorInfoLoading &&
+                            <div
+                              style={{
+                                position: 'relative',
+                                height: '20px',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                              }}>
+                                <LoadingOverlay show={isAuthorInfoLoading} isLinear noOverlay/>
+                            </div>
+                          }
+                          {
+                            !isAuthorInfoLoading &&
+                            <div className={styles['author-books']} onClick={handleAuthorBooksClick}>{`${authorBooks.length} Books`}</div>
+                          }
                         </div>
                       </div>
                       <div className={styles['author-about']}>
@@ -432,14 +707,29 @@ const BookInfoPage = (props) => {
               }
             </div>
           </div>
-          <ReviewBookModal
-            open={showReviewModal}
-            handleClose={handleCloseReviewModal}
-            user={currentUser}
-            book={_book!}
-            onSubmitted={onNewReviewCreated}
-            theme={theme}
-          />
+          {
+            !isBookInfoLoading &&
+            <ReviewBookModal
+              open={showReviewModal}
+              handleClose={handleCloseReviewModal}
+              user={currentUser}
+              book={_book!}
+              onSubmitted={onReviewCreatedOrUpdate}
+              theme={theme}
+              isEdit={reviewToEdit != null}
+              reviewToEdit={reviewToEdit}
+            />
+          }
+          {
+            reviewToReport &&
+            <ReportReviewModal
+              open={showReportModal}
+              handleClose={handleCloseReportModal}
+              review={reviewToReport}
+              onSubmitted={onReported}
+              theme={theme}
+            />
+          }
         </div>)
       }
     </LibraryPageTemplate>
@@ -450,6 +740,7 @@ const mapStateToProps = (state) => ({
   books: state.books,
   reviews: state.reviews,
   local: state.local,
+  user: state.users,
 });
 
 export default connect(mapStateToProps, { getBookById, getReviewsByBookId, downloadBook })(BookInfoPage);

@@ -1,11 +1,14 @@
 import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 interface LoadingOverlayProps {
   show: boolean;
+  isLinear?: boolean;
+  noOverlay?: boolean;
 }
 
-const LoadingOverlay = ({ show }: LoadingOverlayProps) => {
+const LoadingOverlay = ({ show, isLinear, noOverlay }: LoadingOverlayProps) => {
   return (
     show ?
       (<div
@@ -15,11 +18,19 @@ const LoadingOverlay = ({ show }: LoadingOverlayProps) => {
           right: 0,
           top: 0,
           bottom: 0,
-          backgroundColor: 'rgba(255, 255, 255, 0.5)',
-          zIndex: 100
+          backgroundColor: noOverlay ? 'rgba(255, 255, 255, 0)' : 'rgba(255, 255, 255, 0.3)',
+          zIndex: 100,
+          borderRadius: 'inherit',
         }}
       >
-        <CircularProgress size={24} className="circular-center-size-24px" />
+        {
+          !isLinear &&
+          <CircularProgress size={24} className="circular-center-size-24px" />
+        }
+        {
+          isLinear &&
+          <LinearProgress className='linear-center' />
+        }
       </div>)
       : <div></div>
   );
