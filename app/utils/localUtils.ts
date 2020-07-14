@@ -207,3 +207,17 @@ export const updateBookDisplayConfig = (bookId: string, displayConfig: DisplayCo
 export const setCommonDisplayConfig = (commonDisplay: DisplayConfig) => {
   ipcRenderer.send('set-default-display-style', { displayStyle: commonDisplay });
 }
+
+export const loveOrUnloveBook = (bookId: string) => {
+  return new Promise((resolve, reject) => {
+    ipcRenderer.send('love-or-unlove-book', { bookId });
+    ipcRenderer.on('love-or-unlove-book-done', (event, res) => {
+      if (res.result == 'SUCCESS') {
+        resolve({ result: res.result, isLoved: res.isLoved });
+      }
+      else {
+        reject({ result: res.result });
+      }
+    });
+  });
+}

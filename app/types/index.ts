@@ -68,6 +68,7 @@ export interface LocalBook {
   lastRead?: string,
   displayConfig?: DisplayConfig,
   useCommonDisplay?: boolean,
+  isLoved?: boolean,
 }
 
 export interface User {

@@ -137,18 +137,25 @@ const BookInfoPage = (props) => {
   }, [_reviews]);
 
   const handleAuthorBooksClick = () => {
-    console.log('asdds');
+    // console.log('asdds');
     history.push({ pathname: '/search', state: { passedAuthorIds: [ _book!.authorIds![0] ], passedAuthors: [ _book!.authors![0] ] } });
   }
 
   const showFlagButton = (review: Review) => {
-    if (!currentUser || !currentUser.username) {
-      return true;
+    if (!isLoggedIn ||!currentUser || !currentUser.username) {
+      return false;
     }
     if (review.username == currentUser.username) {
       return false;
     }
     if (isAlreadyReported(review)) {
+      return false;
+    }
+    return true;
+  }
+
+  const showAgreeButton = (review: Review) => {
+    if (!isLoggedIn ||!currentUser || !currentUser.username) {
       return false;
     }
     return true;
@@ -531,16 +538,19 @@ const BookInfoPage = (props) => {
                                 <EditIcon />
                               </IconButton>
                             }
-                            <IconButton
-                              className={classes.iconButtonSmall}
-                              onClick={() => handleVoteClick(review)}
-                            >
-                              {
-                                showAgreed(review)
-                                ? <ThumbUpIcon style={{ color: theme.iconColor }}/>
-                                : <ThumbUpIcon />
-                              }
-                            </IconButton>
+                            {
+                              showAgreeButton(review) &&
+                              <IconButton
+                                className={classes.iconButtonSmall}
+                                onClick={() => handleVoteClick(review)}
+                              >
+                                {
+                                  showAgreed(review)
+                                  ? <ThumbUpIcon style={{ color: theme.iconColor }}/>
+                                  : <ThumbUpIcon />
+                                }
+                              </IconButton>
+                            }
                             {
                               (showFlagButton(review)) &&
                               <IconButton className={classes.iconButtonSmall} onClick={() => handleReportReviewClick(review)}>

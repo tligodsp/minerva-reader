@@ -1,7 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import defaultStyles from './BookInfoCard.css';
 import Palette, {usePalette} from 'react-palette';
 import {useHistory} from 'react-router-dom';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import IconButton from '@material-ui/core/IconButton';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
+import * as Local from '../../../../utils/localUtils';
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    iconButton: {
+      fontSize: "2rem"
+    },
+    iconButtonSmall: {
+      fontSize: "0.2rem !important",
+      color: "#fefefe",
+      backgroundColor: "rgba(0, 0, 0, 0.2)",
+      padding: "6px",
+      zIndex: 100,
+    },
+  }),
+);
 
 // Properties
 export interface BookInfoCardProps {
@@ -20,26 +40,55 @@ export interface BookInfoCardProps {
   smartBackgroundColor?: boolean;
   isVertical?: boolean;
   onBookClick?: Function;
+  showLoveButton?: boolean;
+  isLoved?: boolean;
 }
 
 const BookInfoCard = ({
   id, title, authors, cover, subInfo, children,
   wrapperStyle, bookCoverStyle, bookInfoContainerStyle,
   bookTitleStyle, bookAuthorsStyle, bookSubInfoStyle,
-  smartBackgroundColor, isVertical, onBookClick
+  smartBackgroundColor, isVertical, onBookClick, showLoveButton,
+  isLoved
 }: BookInfoCardProps) => {
   const _cover = cover ? cover : 'https://lazioeventi.com/wp-content/uploads/2014/05/No-image-available.jpg';
+  const [_isLoved, _setIsLoved] = useState(isLoved == null ? false : isLoved)
   const { data, loading, error } = usePalette(_cover);
   const _isVertical = !(isVertical == null) ? isVertical : false;
   let history = useHistory();
+  const classes = useStyles();
 
-  const _handleClick = () => {
+  useEffect(() => {
+    console.log(_isLoved);
+  }, [_isLoved]);
+
+  const _handleClick = (event: any) => {
+    event.cancelBubble = true;
+    if(event.stopPropagation) {
+      event.stopPropagation();
+    }
     if (onBookClick) {
       onBookClick(id);
     }
     else {
       history.push(`/book-info/${id}`);
     }
+  }
+
+  const _handleLoveClick = (event: any) => {
+    event.cancelBubble = true;
+    if(event.stopPropagation) {
+      event.stopPropagation();
+    }
+    console.log('luv');
+    Local.loveOrUnloveBook(id)
+      .then((response: any) => {
+        console.log(response);
+        _setIsLoved(response.isLoved);
+      })
+      .catch((error) => {
+        console.log(error)
+      })
   }
 
   const renderHorizontally = () => {
@@ -112,6 +161,23 @@ const BookInfoCard = ({
           className={defaultStyles['book-cover-container']}
           style={{ ...bookCoverStyle }}
         >
+          <div style={{ position: 'absolute', right: 0, top: 0 }}>
+            <IconButton className={classes.iconButtonSmall} onClick={_handleLoveClick}>
+              {/* {
+                _isLoved
+                ? <FavoriteIcon />
+                : <FavoriteBorderIcon />
+              } */}
+              {
+                _isLoved &&
+                <FavoriteIcon />
+              }
+              {
+                !_isLoved &&
+                <FavoriteBorderIcon />
+              }
+            </IconButton>
+          </div>
           <div
             className={defaultStyles['aspect-ratio-container']}
           >

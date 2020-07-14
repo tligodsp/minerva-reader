@@ -1,5 +1,6 @@
 import { GET_CURRENT_USER, SET_CURRENT_USER, SET_TOKEN, REMOVE_TOKEN } from '../actions/types';
 import * as Local from '../utils/localUtils';
+import * as Constants from '../utils/constants';
 
 const initialState = {
   currentUser: Local.getGuessUser(),
@@ -17,13 +18,13 @@ const userReducer = (state = initialState, action) => {
     case SET_CURRENT_USER:
       return {
         ...state,
-        currentUser: action.payload
+        currentUser: action.payload,
+        isLoggedIn: (action.payload && (action.payload.id != Constants.GUESS_USER_ID))
       };
     case SET_TOKEN:
       return {
         ...state,
-        token: action.payload,
-        isLoggedIn: true
+        token: action.payload
       };
     case REMOVE_TOKEN:
       return {

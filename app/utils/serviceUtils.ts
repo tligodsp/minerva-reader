@@ -25,25 +25,59 @@ export const isElemInList = (elem: any, list: any[] | undefined) => {
   return list.findIndex(e => e === elem) != -1;
 }
 
-export const getBookByFilters = (searchTerm: string, authorIds: string[], genreIds: string[]) => {
+// export const getBookByFilters = (searchTerm: string, authorIds: string[], genreIds: string[]) => {
+//   /** API REPLACE */
+//   // remove duplicates
+//   // filteredBooks = filteredBooks.filter((book, index) => filteredBooks.indexOf(book) === index);
+//   return new Promise((resolve, reject) => {
+//     bookAPI.getBooks(searchTerm)
+//       .then((response) => {
+//         let filteredBooks = response.data.books.map(bookRes => convertBookModel(bookRes));
+//         for (let authorId of authorIds) {
+//           // console.log(authorId);
+//           filteredBooks = [ ...filteredBooks.filter(book => isElemInList(authorId, book.authorIds)) ];
+//           // console.log(filteredBooks);
+//         }
+//         for (let genreId of genreIds) {
+//           filteredBooks = [ ...filteredBooks.filter(book => isElemInList(genreId, book.genreIds)) ];
+//         }
+//         // if (searchTerm && searchTerm.length > 0) {
+//         //   filteredBooks = [ ...filteredBooks.filter(book => book.title.toLowerCase().includes(searchTerm)) ];
+//         // }
+//         resolve({ books: filteredBooks });
+//       })
+//       .catch((error) => {
+//         reject({ error, books: [] });
+//       })
+//     // resolve({ books: filteredBooks });
+//   });
+// }
+
+export const getBookByFilters = (searchTerm: string) => {
   /** API REPLACE */
-  const books = mockBooks;
-  let filteredBooks = mockBooks;
-  for (let authorId of authorIds) {
-    console.log(authorId);
-    filteredBooks = [ ...filteredBooks.filter(book => isElemInList(authorId, book.authorIds)) ];
-    console.log(filteredBooks);
-  }
-  for (let genreId of genreIds) {
-    filteredBooks = [ ...filteredBooks.filter(book => isElemInList(genreId, book.genreIds)) ];
-  }
-  if (searchTerm && searchTerm.length > 0) {
-    filteredBooks = [ ...filteredBooks.filter(book => book.title.toLowerCase().includes(searchTerm)) ];
-  }
   // remove duplicates
   // filteredBooks = filteredBooks.filter((book, index) => filteredBooks.indexOf(book) === index);
   return new Promise((resolve, reject) => {
-    resolve({ books: filteredBooks });
+    bookAPI.getBooks(searchTerm)
+      .then((response) => {
+        let books = response.data.books.map(bookRes => convertBookModel(bookRes));
+        // for (let authorId of authorIds) {
+        //   // console.log(authorId);
+        //   filteredBooks = [ ...filteredBooks.filter(book => isElemInList(authorId, book.authorIds)) ];
+        //   // console.log(filteredBooks);
+        // }
+        // for (let genreId of genreIds) {
+        //   filteredBooks = [ ...filteredBooks.filter(book => isElemInList(genreId, book.genreIds)) ];
+        // }
+        // if (searchTerm && searchTerm.length > 0) {
+        //   filteredBooks = [ ...filteredBooks.filter(book => book.title.toLowerCase().includes(searchTerm)) ];
+        // }
+        resolve({ books });
+      })
+      .catch((error) => {
+        reject({ error, books: [] });
+      })
+    // resolve({ books: filteredBooks });
   });
 }
 

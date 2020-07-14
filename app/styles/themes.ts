@@ -20,6 +20,8 @@ const Theme = {
     readerBackgroundColor: '#FEFEFE',
     readerTextColor: '#111111',
     primaryButtonColor: '#7670FF',
+    notFoundDisplayColor: '#7670FF',
+    notFoundColorFilter: 'invert(66%) sepia(52%) saturate(7490%) hue-rotate(220deg) brightness(99%) contrast(105%)',
   },
   'dark': {
     name: 'dark',
@@ -41,7 +43,9 @@ const Theme = {
     progressTextColor: '#FEFEFE',
     readerBackgroundColor: '#333333',
     readerTextColor: '#FEFEFE',
-    primaryButtonColor: '#3A3B3C'
+    primaryButtonColor: '#3A3B3C',
+    notFoundDisplayColor: '#FEFEFE',
+    notFoundColorFilter: 'invert(99%) sepia(100%) saturate(1%) hue-rotate(69deg) brightness(104%) contrast(99%)',
   }
 };
 

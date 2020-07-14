@@ -33,7 +33,7 @@ interface BookListProps {
   progressPathColor?: string;
   progressTrailColor?: string;
   progressTextColor?: string;
-  // TODO: Add book card display type: Rating|Progress
+  showLoveButton?: boolean;
 }
 
 const BookList = ({
@@ -41,7 +41,7 @@ const BookList = ({
     wrapperStyle, bookContainerStyle, bookProps, useProgressForSubInfo,
     useProgressForChildren, isVerticalBookCard, hideSubInfo, showSimpleRating,
     starColor,showBookRatingCount, progressPathColor, progressTrailColor,
-    progressTextColor }
+    progressTextColor, showLoveButton }
   : BookListProps) => {
   const _books: any = books ? books : [];
   let history = useHistory();
@@ -176,7 +176,7 @@ const BookList = ({
       >
         {
           _books.map((localBook: LocalBook, index: number) => {
-            const { book, readingProgress } = localBook;
+            const { book, readingProgress, isLoved } = localBook;
             return(
               <div
                 key={`book-${index}`}
@@ -204,6 +204,7 @@ const BookList = ({
                   }}
                   isVertical={isVerticalBookCard}
                   onBookClick={_handleBookClick}
+                  isLoved={isLoved}
                 >
                   {
                     useProgressForChildren ?

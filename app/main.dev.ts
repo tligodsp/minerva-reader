@@ -400,6 +400,68 @@ ipcMain.on('update-book-display-config', (event, info) => {
   };
 });
 
+ipcMain.on('love-or-unlove-book', (event, info) => {
+  try {
+    // const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
+    // let userData: any = {};
+    // let bookId = info.bookId;
+    // if (fs.existsSync(userDataPath)) {
+    //   const userRawData = fs.readFileSync(userDataPath);
+    //   userData = JSON.parse(userRawData);
+    //   if (userData && userData.lovedBookIds) {
+    //     if (userData.lovedBookIds.findIndex(id => id === bookId) !== -1) {
+    //       userData.lovedBookIds = [ userData.lovedBookIds.filter(id => id !== bookId) ];
+    //     }
+    //     else {
+    //       userData.lovedBookIds = [ ...userData.lovedBookIds, bookId ]
+    //     }
+    //   }
+    //   else {
+    //     userData = { lovedBookIds: [ bookId ] };
+    //   }
+    // }
+    // else {
+    //   userData = { lovedBookIds: [ bookId ] };
+    // }
+    // fs.writeFileSync(
+    //   userDataPath,
+    //   JSON.stringify(userData, null, 2)
+    // );
+    const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
+    let userData: any = {};
+    let isLovedRes = false;
+    if (fs.existsSync(userDataPath)) {
+      const userRawData = fs.readFileSync(userDataPath);
+      userData = JSON.parse(userRawData);
+      if (userData && userData.localBooks) {
+        let bookIndex = userData.localBooks.findIndex(lb => lb.book.id === info.bookId);
+        if (bookIndex != -1) {
+          let localBooks =  userData.localBooks;
+          let book = localBooks[bookIndex];
+          if (!book.isLoved) {
+            book.isLoved = true;
+            isLovedRes = true;
+          }
+          else {
+            book.isLoved = false;
+            isLovedRes = false;
+          }
+          localBooks[bookIndex] = book;
+          userData.localBooks = [ ...localBooks ];
+          fs.writeFileSync(
+            userDataPath,
+            JSON.stringify(userData, null, 2)
+          );
+        }
+      }
+    }
+    event.sender.send(`love-or-unlove-book-done`, { result: 'SUCCESS', isLoved: isLovedRes });
+  } catch (error) {
+    console.log(error);
+    event.sender.send(`love-or-unlove-book-done`, { result: 'ERROR' });
+  }
+});
+
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed

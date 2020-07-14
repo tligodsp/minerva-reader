@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
-import { FilterCard } from '../../components/common/molecules';
+import { FilterCard, LoadingOverlay, NotFoundDisplay } from '../../components/common/molecules';
 import { BookList, BookListSection } from '../../components/common/organisms';
 import { LibraryPageTemplate } from '../../components/common/template';
 import { Colors } from '../../styles';
-import { Genre, Author } from '../../types';
+import { Genre, Author, Book } from '../../types';
 import { mockBooks } from '../../utils/mock-books';
-import { mockGenres } from '../../utils/mock-genres';
-import { mockAuthors } from '../../utils/mock-authors';
+// import { mockGenres } from '../../utils/mock-genres';
+// import { mockAuthors } from '../../utils/mock-authors';
 import Chips, { Chip } from 'react-chips'
 import { useLocation, useHistory } from 'react-router-dom';
 import * as Service from '../../utils/serviceUtils';
@@ -16,6 +16,7 @@ import { makeStyles, createStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
+import * as Constants from '../../utils/constants';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -48,10 +49,12 @@ const SearchResultsPage = (props) => {
   const passedGenreIds = location.state && location.state.passedGenreIds ? location.state.passedGenreIds: [];
   const [ allGenres, setAllGenres ] = useState([]);
   const [ allAuthors, setAllAuthors ] = useState([]);
+  const [ foundBooks, setFoundBooks ] = useState([]);
   const [ filteredBooks, setFilteredBooks ] = useState([]);
   const [ searchTerm, setSearchTerm ] = useState('');
   const [ genresFilter, setGenresFilter ] = useState<Genre[]>([]);
   const [ authorsFilter, setAuthorsFilter ] = useState<Author[]>([]);
+  const [ isSearching, setIsSearching ] = useState(false);
   const classes = useStyles();
   const { theme } = props.local;
   let history = useHistory();
@@ -83,9 +86,17 @@ const SearchResultsPage = (props) => {
       })
   }, []);
 
+  // useEffect(() => {
+  //   updateFilteredBooks();
+  // }, [genresFilter, authorsFilter, searchTerm])
+
   useEffect(() => {
-    updateFilteredBooks();
-  }, [genresFilter, authorsFilter, searchTerm])
+    searchBooks();
+  }, [searchTerm])
+
+  useEffect(() => {
+    applyFilters();
+  }, [genresFilter, authorsFilter, foundBooks])
 
   useEffect(() => {
     setFilterValues();
@@ -106,12 +117,26 @@ const SearchResultsPage = (props) => {
     }
   }
 
-  const updateFilteredBooks = () => {
+  const applyFilters = () => {
     const genreIds = genresFilter ? genresFilter.map(genre => genre.id) : [];
     const authorIds = authorsFilter ? authorsFilter.map(author => author.id) : [];
-    Service.getBookByFilters(searchTerm, authorIds, genreIds)
+    let res = [ ...foundBooks ];
+    for (let authorId of authorIds) {
+      res = [ ...res.filter((book: Book) => Service.isElemInList(authorId, book.authorIds)) ];
+    }
+    for (let genreId of genreIds) {
+      res = [ ...res.filter((book: Book) => Service.isElemInList(genreId, book.genreIds)) ];
+    }
+    setFilteredBooks([ ...res ]);
+  }
+
+  const searchBooks = () => {
+    setIsSearching(true);
+    setFilteredBooks([]);
+    Service.getBookByFilters(searchTerm)
       .then((response: any) => {
-        setFilteredBooks(response.books);
+        setIsSearching(false);
+        setFoundBooks(response.books);
       })
       .catch(error => {
         console.log(error);
@@ -168,7 +193,7 @@ const SearchResultsPage = (props) => {
           </div>
           <FilterCard
             criteriaName="Genres"
-            values={mockGenres}
+            values={allGenres}
             wrapperStyle={{ margin: "20px 14px 0", backgroundColor: theme.cardBGColor, }}
             headerStyle={{ color: theme.sectionHeaderColor, }}
           >
@@ -195,7 +220,7 @@ const SearchResultsPage = (props) => {
           </FilterCard>
           <FilterCard
             criteriaName="Authors"
-            values={mockAuthors}
+            values={allAuthors}
             wrapperStyle={{ margin: "14px 14px 0", backgroundColor: theme.cardBGColor, }}
             headerStyle={{ color: theme.sectionHeaderColor, }}
           >
@@ -233,27 +258,40 @@ const SearchResultsPage = (props) => {
             color: theme.sectionHeaderColor,
           }}
         >
-          <BookList
-            books={filteredBooks}
-            wrapperStyle={{
-              justifyContent: 'flex-start',
-              // backgroundColor: Colors.WHITE,
-              backgroundColor: theme.backgroundColor ,
-              borderRadius: "10px",
-              padding: "0"
-            }}
-            // bookContainerStyle={{ width: "31%", margin: "1%", fontSize: "0.85rem" }}
-            bookContainerStyle={{ width: "165px", margin: "20px 10px", fontSize: "0.85rem" }}
-            // bookProps={{ bookTitleStyle: { fontSize: "1rem" } }}
-            bookProps={{
-              wrapperStyle: { borderRadius: "10px", padding: "14px", backgroundColor: theme.bookCardBGColor },
-              bookTitleStyle: { fontSize: "0.85rem", color: theme.bookTitleColor },
-              bookAuthorsStyle: { fontSize: "0.8rem", fontWeight: 500, color: theme.bookAuthorsColor },
-              bookCoverStyle: { borderRadius: "10px" }
-            }}
-            starColor={theme.starColor}
-            isVerticalBookCard
-          />
+          {
+            isSearching &&
+            <div style={{ flex: 1, position: 'relative' }}>
+              <LoadingOverlay show={isSearching} noOverlay/>
+            </div>
+          }
+          {
+            !isSearching &&
+            <BookList
+              books={filteredBooks}
+              wrapperStyle={{
+                justifyContent: 'flex-start',
+                // backgroundColor: Colors.WHITE,
+                backgroundColor: theme.backgroundColor ,
+                borderRadius: "10px",
+                padding: "0"
+              }}
+              // bookContainerStyle={{ width: "31%", margin: "1%", fontSize: "0.85rem" }}
+              bookContainerStyle={{ width: "165px", margin: "20px 10px", fontSize: "0.85rem" }}
+              // bookProps={{ bookTitleStyle: { fontSize: "1rem" } }}
+              bookProps={{
+                wrapperStyle: { borderRadius: "10px", padding: "14px", backgroundColor: theme.bookCardBGColor },
+                bookTitleStyle: { fontSize: "0.85rem", color: theme.bookTitleColor },
+                bookAuthorsStyle: { fontSize: "0.8rem", fontWeight: 500, color: theme.bookAuthorsColor },
+                bookCoverStyle: { borderRadius: "10px" }
+              }}
+              starColor={theme.starColor}
+              isVerticalBookCard
+            />
+          }
+          {
+            (!isSearching && filteredBooks.length == 0) &&
+            <NotFoundDisplay theme={theme}/>
+          }
         </BookListSection>
       </div>
     </LibraryPageTemplate>

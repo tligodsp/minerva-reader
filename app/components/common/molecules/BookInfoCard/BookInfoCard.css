@@ -26,6 +26,7 @@
 .book-cover-container {
   flex: 1;
   border-radius: 1rem;
+  position: relative;
   /* background-color: blue; */
 }
 
