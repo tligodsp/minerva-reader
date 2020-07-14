@@ -25,14 +25,6 @@ export const isElemInList = (elem: any, list: any[] | undefined) => {
   return list.findIndex(e => e === elem) != -1;
 }
 
-// export const getBookById = (id: string) => {
-//   /** API REPLACE */
-//   const book: Book | undefined = mockBooks.find(book => book.id === id);
-//   return new Promise((resolve, reject) => {
-//     book ? resolve({ book }) : reject("Err");
-//   });
-// }
-
 export const getBookByFilters = (searchTerm: string, authorIds: string[], genreIds: string[]) => {
   /** API REPLACE */
   const books = mockBooks;
@@ -54,52 +46,6 @@ export const getBookByFilters = (searchTerm: string, authorIds: string[], genreI
     resolve({ books: filteredBooks });
   });
 }
-
-// export const getSimilarBooks = (bookId: string) => {
-//   /** API REPLACE */
-//   const books = mockBooks.slice(0, 8);
-//   return new Promise((resolve, reject) => {
-//     resolve({ books: books });
-//   });
-// }
-
-// export const getAuthorBooks = (authorId: string) => {
-//   const books = mockBooks;
-//   let authorBooks = [ ...books.filter(book => isElemInList(authorId, book.authorIds)) ];
-//   return new Promise((resolve, reject) => {
-//     resolve({ books: authorBooks });
-//   });
-// }
-
-// export const getReviewsByBookId = (bookId: string) => {
-//   /** API REPLACE */
-//   const reviews : Review[] = mockReviews.filter(review => review.book.id === bookId);
-//   return new Promise((resolve, reject) => {
-//     resolve({ reviews });
-//   });
-// }
-
-// export const createReview = (reviewInput: ReviewInput) => {
-//   const review: Review = { id: ID(), ...reviewInput };
-//   return new Promise((resolve, reject) => {
-//     mockReviews.push(review);
-//     resolve({ review });
-//   });
-// }
-
-// export const getGenres = () => {
-//   const genres = mockGenres;
-//   return new Promise((resolve, reject) => {
-//     resolve({ genres });
-//   });
-// }
-
-// export const getAuthors = () => {
-//   const authors = mockAuthors;
-//   return new Promise((resolve, reject) => {
-//     resolve({ authors });
-//   });
-// }
 
 export const saveUserAndToken = (user, token) => {
   localStorage.setItem('user', user);
