@@ -1,4 +1,4 @@
-import { LocalBook, Genre, Author, DisplayConfig } from '../types';
+import { LocalBook, Genre, Author, DisplayConfig, Book } from '../types';
 import { getLocalBooks } from './mock-books';
 import { getMockLocalGenres } from './mock-genres';
 import { getMockLocalAuthors } from './mock-authors';
@@ -60,6 +60,26 @@ export const getRecentlyReadBooks = () => {
             return Date.parse(book2.lastRead) - Date.parse(book1.lastRead);
           })
           resolve({ books: recentlyAddedBooks });
+        }
+        else {
+          resolve({ books: [] });
+        }
+      } catch (error) {
+        console.log(error);
+        reject(error);
+      }
+    });
+	})
+}
+
+export const getLovedBooks = () => {
+	return new Promise((resolve, reject) => {
+    ipcRenderer.send('get-user-data');
+    ipcRenderer.on('get-user-data-done', (event, res) => {
+      try {
+        if (res.result == 'SUCCESS' && res.userData.localBooks) {
+          let lovedBooks = res.userData.localBooks.filter(book => book.isLoved);
+          resolve({ books: lovedBooks });
         }
         else {
           resolve({ books: [] });

@@ -11,3 +11,11 @@ export const getUserByUsername = (username: string) => {
 export const addFavoriteGenre = (favoriteCategoryId: string) => {
   return axios.put(`users/favorites`, { action: 'ADD', favoriteCategoryId});
 }
+
+export const addBookToWishlist = (bookId: string) => {
+  return axios.put(`users/favorites`, { action: 'ADD', favoriteId: bookId});
+}
+
+export const removeBookFromWishlist = (bookId: string) => {
+  return axios.put(`users/favorites`, { action: 'REMOVE', favoriteId: bookId});
+}

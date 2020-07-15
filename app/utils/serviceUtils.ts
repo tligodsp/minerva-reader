@@ -126,6 +126,32 @@ export const addFavoriteGenres = (genreIds: string[]) => {
   });
 }
 
+export const addBookToWishlist = (bookId: string) => {
+  return new Promise((resolve, reject) => {
+    userAPI.addBookToWishlist(bookId)
+      .then((response: any) => {
+        resolve({ result: 'SUCCESS', user: convertUserModel(response.data.user) });
+      })
+      .catch((error) => {
+        console.log(error);
+        reject({ result: 'ERROR' });
+      })
+  });
+}
+
+export const removeBookFromWishlist = (bookId: string) => {
+  return new Promise((resolve, reject) => {
+    userAPI.removeBookFromWishlist(bookId)
+      .then((response: any) => {
+        resolve({ result: 'SUCCESS', user: convertUserModel(response.data.user) });
+      })
+      .catch((error) => {
+        console.log(error);
+        reject({ result: 'ERROR' });
+      })
+  });
+}
+
 export const getBooks = (limit = 1000, query = '') => {
   return new Promise((resolve, reject) => {
     bookAPI.getBooks(query, limit)

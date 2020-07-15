@@ -16,15 +16,17 @@ import { connect } from 'react-redux';
 const TAB = {
 	RECENTLY_READ: 'Recently Read',
 	RECENTLY_ADDED: 'Recently Added',
-	WANT_TO_READ: 'Want To Read',
+  LOVED: 'Loved',
+  WANT_TO_READ: 'Wishlist',
 	ALL: 'All Downloaded',
 }
 
 const TAB_LIST = [
 	TAB.RECENTLY_READ,
 	TAB.RECENTLY_ADDED,
+	TAB.LOVED,
 	TAB.WANT_TO_READ,
-	TAB.ALL
+	TAB.ALL,
 ];
 
 const useStyles = makeStyles(() =>
@@ -58,10 +60,14 @@ const LocalLibrary = (props) => {
   const [ genresFilter, setGenresFilter ] = useState<Genre[]>([]);
   const [ authorsFilter, setAuthorsFilter ] = useState<Author[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [ tabList, setTabList ] = useState<string[]>([]);
   const classes = useStyles();
   const { theme } = props.local;
+  const { currentUser, isLoggedIn } = props.user;
+  const [ renderAsLocalBooks, setRenderAsLocalBooks ] = useState(true);
 
   useEffect(() => {
+    setTabList(TAB_LIST.filter(tab => !(!isLoggedIn && tab == TAB.WANT_TO_READ)));
     Local.getLocalGenres()
         .then((response: any) => {
           setAllGenres(response.genres);
@@ -79,10 +85,16 @@ const LocalLibrary = (props) => {
   }, []);
 
   useEffect(() => {
+    setTabList(TAB_LIST.filter(tab => !((!isLoggedIn || !currentUser.wishlist) && tab == TAB.WANT_TO_READ)));
+  }, [currentUser])
+
+  useEffect(() => {
+    setBooks([]);
     if (chosenTab == TAB.RECENTLY_READ) {
+      setRenderAsLocalBooks(true);
       Local.getRecentlyReadBooks()
           .then((response: any) => {
-            setBooks(response.books)
+            setBooks([ ...response.books ]);
             console.log(response);
           })
           .catch(err => {
@@ -90,27 +102,48 @@ const LocalLibrary = (props) => {
           })
     }
     else if (chosenTab == TAB.RECENTLY_ADDED) {
+      setRenderAsLocalBooks(true);
       Local.getRecentlyAddedBooks()
           .then((response: any) => {
-            setBooks(response.books)
+            setBooks([ ...response.books ])
+          })
+          .catch(err => {
+            console.log(err)
+          })
+    }
+    else if (chosenTab == TAB.LOVED) {
+      setRenderAsLocalBooks(true);
+      Local.getLovedBooks()
+          .then((response: any) => {
+            setBooks([ ...response.books ])
           })
           .catch(err => {
             console.log(err)
           })
     }
     else if (chosenTab == TAB.WANT_TO_READ) {
-      Local.getWantToReadBooks()
-          .then((response: any) => {
-            setBooks(response.books)
-          })
-          .catch(err => {
-            console.log(err)
-          })
+      setRenderAsLocalBooks(false);
+      if (isLoggedIn && currentUser.wishlist) {
+        console.log(currentUser.wishlist);
+        setBooks([ ...currentUser.wishlist ]);
+      }
+      else {
+        setBooks([]);
+      }
+      console.log(currentUser);
+      // Local.getWantToReadBooks()
+      //     .then((response: any) => {
+      //       setBooks([ ...response.books ])
+      //     })
+      //     .catch(err => {
+      //       console.log(err)
+      //     })
     }
     else {
+      setRenderAsLocalBooks(true);
       Local.getAllDownloadedBooks()
           .then((response: any) => {
-            setBooks(response.books)
+            setBooks([ ...response.books ])
           })
           .catch(err => {
             console.log(err)
@@ -127,6 +160,10 @@ const LocalLibrary = (props) => {
     setAuthorsFilter([...authors]);
 		// console.log(genresFilter);
 	}
+
+  const showLoveButton = () => {
+    return chosenTab != TAB.WANT_TO_READ;
+  }
 
   const renderFilterButton = () => {
     return (
@@ -147,7 +184,7 @@ const LocalLibrary = (props) => {
 
           <div className={styles['tabs']}>
             {
-              TAB_LIST.map((tab, index) => (
+              tabList.map((tab, index) => (
                 <div
                   key={`tab-${index}`}
                   className={tab == chosenTab ? styles['tab-active'] : styles['tab-inactive']}
@@ -217,31 +254,91 @@ const LocalLibrary = (props) => {
                 </div>
             }
             <div className={styles['main-section']}>
+              {
+                books.length > 0 &&
+                <BookList
+                  books={books}
+                  isLocalBooks={renderAsLocalBooks}
+                  wrapperStyle={{
+                    justifyContent: 'flex-start',
+                    borderRadius: "10px",
+                    padding: "0px"
+                  }}
+                  bookContainerStyle={{ width: "165px", margin: "20px 10px", fontSize: "0.85rem" }}
+                  bookProps={{
+                    wrapperStyle: { borderRadius: "10px", padding: "14px", backgroundColor: theme.bookCardBGColor },
+                    bookTitleStyle: { fontSize: "0.85rem", color: theme.bookTitleColor },
+                    bookAuthorsStyle: { fontSize: "0.8rem", fontWeight: 500, color: theme.bookAuthorsColor },
+                    bookCoverStyle: { borderRadius: "10px" }
+                  }}
+                  isVerticalBookCard
+                  useProgressForChildren={chosenTab == TAB.RECENTLY_READ}
+                  hideSubInfo
+                  progressPathColor={theme.progressPathColor}
+                  progressTrailColor={theme.progressTrailColor}
+                  progressTextColor={theme.progressTextColor}
+                  starColor={theme.starColor}
+                  showLoveButton={showLoveButton()}
+                  // showSimpleRating
+                />
+              }
 
-            <BookList
-              books={books}
-              isLocalBooks
-              wrapperStyle={{
-                justifyContent: 'flex-start',
-                borderRadius: "10px",
-                padding: "0px"
-              }}
-              bookContainerStyle={{ width: "165px", margin: "20px 10px", fontSize: "0.85rem" }}
-              bookProps={{
-                wrapperStyle: { borderRadius: "10px", padding: "14px", backgroundColor: theme.bookCardBGColor },
-                bookTitleStyle: { fontSize: "0.85rem", color: theme.bookTitleColor },
-                bookAuthorsStyle: { fontSize: "0.8rem", fontWeight: 500, color: theme.bookAuthorsColor },
-                bookCoverStyle: { borderRadius: "10px" }
-              }}
-              isVerticalBookCard
-              useProgressForChildren={chosenTab == TAB.RECENTLY_READ}
-              hideSubInfo
-              progressPathColor={theme.progressPathColor}
-              progressTrailColor={theme.progressTrailColor}
-              progressTextColor={theme.progressTextColor}
-              starColor={theme.starColor}
-              // showSimpleRating
-            />
+            {/* {
+              chosenTab !== TAB.WANT_TO_READ &&
+              <BookList
+                books={books}
+                isLocalBooks
+                wrapperStyle={{
+                  justifyContent: 'flex-start',
+                  borderRadius: "10px",
+                  padding: "0px"
+                }}
+                bookContainerStyle={{ width: "165px", margin: "20px 10px", fontSize: "0.85rem" }}
+                bookProps={{
+                  wrapperStyle: { borderRadius: "10px", padding: "14px", backgroundColor: theme.bookCardBGColor },
+                  bookTitleStyle: { fontSize: "0.85rem", color: theme.bookTitleColor },
+                  bookAuthorsStyle: { fontSize: "0.8rem", fontWeight: 500, color: theme.bookAuthorsColor },
+                  bookCoverStyle: { borderRadius: "10px" }
+                }}
+                isVerticalBookCard
+                useProgressForChildren={chosenTab == TAB.RECENTLY_READ}
+                hideSubInfo
+                progressPathColor={theme.progressPathColor}
+                progressTrailColor={theme.progressTrailColor}
+                progressTextColor={theme.progressTextColor}
+                starColor={theme.starColor}
+                showLoveButton={showLoveButton()}
+                // showSimpleRating
+              />
+            }
+            {
+              chosenTab === TAB.WANT_TO_READ &&
+              <BookList
+                books={books}
+                wrapperStyle={{
+                  justifyContent: 'flex-start',
+                  borderRadius: "10px",
+                  padding: "0px"
+                }}
+                bookContainerStyle={{ width: "165px", margin: "20px 10px", fontSize: "0.85rem" }}
+                bookProps={{
+                  wrapperStyle: { borderRadius: "10px", padding: "14px", backgroundColor: theme.bookCardBGColor },
+                  bookTitleStyle: { fontSize: "0.85rem", color: theme.bookTitleColor },
+                  bookAuthorsStyle: { fontSize: "0.8rem", fontWeight: 500, color: theme.bookAuthorsColor },
+                  bookCoverStyle: { borderRadius: "10px" }
+                }}
+                isVerticalBookCard
+                useProgressForChildren={chosenTab == TAB.RECENTLY_READ}
+                hideSubInfo
+                progressPathColor={theme.progressPathColor}
+                progressTrailColor={theme.progressTrailColor}
+                progressTextColor={theme.progressTextColor}
+                starColor={theme.starColor}
+                showLoveButton={showLoveButton()}
+                // showSimpleRating
+              />
+
+            } */}
             </div>
           </div>
       </div>
@@ -251,6 +348,7 @@ const LocalLibrary = (props) => {
 
 const mapStateToProps = (state) => ({
   local: state.local,
+  user: state.users
 });
 
 export default connect(mapStateToProps)(LocalLibrary);

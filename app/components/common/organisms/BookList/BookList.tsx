@@ -205,6 +205,7 @@ const BookList = ({
                   isVertical={isVerticalBookCard}
                   onBookClick={_handleBookClick}
                   isLoved={isLoved}
+                  showLoveButton={showLoveButton}
                 >
                   {
                     useProgressForChildren ?

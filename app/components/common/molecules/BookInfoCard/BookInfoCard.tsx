@@ -7,6 +7,7 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import * as Local from '../../../../utils/localUtils';
+import * as Constants from '../../../../utils/constants';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -51,7 +52,7 @@ const BookInfoCard = ({
   smartBackgroundColor, isVertical, onBookClick, showLoveButton,
   isLoved
 }: BookInfoCardProps) => {
-  const _cover = cover ? cover : 'https://lazioeventi.com/wp-content/uploads/2014/05/No-image-available.jpg';
+  const _cover = cover ? cover : Constants.NO_BOOK_IMAGE_LINK;
   const [_isLoved, _setIsLoved] = useState(isLoved == null ? false : isLoved)
   const { data, loading, error } = usePalette(_cover);
   const _isVertical = !(isVertical == null) ? isVertical : false;
@@ -161,23 +162,26 @@ const BookInfoCard = ({
           className={defaultStyles['book-cover-container']}
           style={{ ...bookCoverStyle }}
         >
-          <div style={{ position: 'absolute', right: 0, top: 0 }}>
-            <IconButton className={classes.iconButtonSmall} onClick={_handleLoveClick}>
-              {/* {
-                _isLoved
-                ? <FavoriteIcon />
-                : <FavoriteBorderIcon />
-              } */}
-              {
-                _isLoved &&
-                <FavoriteIcon />
-              }
-              {
-                !_isLoved &&
-                <FavoriteBorderIcon />
-              }
-            </IconButton>
-          </div>
+          {
+            showLoveButton &&
+            <div style={{ position: 'absolute', right: 0, top: 0 }}>
+              <IconButton className={classes.iconButtonSmall} onClick={_handleLoveClick}>
+                {/* {
+                  _isLoved
+                  ? <FavoriteIcon />
+                  : <FavoriteBorderIcon />
+                } */}
+                {
+                  _isLoved &&
+                  <FavoriteIcon />
+                }
+                {
+                  !_isLoved &&
+                  <FavoriteBorderIcon />
+                }
+              </IconButton>
+            </div>
+          }
           <div
             className={defaultStyles['aspect-ratio-container']}
           >

@@ -28,6 +28,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import FlagIcon from '@material-ui/icons/Flag';
 import EditIcon from '@material-ui/icons/Edit';
 // import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import { setCurrentUserAction } from '../../actions/userActions';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 
 const { ipcRenderer } = require('electron');
@@ -69,6 +70,7 @@ const BookInfoPage = (props) => {
   const { currentUser, isLoggedIn } = props.user;
   const [isVoting, setIsVoting] = useState(false);
   const [ agreedList, setAgreedList ] = useState<string[]>([]);
+  const [ isUpdatingWishlist, setIsUpdatingWishlist ] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -84,6 +86,7 @@ const BookInfoPage = (props) => {
     setReviewToEdit(null);
     setReviewToReport(null);
     setIsVoting(false);
+    setIsUpdatingWishlist(false);
     setAgreedList([]);
     checkBookIsDownloaded();
     Service.getBookById(id)
@@ -168,6 +171,13 @@ const BookInfoPage = (props) => {
     return Service.isElemInList(review.id, agreedList);
   }
 
+  const showWishlistButton = () => {
+    if (!isLoggedIn ||!currentUser || !currentUser.username || isDownloaded) {
+      return false;
+    }
+    return true;
+  }
+
   const handleDownloadClick = () => {
     // console.log(downloadLink);
     const bookObj: Object = {
@@ -181,8 +191,52 @@ const BookInfoPage = (props) => {
     // });
     ipcRenderer.on(`download-end-${id}`, (event, arg) => {
       checkBookIsDownloaded();
+      if (Service.isElemInList(id, currentUser.wishlistIds)) {
+        setIsUpdatingWishlist(true);
+        Service.removeBookFromWishlist(id!)
+          .then((response: any) => {
+            props.setCurrentUserAction(response.user);
+            setIsUpdatingWishlist(false);
+          })
+          .catch((error) => {
+            console.log(error);
+            setIsUpdatingWishlist(false);
+          })
+      }
     })
   }
+
+  const handleWantToReadClick = () => {
+    if (!id) {
+      /** REDIRECT TO PAGE NOT FOUND */
+      return;
+    }
+    setIsUpdatingWishlist(true);
+    if (Service.isElemInList(id, currentUser.wishlistIds)) {
+      Service.removeBookFromWishlist(id)
+        .then((response: any) => {
+          props.setCurrentUserAction(response.user);
+          setIsUpdatingWishlist(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setIsUpdatingWishlist(false);
+        })
+    }
+    else {
+      Service.addBookToWishlist(id)
+        .then((response: any) => {
+          props.setCurrentUserAction(response.user);
+          setIsUpdatingWishlist(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setIsUpdatingWishlist(false);
+        })
+    }
+  }
+
+
 
   const handleVoteClick = (review: Review) => {
     if (isVoting) {
@@ -223,6 +277,10 @@ const BookInfoPage = (props) => {
 
   const isAlreadyAgreed = (review: Review) => {
     return Service.isElemInList(currentUser.username, review.upvoteUsers);
+  }
+
+  const isInWishlist = () => {
+    return Service.isElemInList(id, currentUser.wishlistIds);
   }
 
   const checkBookIsDownloaded = () => {
@@ -370,12 +428,24 @@ const BookInfoPage = (props) => {
                     <div style={{ marginBottom: '5px' }}>
                       <img src={_book!.cover} alt='cover' className={styles['cover-img']}/>
                     </div>
-                    <button
-                      className="button-secondary"
-                      style={{ marginTop: 5, marginBottom: 10 }}
-                    >
-                      Want to Read
-                    </button>
+                    {
+                      showWishlistButton() &&
+                      <button
+                        className="button-secondary"
+                        style={{
+                          marginTop: 5,
+                          marginBottom: 10,
+                          position: 'relative',
+                          cursor: isUpdatingWishlist ? 'unset' : 'pointer'
+                        }}
+                        onClick={handleWantToReadClick}
+                      >
+                        <LoadingOverlay show={isUpdatingWishlist}/>
+                        {
+                          isInWishlist() ? 'Un-wishlist Book' : 'Wishlist Book'
+                        }
+                      </button>
+                    }
                     {
                       isDownloaded &&
                       <button
@@ -398,12 +468,26 @@ const BookInfoPage = (props) => {
                     {
                       (!isDownloaded && isDownloading(_book.id)) &&
                       <button
+                        className={"button-secondary"}
+                        disabled
+                        style={{
+                          position: 'relative',
+                          cursor: isUpdatingWishlist ? 'none' : 'pointer'
+                        }}
+                      >
+                        <LoadingOverlay show={true}/>
+                        {props.local.currentDownloadingBookId === _book.id ? `${Math.round(props.local.currentDownloadProgress * 100)}%` : 'Pending'}
+                      </button>
+                    }
+                    {/* {
+                      (!isDownloaded && isDownloading(_book.id)) &&
+                      <button
                         className={"button-disabled"}
                         disabled
                       >
                         {props.local.currentDownloadingBookId === _book.id ? `${Math.round(props.local.currentDownloadProgress * 100)}%` : 'Pending'}
                       </button>
-                    }
+                    } */}
                   </div>
                   <div className={styles['book-text-info']}>
                     <div
@@ -753,4 +837,4 @@ const mapStateToProps = (state) => ({
   user: state.users,
 });
 
-export default connect(mapStateToProps, { getBookById, getReviewsByBookId, downloadBook })(BookInfoPage);
+export default connect(mapStateToProps, { getBookById, getReviewsByBookId, downloadBook, setCurrentUserAction })(BookInfoPage);
