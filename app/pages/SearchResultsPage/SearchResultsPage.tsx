@@ -139,6 +139,8 @@ const SearchResultsPage = (props) => {
         setFoundBooks(response.books);
       })
       .catch(error => {
+        setIsSearching(false);
+        setFoundBooks([]);
         console.log(error);
       })
   }

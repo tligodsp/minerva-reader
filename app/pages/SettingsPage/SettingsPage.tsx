@@ -40,6 +40,16 @@ const SettingsPage = (props) => {
     Local.setCommonDisplayConfig(display);
   }
 
+  const handleSyncClick = () => {
+    Local.getUnsyncedBooks()
+      .then((response: any) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
   return (
     <div
       style={{
@@ -124,6 +134,7 @@ const SettingsPage = (props) => {
             style={{
               height: '40px'
             }}
+            onClick={handleSyncClick}
           >
             Sync
           </button>

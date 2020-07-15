@@ -35,6 +35,7 @@ const ReaderPage = (props) => {
           })
           .catch(err => {
             console.log(err);
+            // TODO: Redirect
           })
     }
     else {

@@ -34,6 +34,7 @@ interface BookListProps {
   progressTrailColor?: string;
   progressTextColor?: string;
   showLoveButton?: boolean;
+  isUnsyncedBooks?: boolean;
 }
 
 const BookList = ({
@@ -41,7 +42,7 @@ const BookList = ({
     wrapperStyle, bookContainerStyle, bookProps, useProgressForSubInfo,
     useProgressForChildren, isVerticalBookCard, hideSubInfo, showSimpleRating,
     starColor,showBookRatingCount, progressPathColor, progressTrailColor,
-    progressTextColor, showLoveButton }
+    progressTextColor, showLoveButton, isUnsyncedBooks }
   : BookListProps) => {
   const _books: any = books ? books : [];
   let history = useHistory();
@@ -72,7 +73,7 @@ const BookList = ({
   }
 
   const _handleBookClick = (id: string) => {
-    if (isLocalBooks) {
+    if (isLocalBooks && !isUnsyncedBooks) {
       history.push(`/reader/${id}`)
     }
     else {

@@ -18,15 +18,17 @@ const TAB = {
 	RECENTLY_ADDED: 'Recently Added',
   LOVED: 'Loved',
   WANT_TO_READ: 'Wishlist',
-	ALL: 'All Downloaded',
+  ALL: 'All Downloaded',
+  UNSYNCED: 'Unsynced Books'
 }
 
 const TAB_LIST = [
 	TAB.RECENTLY_READ,
 	TAB.RECENTLY_ADDED,
 	TAB.LOVED,
-	TAB.WANT_TO_READ,
-	TAB.ALL,
+  TAB.WANT_TO_READ,
+  TAB.ALL,
+  TAB.UNSYNCED
 ];
 
 const useStyles = makeStyles(() =>
@@ -65,9 +67,12 @@ const LocalLibrary = (props) => {
   const { theme } = props.local;
   const { currentUser, isLoggedIn } = props.user;
   const [ renderAsLocalBooks, setRenderAsLocalBooks ] = useState(true);
+  const [ unsyncedBooks, setUnsyncedBooks ] = useState<LocalBook[]>([]);
+  const [ isDisplayingUnsynced, setIsDisplayingUnsynced ] = useState(false);
 
   useEffect(() => {
-    setTabList(TAB_LIST.filter(tab => !(!isLoggedIn && tab == TAB.WANT_TO_READ)));
+    setIsDisplayingUnsynced(false);
+    setTabList(TAB_LIST.filter(tab => !(!isLoggedIn && tab == TAB.WANT_TO_READ) && !(tab == TAB.UNSYNCED)));
     Local.getLocalGenres()
         .then((response: any) => {
           setAllGenres(response.genres);
@@ -82,7 +87,26 @@ const LocalLibrary = (props) => {
         .catch(err => {
           console.log(err);
         })
+    Local.getUnsyncedBooks()
+        .then((response: any) => {
+          setUnsyncedBooks(response.books);
+        })
+        .catch(err => {
+          console.log(err);
+        })
   }, []);
+
+  useEffect(() => {
+    setTabList(TAB_LIST.filter(tab => {
+      if (!isLoggedIn && tab == TAB.WANT_TO_READ) {
+        return false;
+      }
+      if (unsyncedBooks.length == 0 && tab == TAB.UNSYNCED) {
+        return false;
+      }
+      return true;
+    }));
+  }, [unsyncedBooks])
 
   useEffect(() => {
     setTabList(TAB_LIST.filter(tab => !((!isLoggedIn || !currentUser.wishlist) && tab == TAB.WANT_TO_READ)));
@@ -92,6 +116,7 @@ const LocalLibrary = (props) => {
     setBooks([]);
     if (chosenTab == TAB.RECENTLY_READ) {
       setRenderAsLocalBooks(true);
+      setIsDisplayingUnsynced(false);
       Local.getRecentlyReadBooks()
           .then((response: any) => {
             setBooks([ ...response.books ]);
@@ -103,9 +128,10 @@ const LocalLibrary = (props) => {
     }
     else if (chosenTab == TAB.RECENTLY_ADDED) {
       setRenderAsLocalBooks(true);
+      setIsDisplayingUnsynced(false);
       Local.getRecentlyAddedBooks()
           .then((response: any) => {
-            setBooks([ ...response.books ])
+            setBooks([ ...response.books ]);
           })
           .catch(err => {
             console.log(err)
@@ -113,9 +139,10 @@ const LocalLibrary = (props) => {
     }
     else if (chosenTab == TAB.LOVED) {
       setRenderAsLocalBooks(true);
+      setIsDisplayingUnsynced(false);
       Local.getLovedBooks()
           .then((response: any) => {
-            setBooks([ ...response.books ])
+            setBooks([ ...response.books ]);
           })
           .catch(err => {
             console.log(err)
@@ -123,6 +150,7 @@ const LocalLibrary = (props) => {
     }
     else if (chosenTab == TAB.WANT_TO_READ) {
       setRenderAsLocalBooks(false);
+      setIsDisplayingUnsynced(false);
       if (isLoggedIn && currentUser.wishlist) {
         console.log(currentUser.wishlist);
         setBooks([ ...currentUser.wishlist ]);
@@ -139,8 +167,22 @@ const LocalLibrary = (props) => {
       //       console.log(err)
       //     })
     }
+    else if (chosenTab == TAB.UNSYNCED) {
+      setRenderAsLocalBooks(true);
+      setIsDisplayingUnsynced(true);
+      Local.getUnsyncedBooks()
+          .then((response: any) => {
+            setBooks([ ...response.books ]);
+            setUnsyncedBooks([ ...response.books ]);
+          })
+          .catch(err => {
+            console.log(err);
+            setUnsyncedBooks([]);
+          })
+    }
     else {
       setRenderAsLocalBooks(true);
+      setIsDisplayingUnsynced(false);
       Local.getAllDownloadedBooks()
           .then((response: any) => {
             setBooks([ ...response.books ])
@@ -259,6 +301,7 @@ const LocalLibrary = (props) => {
                 <BookList
                   books={books}
                   isLocalBooks={renderAsLocalBooks}
+                  isUnsyncedBooks={isDisplayingUnsynced}
                   wrapperStyle={{
                     justifyContent: 'flex-start',
                     borderRadius: "10px",

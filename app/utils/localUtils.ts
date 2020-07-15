@@ -6,7 +6,7 @@ import { getMockDisplayConfig } from './mock-display-config';
 const { ipcRenderer } = require('electron');
 import Theme from '../styles/themes';
 
-export const getRecentlyAddedBooks = (within = 7) => {
+export const getRecentlyAddedBooksUnsyncIncluded = (within = 7) => {
   // const books: LocalBook[] = getLocalBooks();
 	return new Promise((resolve, reject) => {
     // resolve({ books });
@@ -38,7 +38,22 @@ export const getRecentlyAddedBooks = (within = 7) => {
 	})
 }
 
-export const getRecentlyReadBooks = () => {
+export const getRecentlyAddedBooks = (within = 7) => {
+  return new Promise((resolve, reject) => {
+    Promise.all([getRecentlyAddedBooksUnsyncIncluded(within), getUnsyncedBooks()])
+      .then((responses: any[]) => {
+        const allRecentlyAdded = responses[0].books;
+        const unsynced = responses[1].books;
+        const syncedRecentlyAddedBooks = allRecentlyAdded.filter(lbook => unsynced.findIndex(ulbook => ulbook.book.id === lbook.book.id) === -1);
+        resolve({ books: syncedRecentlyAddedBooks });
+      })
+      .catch(error => {
+        reject({error, books: []})
+      })
+	})
+}
+
+export const getRecentlyReadBooksUnsyncedIncluded = () => {
   const within = 30;
 	// const books: LocalBook[] = getLocalBooks();
 	return new Promise((resolve, reject) => {
@@ -72,8 +87,23 @@ export const getRecentlyReadBooks = () => {
 	})
 }
 
-export const getLovedBooks = () => {
-	return new Promise((resolve, reject) => {
+export const getRecentlyReadBooks = () => {
+  return new Promise((resolve, reject) => {
+    Promise.all([getRecentlyReadBooksUnsyncedIncluded(), getUnsyncedBooks()])
+      .then((responses: any[]) => {
+        const allRecentlyRead = responses[0].books;
+        const unsynced = responses[1].books;
+        const syncedRecentlyReadBooks = allRecentlyRead.filter(lbook => unsynced.findIndex(ulbook => ulbook.book.id === lbook.book.id) === -1);
+        resolve({ books: syncedRecentlyReadBooks });
+      })
+      .catch(error => {
+        reject({error, books: []})
+      })
+	})
+}
+
+export const getLovedBooksUnsyncedIncluded = () => {
+  return new Promise((resolve, reject) => {
     ipcRenderer.send('get-user-data');
     ipcRenderer.on('get-user-data-done', (event, res) => {
       try {
@@ -92,6 +122,21 @@ export const getLovedBooks = () => {
 	})
 }
 
+export const getLovedBooks = () => {
+	return new Promise((resolve, reject) => {
+    Promise.all([getLovedBooksUnsyncedIncluded(), getUnsyncedBooks()])
+      .then((responses: any[]) => {
+        const allLoved = responses[0].books;
+        const unsynced = responses[1].books;
+        const syncedLovedBooks = allLoved.filter(lbook => unsynced.findIndex(ulbook => ulbook.book.id === lbook.book.id) === -1);
+        resolve({ books: syncedLovedBooks });
+      })
+      .catch(error => {
+        reject({error, books: []})
+      })
+	})
+}
+
 export const getWantToReadBooks = () => {
 	const books: LocalBook[] = getLocalBooks();
 	return new Promise((resolve, reject) => {
@@ -99,9 +144,8 @@ export const getWantToReadBooks = () => {
 	})
 }
 
-export const getAllDownloadedBooks = () => {
-	// const books: LocalBook[] = getLocalBooks();
-	return new Promise((resolve, reject) => {
+export const getAllDownloadedBooksUnsyncedIncluded = () => {
+  return new Promise((resolve, reject) => {
     ipcRenderer.send('get-user-data');
     ipcRenderer.on('get-user-data-done', (event, res) => {
       if (res.result == 'SUCCESS' && res.userData.localBooks) {
@@ -111,6 +155,22 @@ export const getAllDownloadedBooks = () => {
         resolve({ books: [] });
       }
     });
+	})
+}
+
+export const getAllDownloadedBooks = () => {
+	// const books: LocalBook[] = getLocalBooks();
+	return new Promise((resolve, reject) => {
+    Promise.all([getAllDownloadedBooksUnsyncedIncluded(), getUnsyncedBooks()])
+      .then((responses: any[]) => {
+        const allDownloaded = responses[0].books;
+        const unsynced = responses[1].books;
+        const syncedDownloadedBooks = allDownloaded.filter(lbook => unsynced.findIndex(ulbook => ulbook.book.id === lbook.book.id) === -1);
+        resolve({ books: syncedDownloadedBooks });
+      })
+      .catch(error => {
+        reject({error, books: []})
+      })
 	})
 }
 
@@ -146,7 +206,38 @@ export const getLocalAuthors = () => {
   });
 }
 
-export const getLocalBookById = (id: string) => {
+export const getUnsyncedBooks = () => {
+  // const authors: Author[] = getMockLocalAuthors();
+  return new Promise((resolve, reject) => {
+    // resolve({ authors });
+    ipcRenderer.send('get-unsynced-or-corrupted-books');
+    ipcRenderer.on('get-unsynced-or-corrupted-books-done', (event, res) => {
+      if (res.result == 'SUCCESS') {
+        resolve({ books: res.unsyncedBooks });
+      }
+      else {
+        reject(res.error);
+      }
+    });
+  });
+}
+
+export const checkBookSynced = (bookId: string) => {
+  return new Promise((resolve, reject) => {
+    getUnsyncedBooks()
+      .then((response: any) => {
+        const unsynced = response.books;
+        const isSynced = unsynced.findIndex(ulbooks => ulbooks.book.id === bookId) === -1;
+        resolve({ isSynced });
+      })
+      .catch(err => {
+        reject(err);
+      })
+
+  });
+}
+
+export const getLocalBookByIdUnsyncedIncluded = (id: string) => {
   // const allBooks: LocalBook[] = getLocalBooks();
   // const book: LocalBook | undefined = allBooks.find(localBook => localBook.book.id === id);
   return new Promise((resolve, reject) => {
@@ -166,6 +257,38 @@ export const getLocalBookById = (id: string) => {
       }
     });
   });
+}
+
+export const getLocalBookById = (id: string) => {
+  // const allBooks: LocalBook[] = getLocalBooks();
+  // const book: LocalBook | undefined = allBooks.find(localBook => localBook.book.id === id);
+  return new Promise((resolve, reject) => {
+    getLocalBookByIdUnsyncedIncluded(id)
+      .then((response: any) => {
+        const { localBook } = response;
+        if (localBook) {
+          checkBookSynced(id)
+            .then((response: any) => {
+              const { isSynced } = response;
+              if (isSynced) {
+                resolve({ localBook });
+              }
+              else {
+                resolve({ localBook: null });
+              }
+            })
+            .catch((error) => {
+              reject(error)
+            })
+        }
+        else {
+          resolve({ localBook: null });
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      })
+	})
 }
 
 export const getCommonDisplayConfig = () => {

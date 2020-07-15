@@ -149,13 +149,14 @@ const downloadBook = (win, { event, info }) => {
       /** Save Book JSON File */
       const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
       const timeNow = new Date();
-      const newLocalBookData = {
+      let newLocalBookData: any = {
         book: info.bookObj,
         bookFilePath: path.join(downloadTo, fileName),
         bookPhotoPath: path.join(downloadTo, photoResponse.getFilename()),
         readingProgress: 0,
         readingTime: 0,
         dateAdded: timeNow.toISOString(),
+        isLoved: false
       };
       fs.writeFileSync(
         path.join(downloadTo, `${info.bookObj.id}.json`),
@@ -168,12 +169,33 @@ const downloadBook = (win, { event, info }) => {
         if (!userData.localBooks) {
           userData.localBooks = [];
         }
+        const bookIndex = userData.localBooks.findIndex(lbook => lbook.book.id === newLocalBookData.book.id);
+        let newLocalBooks = [ ...userData.localBooks ];
+        if (bookIndex === -1) {
+          newLocalBooks.push(newLocalBookData);
+        }
+        else {
+          const oldBookData = userData.localBooks[bookIndex];
+          if (oldBookData.readingProgress) {
+            newLocalBookData.readingProgress = oldBookData.readingProgress;
+          }
+          if (oldBookData.readingTime) {
+            newLocalBookData.readingTime = oldBookData.readingTime;
+          }
+          if (oldBookData.isLoved) {
+            newLocalBookData.isLoved = true;
+          }
+          if (oldBookData.lastRead) {
+            newLocalBookData.lastRead = oldBookData.lastRead;
+          }
+          if (oldBookData.readingProgressCFI) {
+            newLocalBookData.readingProgressCFI = oldBookData.readingProgressCFI;
+          }
+          newLocalBooks[bookIndex] = newLocalBookData;
+        }
         userData = {
           ...userData,
-          localBooks: [
-            ...userData.localBooks,
-            newLocalBookData
-          ]
+          localBooks: [ ...newLocalBooks ]
         };
         /** Save local genres */
         if (userData.localGenres) {
@@ -402,31 +424,6 @@ ipcMain.on('update-book-display-config', (event, info) => {
 
 ipcMain.on('love-or-unlove-book', (event, info) => {
   try {
-    // const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
-    // let userData: any = {};
-    // let bookId = info.bookId;
-    // if (fs.existsSync(userDataPath)) {
-    //   const userRawData = fs.readFileSync(userDataPath);
-    //   userData = JSON.parse(userRawData);
-    //   if (userData && userData.lovedBookIds) {
-    //     if (userData.lovedBookIds.findIndex(id => id === bookId) !== -1) {
-    //       userData.lovedBookIds = [ userData.lovedBookIds.filter(id => id !== bookId) ];
-    //     }
-    //     else {
-    //       userData.lovedBookIds = [ ...userData.lovedBookIds, bookId ]
-    //     }
-    //   }
-    //   else {
-    //     userData = { lovedBookIds: [ bookId ] };
-    //   }
-    // }
-    // else {
-    //   userData = { lovedBookIds: [ bookId ] };
-    // }
-    // fs.writeFileSync(
-    //   userDataPath,
-    //   JSON.stringify(userData, null, 2)
-    // );
     const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
     let userData: any = {};
     let isLovedRes = false;
@@ -460,6 +457,41 @@ ipcMain.on('love-or-unlove-book', (event, info) => {
     console.log(error);
     event.sender.send(`love-or-unlove-book-done`, { result: 'ERROR' });
   }
+});
+
+ipcMain.on('get-unsynced-or-corrupted-books', (event) => {
+  try {
+    const userDataPath = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, USER_DATA_NAME);
+    let unsyncedBooks: any[] = [];
+    if (fs.existsSync(userDataPath)) {
+      const userRawData = fs.readFileSync(userDataPath);
+      let userData = JSON.parse(userRawData);
+      if (userData && userData.localBooks) {
+        const localBooks = userData.localBooks;
+        localBooks.forEach(lbook => {
+          const bookPhotoPath = lbook.bookPhotoPath;
+          const bookFilePath = lbook.bookFilePath;
+          let isUnsynced = false;
+          if (!fs.existsSync(bookPhotoPath)) {
+            console.log(`${lbook.book.title} photo not found`);
+            isUnsynced = true;
+          }
+          if (!fs.existsSync(bookFilePath)) {
+            console.log(`${lbook.book.title} file not found`);
+            isUnsynced = true;
+          }
+          if (isUnsynced) {
+            unsyncedBooks = [ ...unsyncedBooks, lbook ];
+          }
+        });
+      }
+    }
+    event.sender.send(`get-unsynced-or-corrupted-books-done`, { result: 'SUCCESS', unsyncedBooks });
+  }
+  catch(err) {
+    event.sender.send(`get-unsynced-or-corrupted-books-done`, { result: 'ERROR', error: err, unsyncedBooks: [] });
+    console.log(err);
+  };
 });
 
 app.on('window-all-closed', () => {
