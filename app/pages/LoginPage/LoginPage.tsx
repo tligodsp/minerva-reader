@@ -21,6 +21,9 @@ import jwtDecode from 'jwt-decode';
 import { connect } from 'react-redux';
 import { setTokenAction, setCurrentUserAction, removeTokenAction } from '../../actions/userActions';
 import axios from 'axios';
+import Theme from '../../styles/themes';
+import { LoadingOverlay } from '../../components/common/molecules';
+// import { currentUser } from '../../utils/mock-users';
 
 const LoginPage = (props) => {
   const [username, setUsername] = useState<string>('');
@@ -29,7 +32,8 @@ const LoginPage = (props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const classes = useStyles();
   const history = useHistory();
-  const { isLoggedIn } = props.user;
+  const { isLoggedIn, currentUser } = props.user;
+  const { theme } = props.local;
 
   const onLogin = () => {
     setIsLoading(true);
@@ -67,109 +71,139 @@ const LoginPage = (props) => {
 
   if (isLoggedIn) {
     return (
-      <Card className={classes.card}>
-        <Container component="main" maxWidth="xs">
-
-          <CssBaseline />
-          <div className={classes.paper}>
-            <Avatar className={classes.avatar}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              You've already logged in.
-            </Typography>
-            <form className={classes.form} noValidate>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
+      <div style={{
+        display: 'flex',
+        width: '100%',
+        height: '100%',
+        backgroundColor: theme.backgroundColor,
+      }}>
+        <Card className={theme.name == 'light' ? classes.cardLight : classes.cardDark}>
+          <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
+              <Avatar
+                className={classes.avatar}
+                alt="Profile Picture"
+                src={currentUser.profilePicture}
+              />
+              <Typography
+                component="h1"
+                variant="h5"
+                className={classes.typography}>
+                {`You're logging in as ${currentUser.username}`}
+              </Typography>
+              <button
+                className={'button'}
                 onClick={onLogout}
+                style={{
+                  width: '100%',
+                  marginTop: '20px',
+                  fontSize: '1.1rem',
+                }}
               >
                 Logout
-              </Button>
-            </form>
-          </div>
-      </Container>
-    </Card>
+              </button>
+            </div>
+        </Container>
+      </Card>
+      </div>
     )
   }
 
   return (
-    <Card className={classes.card}>
-      <Container component="main" maxWidth="xs">
+    <div style={{
+      display: 'flex',
+      width: '100%',
+      height: '100%',
+      backgroundColor: theme.backgroundColor,
+    }}>
+      <Card className={theme.name == 'light' ? classes.cardLight : classes.cardDark}>
+        <Container component="main" maxWidth="xs">
 
-          <CssBaseline />
-          <div className={classes.paper}>
-            <Avatar className={classes.avatar}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <form className={classes.form} noValidate>
-              {/* TODO: Clean this up */}
-              <div style={{ color: 'red' }}>{errorMessage}</div>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                value={username}
-                onChange={event => {setUsername(event.target.value)}}
-                onKeyUp={(event) => {
-                  if (event.key === 'Enter') {
-                    onLogin();
-                  }
-                }}
-                autoFocus
-              />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                value={password}
-                onChange={event => {setPassword(event.target.value)}}
-                onKeyUp={(event) => {
-                  if (event.key === 'Enter') {
-                    onLogin();
-                  }
-                }}
-              />
-              <div style={{position: 'relative'}}>
-                {/* Extra <div> is for loading */}
-                <Button
+            <CssBaseline />
+            <div className={classes.paper}>
+              <Avatar className={classes.avatar}>
+                {/* <LockOutlinedIcon /> */}
+              </Avatar>
+              <Typography component="h1" variant="h5" className={classes.typography}>
+                Sign in
+              </Typography>
+              <form className={classes.form + ' ' + (theme.name == 'light' ? classes.rootLight : classes.rootDark)} noValidate>
+                {/* TODO: Clean this up */}
+                <div style={{ color: theme.errorMsgColor }}>{errorMessage}</div>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
                   fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  onClick={onLogin}
-                  disabled={isLoading}
-                >
-                  Sign In
-                </Button>
-                {isLoading ? <CircularProgress size={24} className="circular-center-size-24px" /> : null}
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <Link to='/signup'>
-                  {"Don't have an account? Sign Up"}
-                </Link>
-                {/* <Link href='#' onClick={() => history.push('/signup')} variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link> */}
-              </div>
-            </form>
-          </div>
-      </Container>
-    </Card>
+                  id="username"
+                  label="Username"
+                  name="username"
+                  value={username}
+                  onChange={event => {setUsername(event.target.value)}}
+                  onKeyUp={(event) => {
+                    if (event.key === 'Enter') {
+                      onLogin();
+                    }
+                  }}
+                  autoFocus
+                />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={event => {setPassword(event.target.value)}}
+                  onKeyUp={(event) => {
+                    if (event.key === 'Enter') {
+                      onLogin();
+                    }
+                  }}
+                />
+                <div style={{position: 'relative', margin: '10px 0', borderRadius: '10px'}}>
+                  {/* Extra <div> is for loading */}
+                  <LoadingOverlay show={isLoading}/>
+                  <button
+                    className={'button'}
+                    onClick={onLogin}
+                    style={{
+                      width: '100%',
+                      fontSize: '1.1rem',
+                      height: '50px'
+                    }}
+                    disabled={isLoading}
+                  >
+                    Sign In
+                  </button>
+                  {/* <Button
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={onLogin}
+                    disabled={isLoading}
+                  >
+                    Sign In
+                  </Button> */}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <Link to='/signup' style={{ color: theme.linkColor }}>
+                    {"Don't have an account? Sign Up"}
+                  </Link>
+                  {/* <Link href='#' onClick={() => history.push('/signup')} variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Link> */}
+                </div>
+              </form>
+            </div>
+        </Container>
+      </Card>
+    </div>
   );
 }
 
@@ -184,6 +218,9 @@ const useStyles = makeStyles(theme => ({
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.primary.main,
+    width: theme.spacing(15),
+    height: theme.spacing(15),
+    border: "1px solid #bbb"
   },
   form: {
     width: '100%', // Fix IE 11 issue.
@@ -195,7 +232,65 @@ const useStyles = makeStyles(theme => ({
   card: {
     margin: 'auto',
     width: 'fit-content'
-  }
+  },
+  cardLight: {
+    margin: 'auto',
+    width: 'fit-content',
+    backgroundColor: Theme.light.cardBGColor,
+    color: Theme.light.textColor,
+    borderRadius: '10px'
+  },
+  cardDark: {
+    margin: 'auto',
+    width: 'fit-content',
+    backgroundColor: Theme.dark.cardBGColor,
+    color: Theme.dark.textColor,
+    borderRadius: '10px'
+  },
+  typography: {
+    fontFamily: `'Quicksand', sans-serif`,
+  },
+  rootLight: {
+    fontFamily: "'Quicksand', sans-serif",
+    marginTop: "20px",
+    fontWeight: 500,
+    '& .MuiInputLabel-outlined': {
+      fontFamily: "'Quicksand', sans-serif",
+      fontWeight: 500,
+      color: Theme.light.textColor,
+    },
+    '& .MuiOutlinedInput-input': {
+      fontFamily: "'Quicksand', sans-serif",
+      fontWeight: 500,
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: Theme.light.textFieldActiveColor
+    },
+    '& .MuiFormLabel-root.Mui-focused': {
+      color: Theme.light.textFieldActiveColor
+    },
+  },
+  rootDark: {
+    fontFamily: "'Quicksand', sans-serif",
+    marginTop: "20px",
+    fontWeight: 500,
+    '& .MuiInputLabel-outlined': {
+      fontFamily: "'Quicksand', sans-serif",
+      fontWeight: 500,
+      color: Theme.dark.textColor,
+    },
+    '& .MuiOutlinedInput-input': {
+      fontFamily: "'Quicksand', sans-serif",
+      fontWeight: 500,
+      color: Theme.dark.textColor
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: Theme.dark.textFieldActiveColor
+    },
+    '& .MuiFormLabel-root.Mui-focused': {
+      color: Theme.dark.textFieldActiveColor
+    },
+  },
 }));
 
 const mapStateToProps = (state) => ({

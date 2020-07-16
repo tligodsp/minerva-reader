@@ -67,6 +67,7 @@ const NavBar = (props: any) => {
     location && location.pathname
     ? location.pathname
     : '/home');
+  const [ tabValue, setTabValue ] = useState<any>(false);
   const { routes } = props;
   var history = useHistory();
   const { theme } = props.local;
@@ -90,13 +91,30 @@ const NavBar = (props: any) => {
   }
 
 	const handleChange = (event: React.ChangeEvent<{}>, newPath: string) => {
+    console.log('push');
+    console.log(currentPath);
+    console.log(newPath);
     setCurrentPath(newPath);
+    history.push(newPath);
   };
 
   useEffect(() => {
     history.push(currentPath);
     // console.log(currentPath);
   }, [currentPath]);
+
+  useEffect(() => {
+    console.log('changed');
+    const filteredRoutes = routes.filter(({ isOnNavBar }) => isOnNavBar);
+    const pathsShowOnNavBar = filteredRoutes.map(route => route.path);
+    const curPathIndexInPathsShow = pathsShowOnNavBar.findIndex(path => path == location.pathname);
+    if (curPathIndexInPathsShow == -1) {
+      setTabValue(false);
+    }
+    else {
+      setTabValue(location.pathname);
+    }
+  }, [location.pathname])
 
 	return (
     <Paper
@@ -117,7 +135,7 @@ const NavBar = (props: any) => {
       <Tabs
         orientation="vertical"
         variant="scrollable"
-        value={currentPath}
+        value={tabValue}
         onChange={handleChange}
         classes={{ root: classes.tabs, indicator: classes.tabsIndicator }}
       >

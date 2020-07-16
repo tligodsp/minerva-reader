@@ -22,6 +22,8 @@ const Theme = {
     primaryButtonColor: '#7670FF',
     notFoundDisplayColor: '#7670FF',
     notFoundColorFilter: 'invert(66%) sepia(52%) saturate(7490%) hue-rotate(220deg) brightness(99%) contrast(105%)',
+    errorMsgColor: 'red',
+    linkColor: '#007bff',
   },
   'dark': {
     name: 'dark',
@@ -46,6 +48,8 @@ const Theme = {
     primaryButtonColor: '#3A3B3C',
     notFoundDisplayColor: '#FEFEFE',
     notFoundColorFilter: 'invert(99%) sepia(100%) saturate(1%) hue-rotate(69deg) brightness(104%) contrast(99%)',
+    errorMsgColor: '#fefefe',
+    linkColor: '#fefefe',
   }
 };
 

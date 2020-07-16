@@ -9,7 +9,7 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -73,6 +73,9 @@ const createWindow = async () => {
           }
   });
 
+  mainWindow.setMenuBarVisibility(false);
+  // Menu.setApplicationMenu(null)
+
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   // @TODO: Use 'ready-to-show' event
@@ -123,12 +126,12 @@ const continueDownload = (win, info) => {
 
 const downloadBook = (win, { event, info }) => {
   const downloadTo = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME, info.bookObj.id);
-  if (fs.existsSync(downloadTo)) {
-    console.log('blah');
-    win.webContents.send(`folder-already-exist`, { blah: 'blah' });
-    continueDownload(win, info);
-    return;
-  }
+  // if (fs.existsSync(downloadTo)) {
+  //   console.log('blah');
+  //   win.webContents.send(`folder-already-exist`, { blah: 'blah' });
+  //   continueDownload(win, info);
+  //   return;
+  // }
   /** Download Book */
   download(win!, info.url, {
     directory: downloadTo,
@@ -258,6 +261,37 @@ ipcMain.on('download-item', async (event, info) => {
 
   if (downloadingQueue[0].info.bookObj.id === info.bookObj.id) {
     downloadBook(win, downloadingQueue[0]);
+  }
+});
+
+ipcMain.on('download-user-data', async (event, info) => {
+  const downloadTo = path.join(app.getPath('documents'), APP_NAME, BOOKSHELF_FOLDER_NAME);
+  const win = BrowserWindow.getFocusedWindow();
+  /** Download */
+  try {
+    download(win!, info.url, {
+      directory: downloadTo,
+      onProgress: currentProgress => {
+        console.log(currentProgress);
+      }
+    })
+    .then((fileRes: any) => {
+      const fileName = fileRes.getFilename();
+      fs.rename(path.join(downloadTo, fileName), path.join(downloadTo, 'user-data.json'), function (err) {
+        if (err) {
+          throw err;
+        }
+        console.log('renamed complete');
+        event.sender.send(`download-user-data-done`, { result: 'SUCCESS' });
+      });
+    })
+    .catch((err) => {
+      // console.log(`${err}-${info.bookObj.id}`);
+      event.sender.send(`download-user-data-done`, { result: 'ERROR', err});
+    });
+  }
+  catch(err) {
+    event.sender.send(`download-user-data-done`, { result: 'ERROR', err});
   }
 });
 

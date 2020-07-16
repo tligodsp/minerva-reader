@@ -7,6 +7,7 @@ import Divider from '@material-ui/core/Divider';
 import { BookList } from '../';
 import { ProgressionCard } from '../../molecules';
 import { Sizing, Typography } from '../../../../styles';
+import MTheme from '../../../../styles/themes';
 import defaultStyles from './LibraryPageRightDrawer.css';
 
 const drawerWidth = Sizing.HOMEPAGE_DRAWER_WIDTH;
@@ -21,6 +22,13 @@ const useStyles = makeStyles((theme: Theme) =>
       width: drawerWidth,
       border: "none",
       fontFamily: Typography.FONT_FAMILY,
+      backgroundColor: MTheme.light.backgroundColor
+    },
+    drawerPaperDark: {
+      width: drawerWidth,
+      border: "none",
+      fontFamily: Typography.FONT_FAMILY,
+      backgroundColor: MTheme.dark.backgroundColor
     },
     avatarLarge: {
       width: theme.spacing(7),
@@ -34,7 +42,7 @@ const DrawerSection = (props) => {
   return (
     <div className={defaultStyles['section']}>
       <div className={defaultStyles['header']}>
-        <div>{props.headerText}</div>
+        <div style={{ color: props.headerColor }}>{props.headerText}</div>
         <div className={defaultStyles['view-all']}>{props.headerClickableText}</div>
       </div>
       {props.children}
@@ -44,6 +52,7 @@ const DrawerSection = (props) => {
 
 const LibraryPageRightDrawer = (props) => {
   const _currentUser = props.users.currentUser;
+  const { theme } = props.local;
   const classes = useStyles();
   return (
     <Drawer
@@ -52,7 +61,7 @@ const LibraryPageRightDrawer = (props) => {
       open={props.open}
       onClose={props.onClose}
       classes={{
-        paper: classes.drawerPaper,
+        paper: theme.name == 'light' ? classes.drawerPaper : classes.drawerPaperDark,
       }}
     >
       <div className={defaultStyles['content']}>
@@ -63,11 +72,14 @@ const LibraryPageRightDrawer = (props) => {
               src={_currentUser.profilePicture}
               className={classes.avatarLarge}
             />
-            <div style={{ marginLeft: '10px' }}>{_currentUser.username}</div>
+            <div style={{
+              marginLeft: '10px',
+              color: theme.textColor
+            }}>{_currentUser.username}</div>
           </div>
         </div>
         <Divider style={{ margin: "10px 0" }}/>
-        {
+        {/* {
           _currentUser.recentlyRead &&
           <DrawerSection
             headerText="Recently Read"
@@ -84,25 +96,30 @@ const LibraryPageRightDrawer = (props) => {
               useProgressForChildren={true}
             />
           </DrawerSection>
-        }
+        } */}
         {
           _currentUser.wishlist &&
           <DrawerSection
-            headerText="Want To Read"
-            headerClickableText="View All"
+            headerText="Your Wishlist"
+            headerColor={theme.textColor}
+            // headerClickableText="View All"
           >
             <BookList
-              books={_currentUser.wishlist.slice(0, 1)}
+              books={_currentUser.wishlist.slice(0, 3)}
               wrapperStyle={{ }}
-              bookContainerStyle={{ width: `${Sizing.HOMEPAGE_DRAWER_WIDTH - 60}px`, margin: "5px" }}
+              bookContainerStyle={{ width: `${Sizing.HOMEPAGE_DRAWER_WIDTH - 60}px`, margin: "10px 5px" }}
               bookProps={{
-                wrapperStyle: { backgroundColor: "#ECECEC" }
+                bookTitleStyle: { fontSize: "1rem", color: theme.bookTitleColor },
+                bookAuthorsStyle: { fontWeight: 500, color: theme.bookAuthorsColor },
+                wrapperStyle: { backgroundColor: theme.bookCardBGColor },
               }}
+              starColor={theme.starColor}
+              showBookRatingCount
             />
           </DrawerSection>
 
         }
-        <DrawerSection
+        {/* <DrawerSection
           headerText="Daily Goal"
           headerClickableText="Setting"
         >
@@ -120,14 +137,15 @@ const LibraryPageRightDrawer = (props) => {
               alt='Book'
             />
           </ProgressionCard>
-        </DrawerSection>
+        </DrawerSection> */}
       </div>
     </Drawer>
   );
 }
 
 const mapStateToProps = (state) => ({
-  users: state.users
+  users: state.users,
+  local: state.local,
 });
 
 export default connect(mapStateToProps)(LibraryPageRightDrawer);

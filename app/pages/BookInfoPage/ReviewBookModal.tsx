@@ -128,6 +128,7 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted, theme, is
           onSubmitted();
         })
         .catch((error) => {
+          setIsSubmitting(false);
           console.log(error);
         })
     }
@@ -138,6 +139,7 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted, theme, is
           onSubmitted();
         })
         .catch((error) => {
+          setIsSubmitting(false);
           console.log(error);
         })
     }
@@ -152,6 +154,7 @@ const ReviewBookModal = ({ open, handleClose, user, book, onSubmitted, theme, is
           onSubmitted();
         })
         .catch((error) => {
+          setIsSubmitting(false);
           console.log(error);
         })
     }

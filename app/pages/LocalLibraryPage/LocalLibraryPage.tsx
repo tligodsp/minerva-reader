@@ -12,6 +12,7 @@ import Chips, { Chip } from 'react-chips';
 import { FilterCard } from '../../components/common/molecules';
 import { Colors } from '../../styles';
 import { connect } from 'react-redux';
+import { Theme } from '../../styles';
 
 const TAB = {
 	RECENTLY_READ: 'Recently Read',
@@ -35,6 +36,14 @@ const useStyles = makeStyles(() =>
   createStyles({
     iconButton: {
       fontSize: "2rem"
+    },
+    iconButtonLight: {
+      fontSize: "2rem",
+      color: Theme.light.readerTextColor,
+    },
+    iconButtonDark: {
+      fontSize: "2rem",
+      color: Theme.dark.readerTextColor,
     },
   }),
 );
@@ -72,6 +81,7 @@ const LocalLibrary = (props) => {
 
   useEffect(() => {
     setIsDisplayingUnsynced(false);
+    setUnsyncedBooks([]);
     setTabList(TAB_LIST.filter(tab => !(!isLoggedIn && tab == TAB.WANT_TO_READ) && !(tab == TAB.UNSYNCED)));
     Local.getLocalGenres()
         .then((response: any) => {
@@ -210,7 +220,10 @@ const LocalLibrary = (props) => {
   const renderFilterButton = () => {
     return (
       <div className={styles['menu-button-container']}>
-        <IconButton className={classes.iconButton} onClick={() => setShowFilters(!showFilters)}>
+        <IconButton
+          className={ theme.name == 'light' ? classes.iconButtonLight : classes.iconButtonDark }
+          onClick={() => setShowFilters(!showFilters)}
+        >
           <FilterListIcon />
         </IconButton>
       </div>
@@ -315,7 +328,7 @@ const LocalLibrary = (props) => {
                     bookCoverStyle: { borderRadius: "10px" }
                   }}
                   isVerticalBookCard
-                  useProgressForChildren={chosenTab == TAB.RECENTLY_READ}
+                  // useProgressForChildren={chosenTab == TAB.RECENTLY_READ}
                   hideSubInfo
                   progressPathColor={theme.progressPathColor}
                   progressTrailColor={theme.progressTrailColor}

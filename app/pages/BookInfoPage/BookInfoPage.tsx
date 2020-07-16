@@ -376,6 +376,24 @@ const BookInfoPage = (props) => {
       });
   }
 
+  const fetchBook = () => {
+    setIsBookInfoLoading(true);
+    if (!id) {
+      /** REDIRECT TO PAGE NOT FOUND */
+      return;
+    }
+    Service.getBookById(id)
+      .then((response: any) => {
+        _setBook(response.book);
+        setIsBookInfoLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        /** TODO: REDIRECT TO PAGE NOT FOUND */
+        return;
+      });
+  }
+
   const onReported = () => {
     handleCloseReportModal();
     fetchReviews();
@@ -384,6 +402,7 @@ const BookInfoPage = (props) => {
   const onReviewCreatedOrUpdate = () => {
     handleCloseReviewModal();
     fetchReviews();
+    fetchBook();
   }
 
   const isDownloading = (id) => {
@@ -392,7 +411,7 @@ const BookInfoPage = (props) => {
 
   return (
     <LibraryPageTemplate
-      topBarLeft={renderHomeButton()}
+      // topBarLeft={renderHomeButton()}
       backgroundColor={theme.backgroundColor}
     >
       { true &&
@@ -428,12 +447,14 @@ const BookInfoPage = (props) => {
                     <div style={{ marginBottom: '5px' }}>
                       <img src={_book!.cover} alt='cover' className={styles['cover-img']}/>
                     </div>
+                    <div style={{ height: '5px' }}/>
                     {
                       showWishlistButton() &&
                       <button
-                        className="button-secondary"
+                        className="button"
+                        // className="button-secondary"
                         style={{
-                          marginTop: 5,
+                          // marginTop: 5,
                           marginBottom: 10,
                           position: 'relative',
                           cursor: isUpdatingWishlist ? 'unset' : 'pointer'
@@ -449,7 +470,8 @@ const BookInfoPage = (props) => {
                     {
                       isDownloaded &&
                       <button
-                        className={"button-secondary"}
+                        className={"button"}
+                        // className={"button-secondary"}
                         onClick={() => handleReadBookClick()}
                       >
                         Read Book
@@ -458,7 +480,8 @@ const BookInfoPage = (props) => {
                     {
                       (!isDownloaded && !isDownloading(_book.id)) &&
                       <button
-                        className={!_book.downloadLink ? "button-disabled" : "button-secondary"}
+                        className={!_book.downloadLink ? "button-disabled" : "button"}
+                        // className={!_book.downloadLink ? "button-disabled" : "button-secondary"}
                         onClick={() => handleDownloadClick()}
                         disabled={!_book.downloadLink}
                       >
@@ -468,7 +491,8 @@ const BookInfoPage = (props) => {
                     {
                       (!isDownloaded && isDownloading(_book.id)) &&
                       <button
-                        className={"button-secondary"}
+                        className={"button"}
+                        // className={"button-secondary"}
                         disabled
                         style={{
                           position: 'relative',
@@ -572,7 +596,8 @@ const BookInfoPage = (props) => {
                           , start your review of {_book?.title}
                         </div>
                         <button
-                          className={'button-secondary ' + styles['start-review-button']}
+                          className={'button ' + styles['start-review-button']}
+                          // className={'button-secondary ' + styles['start-review-button']}
                           onClick={handleShowReviewModal}
                         >
                           Add Review

@@ -81,6 +81,7 @@ export interface User {
   wishlistIds?: string[],
   favoriteGenres?: Genre[],
   favoriteGenreIds?: Genre[],
+  dataLink?: string,
 }
 
 export interface DisplayConfig {

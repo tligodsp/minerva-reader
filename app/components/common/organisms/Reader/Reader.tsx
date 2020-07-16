@@ -81,11 +81,11 @@ const Reader = ({ localBook, theme, fontSize, fullScreen, showConfigButton, onCo
     chaptersToggleButtonElem.attr("id", "chapters-toggle");
     chaptersToggleButtonElem.css("display", "none");
     const readContentsElem = chaptersToggleButtonElem.parent();
-    console.log(readContentsElem);
+    // console.log(readContentsElem);
     readContentsElem.css("background", theme.readerBackgroundColor);
     if (rendition) {
-      console.log('rendition');
-      console.log(fontSize);
+      // console.log('rendition');
+      // console.log(fontSize);
       rendition.themes.select(theme.name);
       if (fontSize == 'small') {
         rendition.themes.fontSize("80%");

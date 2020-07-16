@@ -19,3 +19,11 @@ export const addBookToWishlist = (bookId: string) => {
 export const removeBookFromWishlist = (bookId: string) => {
   return axios.put(`users/favorites`, { action: 'REMOVE', favoriteId: bookId});
 }
+
+export const updateUserDataLink = (username: string, link: string) => {
+  return axios.put(`users/update/${username}`, { dataLink: link });
+}
+
+export const updateUserPhoto = (username: string, photoLink: string) => {
+  return axios.put(`users/update/${username}`, { profileAvatar: photoLink });
+}

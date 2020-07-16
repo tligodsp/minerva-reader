@@ -20,6 +20,7 @@ import { FilterCard } from '../../components/common/molecules';
 import styles from './SignUpPage.module.scss';
 import { Genre } from '../../types';
 import $ from 'jquery';
+import Theme from '../../styles/themes';
 
 const CustomChip = (props: any) => {
   console.log(styles);
@@ -48,6 +49,7 @@ const SignUpPage = (props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const classes = useStyles();
   const history = useHistory();
+  const { theme } = props.local;
 
   useEffect(() => {
     setIsFormLoading(true);
@@ -103,111 +105,130 @@ const SignUpPage = (props) => {
   }
 
   return (
-    <Card className={classes.card}>
-      <LoadingOverlay show={isFormLoading}/>
-      <Container component="main" maxWidth="xs">
-          <CssBaseline />
-          <div className={classes.paper}>
-            <Avatar className={classes.avatar}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign Up
-            </Typography>
-            <form className={classes.form} noValidate>
-              {/* TODO: Clean this up */}
-              <div style={{ color: 'red' }}>{errorMessage}</div>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                value={username}
-                onChange={event => {setUsername(event.target.value)}}
-                onKeyUp={(event) => {
-                  if (event.key === 'Enter') {
-                    onSignUp();
-                  }
-                }}
-                autoFocus
-              />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                value={password}
-                onChange={event => {setPassword(event.target.value)}}
-                onKeyUp={(event) => {
-                  if (event.key === 'Enter') {
-                    onSignUp();
-                  }
-                }}
-              />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="passwordConfirm"
-                label="Confirm Password"
-                type="passwordConfirm"
-                id="passwordConfirm"
-                value={passwordConfirm}
-                onChange={event => {setPasswordConfirm(event.target.value)}}
-                onKeyUp={(event) => {
-                  if (event.key === 'Enter') {
-                    onSignUp();
-                  }
-                }}
-              />
-              <Chips
-                id='chipfield'
-                placeholder={`Some of your favorite book genres*`}
-                value={genresFilter}
-                onChange={onSelectedGenresChange}
-                suggestions={allGenres}
-                renderChip={(genre: Genre) => (<CustomChip chipColor={'#7670FF'}>{genre.name}</CustomChip>)}
-                renderSuggestion={(genre: Genre, p: any) => (
-                  <div className={'suggestion'} key={genre.id}>{genre.name}</div>
-                )}
-                suggestionsFilter={(opt: any, val: any) => (
-                  opt.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
-                  && (!genresFilter ||
-                    genresFilter?.findIndex(genre => genre.name == opt.name) === -1)
-                )}
-                getSuggestionValue={(genre: Genre) => genre.name}
-                fromSuggestionsOnly={true}
-                uniqueChips={true}
-                style={{
-                  padding: '16px 12px'
-                }}
-              />
-              <div style={{position: 'relative'}}>
-                {/* Extra <div> is for loading */}
-                <Button
+    <div style={{
+      display: 'flex',
+      width: '100%',
+      height: '100%',
+      backgroundColor: theme.backgroundColor,
+    }}>
+      <Card className={classes.card}>
+        <LoadingOverlay show={isFormLoading}/>
+        <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
+              <Avatar className={classes.avatar}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5" className={classes.typography}>
+                Sign Up
+              </Typography>
+              <form className={classes.form} noValidate>
+                {/* TODO: Clean this up */}
+                <div style={{ color: 'red' }}>{errorMessage}</div>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
                   fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  onClick={onSignUp}
-                  disabled={isLoading}
-                >
-                  Sign Up
-                </Button>
-                {isLoading ? <CircularProgress size={24} className="circular-center-size-24px" /> : null}
-              </div>
-            </form>
-          </div>
-      </Container>
-    </Card>
+                  id="username"
+                  label="Username"
+                  name="username"
+                  value={username}
+                  onChange={event => {setUsername(event.target.value)}}
+                  onKeyUp={(event) => {
+                    if (event.key === 'Enter') {
+                      onSignUp();
+                    }
+                  }}
+                  autoFocus
+                />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={event => {setPassword(event.target.value)}}
+                  onKeyUp={(event) => {
+                    if (event.key === 'Enter') {
+                      onSignUp();
+                    }
+                  }}
+                />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="passwordConfirm"
+                  label="Confirm Password"
+                  type="passwordConfirm"
+                  id="passwordConfirm"
+                  value={passwordConfirm}
+                  onChange={event => {setPasswordConfirm(event.target.value)}}
+                  onKeyUp={(event) => {
+                    if (event.key === 'Enter') {
+                      onSignUp();
+                    }
+                  }}
+                />
+                <Chips
+                  id='chipfield'
+                  placeholder={`Some of your favorite book genres*`}
+                  value={genresFilter}
+                  onChange={onSelectedGenresChange}
+                  suggestions={allGenres}
+                  renderChip={(genre: Genre) => (<CustomChip chipColor={'#7670FF'}>{genre.name}</CustomChip>)}
+                  renderSuggestion={(genre: Genre, p: any) => (
+                    <div className={'suggestion'} key={genre.id}>{genre.name}</div>
+                  )}
+                  suggestionsFilter={(opt: any, val: any) => (
+                    opt.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
+                    && (!genresFilter ||
+                      genresFilter?.findIndex(genre => genre.name == opt.name) === -1)
+                  )}
+                  getSuggestionValue={(genre: Genre) => genre.name}
+                  fromSuggestionsOnly={true}
+                  uniqueChips={true}
+                  style={{
+                    padding: '16px 12px'
+                  }}
+                />
+                <div style={{position: 'relative', margin: '20px 0 10px', borderRadius: '10px'}}>
+                  {/* Extra <div> is for loading */}
+                  <LoadingOverlay show={isLoading}/>
+                  <button
+                    className={'button'}
+                    onClick={onSignUp}
+                    style={{
+                      width: '100%',
+                      fontSize: '1.1rem',
+                      height: '50px'
+                    }}
+                    disabled={isLoading}
+                  >
+                    Sign Up
+                  </button>
+                  {/* <Button
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={onLogin}
+                    disabled={isLoading}
+                  >
+                    Sign In
+                  </Button> */}
+                </div>
+              </form>
+            </div>
+        </Container>
+      </Card>
+    </div>
   );
 }
 
@@ -223,6 +244,9 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
     backgroundColor: theme.palette.primary.main,
   },
+  typography: {
+    fontFamily: `'Quicksand', sans-serif`,
+  },
   form: {
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(1),
@@ -234,7 +258,63 @@ const useStyles = makeStyles(theme => ({
     margin: 'auto',
     width: 'fit-content',
     position: 'relative',
-  }
+    borderRadius: '10px'
+  },
+  cardLight: {
+    margin: 'auto',
+    width: 'fit-content',
+    backgroundColor: Theme.light.cardBGColor,
+    color: Theme.light.textColor,
+    borderRadius: '10px'
+  },
+  cardDark: {
+    margin: 'auto',
+    width: 'fit-content',
+    backgroundColor: Theme.dark.cardBGColor,
+    color: Theme.dark.textColor,
+    borderRadius: '10px'
+  },
+  rootLight: {
+    fontFamily: "'Quicksand', sans-serif",
+    marginTop: "20px",
+    fontWeight: 500,
+    '& .MuiInputLabel-outlined': {
+      fontFamily: "'Quicksand', sans-serif",
+      fontWeight: 500,
+      color: Theme.light.textColor,
+    },
+    '& .MuiOutlinedInput-input': {
+      fontFamily: "'Quicksand', sans-serif",
+      fontWeight: 500,
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: Theme.light.textFieldActiveColor
+    },
+    '& .MuiFormLabel-root.Mui-focused': {
+      color: Theme.light.textFieldActiveColor
+    },
+  },
+  rootDark: {
+    fontFamily: "'Quicksand', sans-serif",
+    marginTop: "20px",
+    fontWeight: 500,
+    '& .MuiInputLabel-outlined': {
+      fontFamily: "'Quicksand', sans-serif",
+      fontWeight: 500,
+      color: Theme.dark.textColor,
+    },
+    '& .MuiOutlinedInput-input': {
+      fontFamily: "'Quicksand', sans-serif",
+      fontWeight: 500,
+      color: Theme.dark.textColor
+    },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: Theme.dark.textFieldActiveColor
+    },
+    '& .MuiFormLabel-root.Mui-focused': {
+      color: Theme.dark.textFieldActiveColor
+    },
+  },
 }));
 
 const mapStateToProps = (state) => ({

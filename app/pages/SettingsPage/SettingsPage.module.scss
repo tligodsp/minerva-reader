@@ -6,7 +6,8 @@
   justify-content: center;
   align-items: center;
   height: fit-content;
-  width: fit-content;
+  padding: 20px;
+  // width: fit-content;
 }
 
 .config-container {
@@ -69,4 +70,26 @@
       align-items: center;
     }
   }
+}
+
+.user-avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 100%;
+  border: solid thin;
+  object-fit: cover;
+}
+
+.main-display {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  min-width: 0;
+}
+
+.scroll-view-container {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
 }

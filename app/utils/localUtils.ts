@@ -3,8 +3,38 @@ import { getLocalBooks } from './mock-books';
 import { getMockLocalGenres } from './mock-genres';
 import { getMockLocalAuthors } from './mock-authors';
 import { getMockDisplayConfig } from './mock-display-config';
+import * as Constants from '../utils/constants';
 const { ipcRenderer } = require('electron');
 import Theme from '../styles/themes';
+
+export const downloadUserData = (url: string) => {
+  return new Promise((resolve, reject) => {
+    ipcRenderer.send('download-user-data', { url });
+    ipcRenderer.on('download-user-data-done', (event, res) => {
+      // console.log(res);
+      resolve({ result: 'SUCCESS' });
+    })
+  });
+}
+
+export const getUserData = () => {
+	return new Promise((resolve, reject) => {
+    ipcRenderer.send('get-user-data');
+    ipcRenderer.on('get-user-data-done', (event, res) => {
+      try {
+        if (res.result == 'SUCCESS' && res.userData) {
+          resolve({ userData: res.userData });
+        }
+        else {
+          resolve({ userData: {} });
+        }
+      } catch (error) {
+        console.log(error);
+        reject(error);
+      }
+    });
+	})
+}
 
 export const getRecentlyAddedBooksUnsyncIncluded = (within = 7) => {
   // const books: LocalBook[] = getLocalBooks();
@@ -18,8 +48,8 @@ export const getRecentlyAddedBooksUnsyncIncluded = (within = 7) => {
           lastXDays.setDate(lastXDays.getDate() - within);
           let recentlyAddedBooks = res.userData.localBooks.filter(book => {
             const bookDownloadedAt : Date = new Date(book.dateAdded);
-            console.log(lastXDays);
-            console.log(bookDownloadedAt);
+            // console.log(lastXDays);
+            // console.log(bookDownloadedAt);
             return lastXDays <= bookDownloadedAt;
           });
           recentlyAddedBooks.sort((book1, book2) => {
@@ -213,7 +243,8 @@ export const getUnsyncedBooks = () => {
     ipcRenderer.send('get-unsynced-or-corrupted-books');
     ipcRenderer.on('get-unsynced-or-corrupted-books-done', (event, res) => {
       if (res.result == 'SUCCESS') {
-        resolve({ books: res.unsyncedBooks });
+        const books = res.unsyncedBooks.map(uBook => ({ ...uBook, bookPhotoPath: Constants.NO_BOOK_IMAGE_LINK }))
+        resolve({ books });
       }
       else {
         reject(res.error);
@@ -332,7 +363,7 @@ export const getGuessUser = () => {
 }
 
 export const getThemeByName = (name: string) => {
-  console.log(name);
+  // console.log(name);
   if (name == 'dark') {
     return Theme.dark;
   }

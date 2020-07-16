@@ -8,6 +8,7 @@ import * as genreAPI from '../api/genreAPI';
 import * as bookAPI from '../api/bookAPI';
 import * as authorAPI from '../api/authorAPI';
 import * as reviewAPI from '../api/reviewAPI';
+import { storage } from '../firebase/firebase';
 
 var ID = function () {
   // Math.random should be unique because of its seeding algorithm.
@@ -23,6 +24,38 @@ export const isElemInList = (elem: any, list: any[] | undefined) => {
     return false;
   }
   return list.findIndex(e => e === elem) != -1;
+}
+
+export const uploadFile = (folder: string, file: any, name: string, autoExtension = false) => {
+  const fileName = name.replace(/\s+/g, '');
+  let fileExtension = '';
+  if (autoExtension) {
+    fileExtension = '.' + file.name.split('.').pop();
+  }
+	return new Promise((resolve, reject) => {
+		const uploadTask = storage.ref(`${folder}/${fileName}${fileExtension}`).put(file);
+		uploadTask.on(
+			"state_changed",
+			(snapshot) => {},
+			(error) => {
+				console.log(error);
+				reject(error);
+			},
+			() => {
+				storage
+					.ref(folder)
+					.child(`${fileName}${fileExtension}`)
+					.getDownloadURL()
+					.then(url => {
+						// console.log(url);
+						resolve(url);
+          })
+          .catch(error => {
+            reject(error);
+          })
+      }
+    );
+	});
 }
 
 // export const getBookByFilters = (searchTerm: string, authorIds: string[], genreIds: string[]) => {
@@ -98,6 +131,33 @@ export const getUserByUsername = (username: string) => {
         reject(error);
       })
   });
+}
+
+export const updateUserDataLink = (username: string, link: string) => {
+  return new Promise((resolve, reject) => {
+    userAPI.updateUserDataLink(username, link)
+      .then((response: any) => {
+        // console.log(response);
+        const user = convertUserModel(response.data.users);
+        resolve({ user });
+      })
+      .catch((error) => {
+        reject(error);
+      })
+  })
+}
+
+export const updateUserPhoto = (username: string, photoLink: string) => {
+  return new Promise((resolve, reject) => {
+    userAPI.updateUserPhoto(username, photoLink)
+      .then((response: any) => {
+        const user = convertUserModel(response.data.users);
+        resolve({ user });
+      })
+      .catch((error) => {
+        reject(error);
+      })
+  })
 }
 
 export const getGenres = () => {
@@ -374,7 +434,7 @@ export const unvoteReview = (id: string) => {
 
 const convertUserModel = (userRes) => {
   const { id, username, fullName, favoriteIds, favoriteCategoryIds,
-      favoriteBooks, favoriteCategories, profileAvatar} = userRes;
+      favoriteBooks, favoriteCategories, profileAvatar, dataLink} = userRes;
   const user: User = {
     id: userRes.id,
     username: username,
@@ -384,6 +444,7 @@ const convertUserModel = (userRes) => {
     wishlistIds: favoriteIds,
     favoriteGenres: favoriteCategories ? favoriteCategories.map(genreRes => convertGenreModel(genreRes)) : [],
     favoriteGenreIds: favoriteCategoryIds,
+    dataLink: dataLink,
   }
   return user;
 }

@@ -3,6 +3,7 @@ import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import ImportContactsOutlinedIcon from '@material-ui/icons/ImportContactsOutlined';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
+import FaceIcon from '@material-ui/icons/Face';
 
 import { Sizing } from './styles';
 
@@ -38,6 +39,12 @@ export const routes = [
     isOnNavBar: false,
   },
   {
+    path: '/search2',
+    name: 'Search',
+    component: SearchResultsPage,
+    isOnNavBar: false,
+  },
+  {
     path: '/book-info/:id',
     name: 'BookInfo',
     component: BookInfoPage,
@@ -67,7 +74,7 @@ export const routes = [
     path: '/about',
     name: 'About',
     component: AboutPage,
-    isOnNavBar: true,
+    isOnNavBar: false,
     icon: <HelpOutlineOutlinedIcon style={styles}/>,
   },
   {
@@ -76,13 +83,19 @@ export const routes = [
     component: LoginPage,
     isOnNavBar: true,
     hideNavBar: true,
-    icon: <HelpOutlineOutlinedIcon style={styles}/>,
+    icon: <FaceIcon style={styles}/>,
   },
   {
     path: '/signup',
     name: 'SignUp',
     component: SignUpPage,
     hideNavBar: true,
+    isOnNavBar: false,
+  },
+  {
+    path: '',
+    name: 'LocalLibrary',
+    component: LocalLibraryPage,
     isOnNavBar: false,
   },
 ];

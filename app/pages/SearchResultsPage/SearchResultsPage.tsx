@@ -99,7 +99,9 @@ const SearchResultsPage = (props) => {
   }, [genresFilter, authorsFilter, foundBooks])
 
   useEffect(() => {
+    console.log('change');
     setFilterValues();
+    setIsSearching(true);
   }, [location.state])
 
   const setFilterValues = () => {
@@ -110,6 +112,7 @@ const SearchResultsPage = (props) => {
       setGenresFilter([ ...location.state.passedGenres ]);
     }
     if (location.state && location.state.passedSearchTerm) {
+      console.log(location.state.passedSearchTerm);
       setSearchTerm(location.state.passedSearchTerm);
     }
     else {
@@ -176,7 +179,7 @@ const SearchResultsPage = (props) => {
   return (
     <LibraryPageTemplate
       backgroundColor={theme.backgroundColor}
-      topBarLeft={renderHomeButton()}
+      // topBarLeft={renderHomeButton()}
     >
       <div className={styles['page-content']}>
         {/* FILTER SECTION */}

@@ -39,12 +39,18 @@ const SearchInput = (props) => {
   console.log(location);
 
   const handleSearchClick = () => {
-    if (location.pathname.includes('/search')) {
-      history.go(0);
-      history.replace({ pathname: '/search', state: { passedSearchTerm: searchInput } });
+    // if (location.pathname.includes('/search')) {
+    //   history.go(0);
+    //   history.replace({ pathname: '/search', state: { passedSearchTerm: searchInput } });
+    // }
+    // else {
+    //   history.push({ pathname: '/search', state: { passedSearchTerm: searchInput } });
+    // }
+    if (location.pathname.includes('/search2')) {
+      history.push({ pathname: '/search', state: { passedSearchTerm: searchInput } });
     }
     else {
-      history.push({ pathname: '/search', state: { passedSearchTerm: searchInput } });
+      history.push({ pathname: '/search2', state: { passedSearchTerm: searchInput } });
     }
   }
 
@@ -58,7 +64,7 @@ const SearchInput = (props) => {
     <Paper component="form" className={classes.root}>
       <InputBase
         className={classes.input}
-        placeholder="Search Books"
+        placeholder="Search Online Books"
         inputProps={{ 'aria-label': 'search books' }}
         value={searchInput}
         onChange={onChangeInput}
