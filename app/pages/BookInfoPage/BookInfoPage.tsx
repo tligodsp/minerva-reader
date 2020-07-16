@@ -634,12 +634,13 @@ const BookInfoPage = (props) => {
                               />
                             </span>
                           </div>
-                          <p>{review.content}</p>
+                          <p style={{ marginTop: '10px' }}>{review.content}</p>
                         </div>
                         <div style={{ flex: 1, position: 'relative' }}>
                           <div style={{
                             position: 'absolute',
                             right: '20px',
+                            display: 'flex',
                           }}>
                             {
                               (review.username == currentUser.username) &&
