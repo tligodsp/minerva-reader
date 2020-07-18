@@ -22,6 +22,7 @@ type Props = {
 };
 
 axios.defaults.baseURL = `http://libu20.herokuapp.com/api/v1`;
+// axios.defaults.baseURL = `http://localhost:8585/api/v1`;
 
 const renderRoutes = (routes: any) => {
   return routes.map((route: any) => <Route path={route.path} component={route.component} />);

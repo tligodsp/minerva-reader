@@ -245,7 +245,8 @@ export const getSimilarBooks = (id: string, limit = 1000) => {
       .then((response: any) => {
         console.log('similar res');
         console.log(response);
-        const convertedBooks = response.data.book.map(bookRes => convertBookModel(bookRes));
+        let convertedBooks = response.data.book.map(bookRes => convertBookModel(bookRes));
+        convertedBooks = convertedBooks.filter(book => book.id !== id);
         resolve({ books: convertedBooks });
       })
       .catch((error) => {

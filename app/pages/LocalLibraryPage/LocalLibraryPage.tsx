@@ -124,6 +124,15 @@ const LocalLibrary = (props) => {
 
   useEffect(() => {
     setBooks([]);
+    Local.getUnsyncedBooks()
+          .then((response: any) => {
+            // setBooks([ ...response.books ]);
+            setUnsyncedBooks([ ...response.books ]);
+          })
+          .catch(err => {
+            console.log(err);
+            setUnsyncedBooks([]);
+          })
     if (chosenTab == TAB.RECENTLY_READ) {
       setRenderAsLocalBooks(true);
       setIsDisplayingUnsynced(false);
@@ -180,15 +189,17 @@ const LocalLibrary = (props) => {
     else if (chosenTab == TAB.UNSYNCED) {
       setRenderAsLocalBooks(true);
       setIsDisplayingUnsynced(true);
-      Local.getUnsyncedBooks()
-          .then((response: any) => {
-            setBooks([ ...response.books ]);
-            setUnsyncedBooks([ ...response.books ]);
-          })
-          .catch(err => {
-            console.log(err);
-            setUnsyncedBooks([]);
-          })
+      setBooks([ ...unsyncedBooks ]);
+
+    //   Local.getUnsyncedBooks()
+    //       .then((response: any) => {
+    //         setBooks([ ...response.books ]);
+    //         setUnsyncedBooks([ ...response.books ]);
+    //       })
+    //       .catch(err => {
+    //         console.log(err);
+    //         setUnsyncedBooks([]);
+    //       })
     }
     else {
       setRenderAsLocalBooks(true);

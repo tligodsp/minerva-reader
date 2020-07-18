@@ -73,99 +73,109 @@ const HomePage = (props) => {
       });
   }, []);
 
+  const showRecommend = () => {
+      if (!isLoggedIn || !currentUser || !currentUser.favoriteGenreIds || currentUser.favoriteGenreIds.length == 0) {
+          return false;
+      }
+      return true;
+  }
+
   return (
     <LibraryPageTemplate backgroundColor={theme.backgroundColor}>
-      <BookListSection
-        sectionTitle="You Might Like"
-        buttonLabel="View All"
-        wrapperStyle={{ padding: "0 40px", minWidth: "0" }}
-        headerContainerStyle={{
-          fontFamily: "Quicksand, sans-serif",
-          fontSize: "1.15rem",
-          fontWeight: "bold",
-          padding: "15px 20px",
-          color: theme.sectionHeaderColor,
-        }}
-        // buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
-      >
         {
-          isRecommendSectionLoading &&
-          <div style={{ position: 'relative', height: '200px' }}>
-            <LoadingOverlay show={isRecommendSectionLoading} noOverlay={true}/>
-          </div>
-        }
-        {
-          !isRecommendSectionLoading &&
-          <Carousel
-            slidesToShow={3}
-            slidesToScroll={3}
-            cellSpacing={30}
-            framePadding="0 30px"
-            slideWidth="436px"
-            defaultControlsConfig={{
-              nextButtonText: '›',
-              prevButtonText: '‹',
-              nextButtonStyle: {
-                width: "34px",
-                height: "34px",
-                lineHeight: "0",
-                borderRadius: "100%",
-                transform: "translateX(16px)"
-              },
-              prevButtonStyle: {
-                width: "34px",
-                height: "34px",
-                lineHeight: "0",
-                borderRadius: "100%",
-                transform: "translateX(-16px)"
-              },
-              pagingDotsStyle: { display: "none" }
-            }}
-          >
-            {
-              recommendBooks.map((book: Book, index: number) => (
-                <div key={`book${index}`}>
-                  <BookInfoCard
-                    id={book.id}
-                    title={book.title}
-                    cover={book.cover}
-                    authors={book.authors ? `by ${book.authors[0].name}` : ""}
-                    smartBackgroundColor={theme.name == 'light'}
-                    wrapperStyle={
-                      theme.name == 'light' ? undefined : { backgroundColor: theme.bookCardBGColor }
-                    }
-                    bookTitleStyle={{
-                      color: Colors.WHITE,
-                      textShadow: "0px 0px 10px #000000",
-                      fontSize: "1.25rem"
-                    }}
-                    bookAuthorsStyle={{
-                      color: Colors.WHITE,
-                      textShadow: "0px 0px 10px #000000",
-                      fontSize: "1rem"
-                    }}
-                  >
-                    <div
-                      style={{
-                        flex: 1,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: "flex-end",
-                        paddingRight: "30%"
-                      }}
-                    >
-                      <RatingBar
-                        ratingValue={book.ratingValue ? book.ratingValue / 5 : 0}
-                        starStyle={{ color: Colors.WHITE }}
-                      />
-                    </div>
-                  </BookInfoCard>
+            showRecommend() &&
+            <BookListSection
+                sectionTitle="You Might Like"
+                buttonLabel="View All"
+                wrapperStyle={{ padding: "0 40px", minWidth: "0" }}
+                headerContainerStyle={{
+                fontFamily: "Quicksand, sans-serif",
+                fontSize: "1.15rem",
+                fontWeight: "bold",
+                padding: "15px 20px",
+                color: theme.sectionHeaderColor,
+                }}
+                // buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
+            >
+                {
+                isRecommendSectionLoading &&
+                <div style={{ position: 'relative', height: '200px' }}>
+                    <LoadingOverlay show={isRecommendSectionLoading} noOverlay={true}/>
                 </div>
-              ))
-            }
-          </Carousel>
+                }
+                {
+                !isRecommendSectionLoading &&
+                <Carousel
+                    slidesToShow={3}
+                    slidesToScroll={3}
+                    cellSpacing={30}
+                    framePadding="0 30px"
+                    slideWidth="436px"
+                    defaultControlsConfig={{
+                    nextButtonText: '›',
+                    prevButtonText: '‹',
+                    nextButtonStyle: {
+                        width: "34px",
+                        height: "34px",
+                        lineHeight: "0",
+                        borderRadius: "100%",
+                        transform: "translateX(16px)"
+                    },
+                    prevButtonStyle: {
+                        width: "34px",
+                        height: "34px",
+                        lineHeight: "0",
+                        borderRadius: "100%",
+                        transform: "translateX(-16px)"
+                    },
+                    pagingDotsStyle: { display: "none" }
+                    }}
+                >
+                    {
+                    recommendBooks.map((book: Book, index: number) => (
+                        <div key={`book${index}`}>
+                        <BookInfoCard
+                            id={book.id}
+                            title={book.title}
+                            cover={book.cover}
+                            authors={book.authors ? `by ${book.authors[0].name}` : ""}
+                            smartBackgroundColor={theme.name == 'light'}
+                            wrapperStyle={
+                            theme.name == 'light' ? undefined : { backgroundColor: theme.bookCardBGColor }
+                            }
+                            bookTitleStyle={{
+                            color: Colors.WHITE,
+                            textShadow: "0px 0px 10px #000000",
+                            fontSize: "1.25rem"
+                            }}
+                            bookAuthorsStyle={{
+                            color: Colors.WHITE,
+                            textShadow: "0px 0px 10px #000000",
+                            fontSize: "1rem"
+                            }}
+                        >
+                            <div
+                            style={{
+                                flex: 1,
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: "flex-end",
+                                paddingRight: "30%"
+                            }}
+                            >
+                            <RatingBar
+                                ratingValue={book.ratingValue ? book.ratingValue / 5 : 0}
+                                starStyle={{ color: Colors.WHITE }}
+                            />
+                            </div>
+                        </BookInfoCard>
+                        </div>
+                    ))
+                    }
+                </Carousel>
+                }
+            </BookListSection>
         }
-      </BookListSection>
 
       {/* POPULAR SECTION */}
       <BookListSection
@@ -214,7 +224,7 @@ const HomePage = (props) => {
       </BookListSection>
 
       {/* HIGH RATED SECTION */}
-      {/* <BookListSection
+      <BookListSection
         sectionTitle="High Rated Books"
         buttonLabel="View All"
         wrapperStyle={{ padding: "0 40px", marginTop: '45px' }}
@@ -225,6 +235,7 @@ const HomePage = (props) => {
           padding: "0 20px",
           color: theme.sectionHeaderColor,
         }}
+        // showButton
         // buttonColor="linear-gradient(270deg, #7670FF 49.62%, #8B82FF 100%)"
       >
         {
@@ -257,7 +268,7 @@ const HomePage = (props) => {
             showBookRatingCount
           />
         }
-      </BookListSection> */}
+      </BookListSection>
 
       {/* NEWLY ADDED SECTION */}
       <BookListSection
